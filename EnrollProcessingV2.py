@@ -1,3 +1,7 @@
+"""needs to include a count of how many files were processed in last line of print in tidy()"
+
+
+
 #conceptual flow
 """ I have the following code that works:
 1. file_tidy(f_loc) which makes a new outfile of data with the correct campus and quarter put up front

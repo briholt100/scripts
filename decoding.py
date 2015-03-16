@@ -1,4 +1,4 @@
-"""this script is a test script for utf coding processing"""
+"""This script is a test script for utf coding processing"""
 
 def d () :
     line=""

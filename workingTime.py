@@ -5,16 +5,16 @@ Spyder Editor
 working with Time
 http://stackoverflow.com/questions/28641336/access-time-in-real-time
 """
-from datetime import timedelta,datetime
-import time
+#from datetime import timedelta,datetime
+import time,random
 #print time.strftime("%H")
 
-print random.uniform(0,1)
+#print random.uniform(0,1)
 
-print "this is the current time in seconds since epoch"  + str(time.time())
-print "this is the current local time " + str(time.localtime())
+#print "this is the current time in seconds since epoch"  + str(time.time())
+#print "this is the current local time " + str(time.localtime())
 
-print "this is the current local time " + str(datetime.datetime.now().time())
+#print "this is the current local time " + str(datetime.datetime.now().time())
 
 print ".....65 degrees........70..........75"    
 temp = 70

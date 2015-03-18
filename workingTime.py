@@ -7,6 +7,7 @@ http://stackoverflow.com/questions/28641336/access-time-in-real-time
 """
 #from datetime import timedelta,datetime
 import time,random
+import numpy as np
 #print time.strftime("%H")
 
 #print random.uniform(0,1)
@@ -16,13 +17,21 @@ import time,random
 
 #print "this is the current local time " + str(datetime.datetime.now().time())
 
-print ".....65 degrees........70..........75"    
+print "degrees"+"\t 65" + "\t" * 2 + "70.00"+ "." * 10+"75"    
 temp = 70
+tempPosition=20
 for sec in range(1,61):
-    print str(sec) + "                    " + "%.2f" % (temp)
-    temp+=random.uniform(-1,2)
+    randNum=random.uniform(-2,2)    
+    if randNum < 0:
+        tempPosition+= np.floor(randNum)
+    if randNum > 0:
+        tempPosition += np.ceil(randNum)
+    print str(sec) + " " * tempPosition + "%.2f" % (temp)
+    temp+=randNum
     time.sleep(.1)
     sec+=1
+  
+
 
 
 """

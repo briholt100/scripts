@@ -26,7 +26,7 @@ for sec in range(1,61):
         tempPosition+= np.floor(randNum)
     if randNum > 0:
         tempPosition += np.ceil(randNum)
-    print str(sec) + " " * tempPosition + "%.2f" % (temp)
+    print str(sec)+"|" + " " * tempPosition + "%.2f" % (temp)
     temp+=randNum
     time.sleep(.1)
     sec+=1

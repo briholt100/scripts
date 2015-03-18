@@ -8,15 +8,6 @@ http://stackoverflow.com/questions/28641336/access-time-in-real-time
 #from datetime import timedelta,datetime
 import time,random
 import numpy as np
-#print time.strftime("%H")
-
-#print random.uniform(0,1)
-
-#print "this is the current time in seconds since epoch"  + str(time.time())
-#print "this is the current local time " + str(time.localtime())
-
-#print "this is the current local time " + str(datetime.datetime.now().time())
-
 print "degrees"+"\t 65" + "\t" * 2 + "70.00"+ "." * 10+"75"    
 temp = 70
 tempPosition=20
@@ -30,9 +21,12 @@ for sec in range(1,61):
     temp+=randNum
     time.sleep(.1)
     sec+=1
-  
-
-
+"""The following are sandbox experiments with time"""
+#print time.strftime("%H")
+#print random.uniform(0,1)
+#print "this is the current time in seconds since epoch"  + str(time.time())
+#print "this is the current local time " + str(time.localtime())
+#print "this is the current local time " + str(datetime.datetime.now().time())
 
 """
 for i in range(0,2):

@@ -45,29 +45,25 @@ class Heater(object): #I would like to add a Name to the print statements in INI
     power="OFF"
     def __init__(self,minTemp=75):
         self.minTemp=minTemp #heat is units per minute added?
-        print "The Heater is  "+ str(self.power)
-        print "And the temperature is set at " +str(self.minTemp)        
+        print "\nThe Heater is  "+ str(self.power)
+        print "And the temperature is set at " +str(self.minTemp)+"F°\n\n"        
 
-    def set_Temp(self):
-        self.minTemp=int(raw_input("what would like to be the minimum temp? "))
-        print self.minTemp
-        
-    def ON(self):
-        # based on thermometer, this turns on or off
-        self.power = "ON"
-        print "The Heater is currently " + str(self.power)
-            
-    def OFF(self):     
-        self.power= "OFF"        
-        print "The Heater is currently " + str(self.power)
+    def set_Temp(self,F=None):
+        if F == None:
+            self.minTemp=int(raw_input("\n\nWhat should be the minimum temp in F°? "))
+        else:
+            self.minTemp=F
+        print "\nThe thermometer is now set at " + str(self.minTemp)+"\n\n"
+
+    def switch_on(self, on="ON"):
+        if on == "ON":
+            self.power="ON"
+        else:
+            self.power="OFF"
+        print "\nThe Heater is now " + str(self.power)+"\n\n"
         
     def heater_check(self):
-        print "The Heater is  "+ str(self.power)
-        print "And the temperature is set at " +str(self.minTemp)
+        print "\n\nThe Heater is  "+ str(self.power)+"\n\n"
+        print "And the temperature is set at " +str(self.minTemp)+"F°\n\n"
         
-        
-        
-        
-        
-        
-        
+    

@@ -48,18 +48,19 @@ class Heater(object):
         
     def ON(self,on=True):
         # based on thermometer, this turns on or off
-        switch = raw_input('Turn On? Y or N, case sensitive ')
+        print on
+        """switch = raw_input('Turn On? Y or N, case sensitive ')
         if switch == 'Y':
             off=False
         else:
             off=True
-        return off
+        return off"""
     
     def OFF(self,on=False):     
-     
-     
-    def heater_check(self,On_Off):
-        print "The Heater is off? "+ str()
+        print on
+        
+    def heater_check(self,on):
+        print "The Heater is off? "+ str(on)
         
         
         

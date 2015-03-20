@@ -41,11 +41,12 @@ class thermo(object):
         print self.tempAvg
 
 class Heater(object):
+    on=False
     def __init__(self,minTemp=75,power="off"):
         self.maxTemp=minTemp #heat is units per minute added?
         self.power=power
         
-    def On_Off(self,off=True):
+    def ON(self,on=True):
         # based on thermometer, this turns on or off
         switch = raw_input('Turn On? Y or N, case sensitive ')
         if switch == 'Y':
@@ -53,6 +54,9 @@ class Heater(object):
         else:
             off=True
         return off
+    
+    def OFF(self,on=False):     
+     
      
     def heater_check(self,On_Off):
         print "The Heater is off? "+ str()

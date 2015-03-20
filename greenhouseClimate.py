@@ -33,34 +33,37 @@ class Climate(object):
             d+=1
 
 class thermo(object):
+
     def __init__(self,currentTemp):
         self.currentTemp=currentTemp #heat is units per minute added?
-      
+    
     def check_Temp(self):
         # based on thermometer, this turns on or off
         print self.tempAvg
 
-class Heater(object):
-    on=False
-    def __init__(self,minTemp=75,power="off"):
-        self.maxTemp=minTemp #heat is units per minute added?
-        self.power=power
+class Heater(object): #I would like to add a Name to the print statements in INIT
+    power="OFF"
+    def __init__(self,minTemp=75):
+        self.minTemp=minTemp #heat is units per minute added?
+        print "The Heater is  "+ str(self.power)
+        print "And the temperature is set at " +str(self.minTemp)        
+
+    def set_Temp(self):
+        self.minTemp=int(raw_input("what would like to be the minimum temp? "))
+        print self.minTemp
         
-    def ON(self,on=True):
+    def ON(self):
         # based on thermometer, this turns on or off
-        print on
-        """switch = raw_input('Turn On? Y or N, case sensitive ')
-        if switch == 'Y':
-            off=False
-        else:
-            off=True
-        return off"""
-    
-    def OFF(self,on=False):     
-        print on
+        self.power = "ON"
+        print "The Heater is currently " + str(self.power)
+            
+    def OFF(self):     
+        self.power= "OFF"        
+        print "The Heater is currently " + str(self.power)
         
-    def heater_check(self,on):
-        print "The Heater is off? "+ str(on)
+    def heater_check(self):
+        print "The Heater is  "+ str(self.power)
+        print "And the temperature is set at " +str(self.minTemp)
         
         
         

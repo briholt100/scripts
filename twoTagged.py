@@ -25,7 +25,7 @@ for i in xrange(n_trials):
         random.shuffle(subj_pool) #shuffles the subject pool of 8
         draw = subj_pool.pop()    # pulls last member of pool list, adds to 'draw'
         random.shuffle(group_select) #shuffles the possible assignments
-        pick=group_select.pop()    # pulls last member of assignments, adds to pick
+        pick=group_select.pop()    # pulls, adds to pick
         if  pick == 'A':
             groupA.append(draw) 
         else:

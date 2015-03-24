@@ -12,32 +12,29 @@ What if there were 500 women and 1/2 of placebo return with cancer?
 
 """
 import random
-subj_pool = [0, 0, 0, 0, 0, 0, 1, 1]
-group_select=['A','B','A','B','A','B','A','B'] 
-groupA = []
-groupB = []
 
 n_trials = 100000
 select_tagged = 0
 
 for i in xrange(n_trials):
+    subj_pool = [0, 0, 0, 0, 0, 0, 1, 1]
+    group_select=['A','B','A','B','A','B','A','B'] 
+    groupA = []
+    groupB = []
+    random.shuffle(subj_pool) #shuffles the subject pool of 8    
+    random.shuffle(group_select) #shuffles the possible assignments
     for i in xrange(8):
-        random.shuffle(subj_pool) #shuffles the subject pool of 8
         draw = subj_pool.pop()    # pulls last member of pool list, adds to 'draw'
-        random.shuffle(group_select) #shuffles the possible assignments
         pick=group_select.pop()    # pulls, adds to pick
         if  pick == 'A':
             groupA.append(draw) 
         else:
             groupB.append(draw)
-    
+    #print "\nGroup A looks like " + str(groupA)
+    #print "Group B looks like " + str(groupB)
+
     if sum(groupA)==2 or sum(groupB)==2: #if sum's to 2, then both '1's are in same group
         select_tagged +=1
-    # the following resets the experiment
-    subj_pool = [0, 0, 0, 0, 0, 0, 1, 1]
-    group_select=['A','B','A','B','A','B','A','B'] 
-    groupA = []
-    groupB = []
     
 print float(select_tagged)/n_trials
    

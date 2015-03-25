@@ -43,14 +43,16 @@ class thermo(object):
 
 class Heater(object): #I would like to add a Name to the print statements in INIT
     power="OFF"
-    def __init__(self,minTemp=75):
+    def __init__(self,minTemp=75,heat_perCuft_perMin=.01,Name=None):
         self.minTemp=minTemp #heat is units per minute added?
-        print "\nThe Heater is  "+ str(self.power)
-        print "And the temperature is set at " +str(self.minTemp)+"F°\n\n"        
+        self.heat_perCuft_perMin=heat_perCuft_perMin
+        self.Name=Name
 
+        
     def set_Temp(self,F=None):
         if F == None:
-            self.minTemp=int(raw_input("\n\nWhat should be the minimum temp in F°? "))
+            self.minTemp=int(raw_input(
+                "\n\nWhat should be the minimum temp in F°? "))
         else:
             self.minTemp=F
         print "\nThe thermometer is now set at " + str(self.minTemp)+"\n\n"
@@ -63,7 +65,9 @@ class Heater(object): #I would like to add a Name to the print statements in INI
         print "\nThe Heater is now " + str(self.power)+"\n\n"
         
     def heater_check(self):
-        print "\n\nThe Heater is  "+ str(self.power)+"\n\n"
-        print "And the temperature is set at " +str(self.minTemp)+"F°\n\n"
-        
+        print "\nThe Heater is  "+ str(self.power)
+        print "And the temperature is set at " +str(self.minTemp)+"F°"
+        print "And heat rate is " +str(self.heat_perCuft_perMin)+ (
+          " degree per cubic foot per minute.\n\n"
+          )       
     

@@ -41,33 +41,38 @@ print float(select_tagged)/n_trials
    
    
    
-   
-   
-"""
-n_trials = 100000
-select_white_ = 0
+from random import shuffle
 
-for i in xrange(8):
-    random.shuffle(subj_pool)
-    print "\nHere shuffle # "+ str(i+1) + ": " + str(subj_pool)
-    draw = subj_pool.pop()    
-    print "\nThis is the draw:.... " + str(draw)
+def trial(n_targets, n_distractors, n_groups):
+    all_ = n_distractors * [0] + n_targets * [1]
+    shuffle(all_)
+    group_size = len(all_) // n_groups
+    return any(
+        sum(all_[i::group_size]) == n_targets
+        for i in range(n_groups)
+    )
     
-#How to randomly pick between grpA or B? Once that is done:
-    groupA.append(draw)    
-    
-    
-    print "\nThis is what remains:.... " + str(subj_pool)
-    subj_pool = subj_pool
-print groupA
-   """ 
+def mean_of_bools(iterator):
+    sum_ = 0
+    for i, x in enumerate(iterator, 1):  #enumerate adds numbers to a list/seq
+        sum_ += 1 if x else 0
+    return sum_ / i    
+
+# for more on enumerate http://stackoverflow.com/a/10777408
+# [pair for pair in enumerate(mylist)]    
 
 
+def avg(iterator):
+    sum_ = 0
+    for i, x in enumerate(iterator, 1):  #enumerate adds numbers to a list/seq
+        sum_ += x if x else 0
+    return sum_ / i    
 
-"""
-for trials in xrange(n_trials):
-    random.shuffle(subj_pool)
-    if subj_pool[0] == 'T'  or subj_pool[1] == 'T':
-        not_both_reds_successes += 1
 
-print float(not_both_reds_successes) / n_trials"""
+#from statistics import mean  Only works on pythong 3.x
+from functools import partial
+
+def simulate(trial_func, n_trials):
+    return mean_of_bools(trial_func() for _ in range(n_trials))
+
+simulate(partial(trial, 2, 6, 2), 10000)

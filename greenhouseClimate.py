@@ -5,7 +5,9 @@ Created on Wed Mar 18 13:38:37 2015
 @author: bholt
 
 """
-"""http://www.csee.umbc.edu/courses/331/spring11/notes/python/python3.ppt.pdf"""
+"""http://www.csee.umbc.edu/courses/331/spring11/notes/python/python3.ppt.pdf
+A GOOD EXAMPLE http://www.wellho.net/resources/ex.php?item=y301/waterflows.py
+"""
 class Climate(object):
     
     def __init__(self,tempAvg=68,humidity=.45,airFlow=1,days=1):
@@ -34,12 +36,14 @@ class Climate(object):
 
 class thermo(object):
 
-    def __init__(self,currentTemp):
-        self.currentTemp=currentTemp #heat is units per minute added?
+    def __init__(self):
+        self=self
+        #self.currentTemp=currentTemp #heat is units per minute added?
     
     def check_Temp(self):
+        #self.current_temp=        
         # based on thermometer, this turns on or off
-        print self.tempAvg
+        print Climate.self.tempAvg
 
 class Heater(object): #I would like to add a Name to the print statements in INIT
     power="OFF"

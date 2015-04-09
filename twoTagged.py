@@ -11,6 +11,7 @@ What if there were 500 women and 1/2 of placebo return with cancer?
 
 
 """
+#%%
 import random
 
 n_trials = 100000
@@ -37,10 +38,10 @@ for i in xrange(n_trials):
         select_tagged +=1
     
 print float(select_tagged)/n_trials
+#%%   
    
    
-   
-   
+#%%   
 from random import shuffle
 
 def trial(n_targets, n_distractors, n_groups):
@@ -61,7 +62,8 @@ def mean_of_bools(iterator):
 # for more on enumerate http://stackoverflow.com/a/10777408
 # [pair for pair in enumerate(mylist)]    
 
-
+#%%
+#%%
 def avg(iterator):
     sum_ = 0
     for i, x in enumerate(iterator, 1):  #enumerate adds numbers to a list/seq
@@ -76,3 +78,4 @@ def simulate(trial_func, n_trials):
     return mean_of_bools(trial_func() for _ in range(n_trials))
 
 simulate(partial(trial, 2, 6, 2), 10000)
+#%%

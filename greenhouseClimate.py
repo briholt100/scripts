@@ -7,6 +7,12 @@ Created on Wed Mar 18 13:38:37 2015
 """
 """http://www.csee.umbc.edu/courses/331/spring11/notes/python/python3.ppt.pdf
 A GOOD EXAMPLE http://www.wellho.net/resources/ex.php?item=y301/waterflows.py
+
+Some notes on creating climate for t
+
+before fog is turned off, turn off air exchange to let fog settle...?maybe 10 minutes of no air?
+
+
 """
 class Climate(object):
     

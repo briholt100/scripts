@@ -1,5 +1,5 @@
 
-library(httr)
+library("httr")
 
 # 1. Find OAuth settings for twitter:
 #    https://dev.twitter.com/docs/auth/oauth
@@ -9,7 +9,9 @@ oauth_endpoints("twitter")
 #    Insert your values below - if secret is omitted, it will look it up in
 #    the TWITTER_CONSUMER_SECRET environmental variable.
 #    Make sure to set callback url to "http://127.0.0.1:1410"
-myapp <- oauth_app("twitter", key = "MhfQlRBfFrcinvFZQC9MTjOcU",secret="SqY1ON1sJyrdqBOoAK5jDTYC5pwwd95FedunSjD9afA9YxAPha")
+myapp <- oauth_app("twitter", key = "MhfQlRBfFrcinvFZQC9MTjOcU",
+                   secret="SqY1ON1sJyrdqBOoAK5jDTYC5pwwd95FedunSjD9afA9YxAPha"
+                   )
 
 # 3. Get OAuth credentials
 twitter_token <- oauth1.0_token(oauth_endpoints("twitter"), myapp)

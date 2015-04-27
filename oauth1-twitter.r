@@ -1,5 +1,6 @@
 
 library("httr")
+library("httpuv")
 
 # 1. Find OAuth settings for twitter:
 #    https://dev.twitter.com/docs/auth/oauth

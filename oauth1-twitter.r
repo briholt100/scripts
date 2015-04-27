@@ -1,0 +1,24 @@
+
+library("httr")
+library("httpuv")
+
+# 1. Find OAuth settings for twitter:
+#    https://dev.twitter.com/docs/auth/oauth
+oauth_endpoints("twitter")
+
+# 2. Register an application at https://apps.twitter.com/
+#    Insert your values below - if secret is omitted, it will look it up in
+#    the TWITTER_CONSUMER_SECRET environmental variable.
+#    Make sure to set callback url to "http://127.0.0.1:1410"
+myapp <- oauth_app("twitter", key = "MhfQlRBfFrcinvFZQC9MTjOcU",
+                   secret="SqY1ON1sJyrdqBOoAK5jDTYC5pwwd95FedunSjD9afA9YxAPha"
+                   )
+
+# 3. Get OAuth credentials
+twitter_token <- oauth1.0_token(oauth_endpoints("twitter"), myapp)
+
+# 4. Use API
+req <- GET("https://api.twitter.com/1.1/statuses/home_timeline.json",
+           config(token = twitter_token))
+stop_for_status(req)
+content(req)

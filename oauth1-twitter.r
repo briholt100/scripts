@@ -11,7 +11,7 @@ oauth_endpoints("twitter")
 #    the TWITTER_CONSUMER_SECRET environmental variable.
 #    Make sure to set callback url to "http://127.0.0.1:1410"
 myapp <- oauth_app("twitter", key = "MhfQlRBfFrcinvFZQC9MTjOcU",
-                   secret="SqY1ON1sJyrdqBOoAK5jDTYC5pwwd95FedunSjD9afA9YxAPha"
+                   secret="myscript"
                    )
 
 # 3. Get OAuth credentials

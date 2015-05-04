@@ -7,7 +7,7 @@ Created on Sun May  3 11:52:01 2015
 
 #webscraping
 
-import requests, bs4,BeautifulSoup
+import requests, bs4, BeautifulSoup
 url='http://americasmarkets.usatoday.com/2015/04/30/surprise-women-trump-men-on-ceo-pay/'
 response =  requests.get(url)
 response.status_code == requests.codes.ok
@@ -20,11 +20,36 @@ len(response.text)
 print(response.text[:200])
 
 text1 = bs4.BeautifulSoup(response.text)
+print text1.prettify()
+
 table_elements=text1.select('table')
 len(table_elements)
 table_elements[0].getText()
 str(table_elements[0])
 table_elements[0].attrs
+
+table = text1.find("table")
+print table
+dir(table)
+
+for row in table.findAll('tr')[0:]:
+    col = row.findAll('td')
+    print col
+   
+   """col = row.findAll('td')
+    rank = col[0].string
+    artist = col[1].string
+    album = col[2].string
+    cover_link = col[3].img['src']
+    record = (rank, artist, album, cover_link)
+    print "|".join(record)
+"""
+
+
+
+
+
+
 
 tr_elements=text1.select('tr')
 tr_elements
@@ -36,3 +61,4 @@ for item in tr_elements:
     for i in item:
         print i.string
     
+print soup.prettify()

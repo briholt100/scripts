@@ -13,16 +13,6 @@ names<-as.matrix(tables[[1]][1,])
 
 df<-data.frame(tables[[1]])
 
-#Dplyr tidying
-
-df
-
-
-
-
-
-
-
 #Traditional Data tidying
 names[,4]<-"CompInMil"
 

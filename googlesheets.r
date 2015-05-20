@@ -27,9 +27,9 @@ objects(person)
 #person_list_feed <- get_via_lf(Person, ws = "Sheet1") #creates a list
 person_csv <- person %>% get_via_csv(ws = "Sheet1")
 str(person_csv)
-colnames(person_csv)<-c("num","SID","name","email","attend","exam1MC","exam1SA","examTot","case1","disc1","total","percent")
+first_row<-person_csv[1,]
+names(person_csv)<-first_row
 person_csv<-person_csv[-1,-1]
-
 
 person_csv<-(as.matrix(person_csv))
 person_csv<-as.data.frame(person_csv)
@@ -38,10 +38,15 @@ str(person_csv)
 class(person_csv[,5])
 apply(person_csv,2,class)
 
-for (i in 4:11){
+for (i in 4:length(person_csv)){
   person_csv[,i]<-as.numeric(as.character(person_csv[,i]))
 }
 
-mean(person_csv[,5],na.rm=T)
+person_csv %>% summarize(total_percent = n(),mean(person_csv[,15]))
+summary(person_csv)
+
+
+
+
 
 #download_ss(key='PersonalitySpring2015',to="./per15.xlsx",overwrite=T) #add ws = int to pick particular worksheets

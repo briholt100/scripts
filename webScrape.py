@@ -45,12 +45,6 @@ for row in table.findAll('tr')[0:]:
     print "|".join(record)
 """
 
-
-
-
-
-
-
 tr_elements=text1.select('tr')
 tr_elements
 len(tr_elements)
@@ -62,3 +56,51 @@ for item in tr_elements:
         print i.string
     
 print soup.prettify()
+
+
+
+
+
+##webscraping SCCD
+from requests.auth import HTTPDigestAuth
+import json
+def get_stuff():
+    import requests
+    from requests.auth import HTTPDigestAuth 
+    url=raw_input("paste web's URL now   ")
+    r = requests.get(url, auth=HTTPDigestAuth('bholt', 'fuckD1strict!'))
+    return r
+
+
+
+url="https://inside.seattlecolleges.com/enrollment/content/displayReport.aspx?col=063&q=B343&qn=WINTER%2014&nc=false&in=&cr="
+r=requests.get(url, auth=('bholt', 'fuckD1strict!'))
+
+r.text
+r.headers["content-type"]
+r.encoding
+r.content
+
+
+verbs=requests.options(url)
+print(verbs.headers['allow'])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

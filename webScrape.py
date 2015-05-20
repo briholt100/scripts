@@ -68,19 +68,25 @@ import json
 
 url="https://inside.seattlecolleges.com/default.aspx?svc=enrollment&page=enrollment"
 url="https://inside.seattlecolleges.com/enrollment/content/displayReport.aspx?col=063&q=B343&qn=WINTER 14&nc=false&in=&cr="
-r=requests.get(url, auth=('bholt', 'fuckD1strict!'))
-r
+r=requests.get(url, auth=('bholt', '!'))
+r.request.body
 r.text
 r.headers["content-type"]
+r.cookies
 r.encoding
 r.content
 r.json
 r.binary
+r.Response
 
-
+for string in dir(r):
+    print r,string
+    
+    
+    
 text1 = bs4.BeautifulSoup(r.text)
 print text1.prettify()
-
+r.response
 print(r.json)
 
 

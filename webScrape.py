@@ -62,45 +62,36 @@ print soup.prettify()
 
 
 ##webscraping SCCD
+import requests
 from requests.auth import HTTPDigestAuth
 import json
-def get_stuff():
-    import requests
-    from requests.auth import HTTPDigestAuth 
-    url=raw_input("paste web's URL now   ")
-    r = requests.get(url, auth=HTTPDigestAuth('bholt', 'fuckD1strict!'))
-    return r
 
-
-
-url="https://inside.seattlecolleges.com/enrollment/content/displayReport.aspx?col=063&q=B343&qn=WINTER%2014&nc=false&in=&cr="
+url="https://inside.seattlecolleges.com/default.aspx?svc=enrollment&page=enrollment"
+url="https://inside.seattlecolleges.com/enrollment/content/displayReport.aspx?col=063&q=B343&qn=WINTER 14&nc=false&in=&cr="
 r=requests.get(url, auth=('bholt', 'fuckD1strict!'))
-
+r
 r.text
 r.headers["content-type"]
 r.encoding
 r.content
+r.json
+r.binary
 
 
-verbs=requests.options(url)
-print(verbs.headers['allow'])
+text1 = bs4.BeautifulSoup(r.text)
+print text1.prettify()
 
-
-
-
-
-
-
+print(r.json)
 
 
 
 
+dir(requests.Response)
 
 
 
 
-
-
+"Basic YmhvbHQ6ZnVja0Qxc3RyaWN0IQ=="
 
 
 

@@ -70,10 +70,6 @@ import json
 url="https://inside.seattlecolleges.com/enrollment/content/displayReport.aspx"
 payload = {'col': '063', 'q': 'B343', 'qn': 'WINTER 14', 'nc': 'false', 'in': '', 'cr': ''}
 
-
- 
-
-
 r=requests.get(url,params=payload, auth=('', '!'))
 r
 r.url
@@ -83,5 +79,3 @@ r.cookies
 r.encoding
 r.content
 r.json
-
-

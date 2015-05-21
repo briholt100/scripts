@@ -66,11 +66,17 @@ import requests
 from requests.auth import HTTPDigestAuth
 import json
 
-
+url="https://inside.seattlecolleges.com/enrollment/content/displayReport.aspx?col=063&q=B343&qn=WINTER%2014&nc=false&in=&cr="
 url="https://inside.seattlecolleges.com/enrollment/content/displayReport.aspx"
-payload = {'col': '063', 'q': 'B343', 'qn': 'WINTER 14', 'nc': 'false', 'in': '', 'cr': ''}
+payload = {'col': '063', 'q': 'B343', 'qn': 'WINTER+14', 'nc': 'false', 'in': '', 'cr': ''}
+payload_str = "&".join("%s=%s" % (k,v) for k,v in payload.items())
 
-r=requests.get(url,params=payload, auth=('', '!'))
+
+
+
+r=requests.get(url,
+               params=payload, 
+               auth=('us', '!'))
 r
 r.url
 r.text
@@ -78,4 +84,26 @@ r.headers
 r.cookies
 r.encoding
 r.content
+r.raw
 r.json
+
+#params='format=json&key=site:dummy+type:example+group:wheel')
+
+payload = {'format': 'json', 'key': 'site:dummy+type:example+group:wheel'}
+
+payload_str = "&".join("%s=%s" % (k,v) for k,v in payload.items())
+# 'format=json&key=site:dummy+type:example+group:wheel'
+
+r = requests.get(url, params=payload_str)
+
+
+
+
+
+
+
+
+
+
+
+

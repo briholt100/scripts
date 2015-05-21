@@ -35,3 +35,24 @@ df[,4]<-as.numeric(as.character(df[,4]))
 df[df[,4]>30 | df[,4]<21,]
 
 df %>% filter(CompInMil>20)
+
+
+
+
+library(httr)
+url="https://inside.seattlecolleges.com/enrollment/content/displayReport.aspx"
+payload = {'col': '063', 'q': 'B343', 'qn': 'WINTER+14', 'nc': 'false', 'in': '', 'cr': ''}
+payload_str = "&".join("%s=%s" % (k,v) for k,v in payload.items())
+
+r<-GET("https://inside.seattlecolleges.com/",modify_url(url, query = "col=063&q=B343&qn=WINTER%2014&nc=false&in=&cr="), authenticate("user","!"))
+r$url
+r
+
+paramlist=list("col=063","q=B343")
+qlist=list("063","B343")
+modify_url(url, query=qlist)
+
+
+
+
+

@@ -98,8 +98,10 @@ r = requests.get(url, params=payload_str)
 
 
 
+from selenium import webdriver 
 
-
+browser = webdriver.Firefox()
+browser.get(url)
 
 
 

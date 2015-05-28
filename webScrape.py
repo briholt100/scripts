@@ -98,14 +98,44 @@ r = requests.get(url, params=payload_str)
 
 
 
-from selenium import webdriver 
+from selenium import webdriver
 
-browser = webdriver.Firefox()
-browser.get(url)
+profile = webdriver.FirefoxProfile()
+profile.set_preference('network.http.phishy-userpass-length', 255)
+driver = webdriver.Firefox(firefox_profile=profile)
 
+driver.get("https://putUsername:putPassword@inside.seattlecolleges.com/default.aspx?svc=enrollment&page=enrollment")
 
+element = driver.find_element_by_id("ctl08_ddlCollegeView")
 
+element.select_by_value(063)
 
+dir(element)
+
+#ctl08_ddlCollegeView
+<select name="ctl08$ddlCollegeView" id="ctl08_ddlCollegeView">
+	<option value="062">Central</option>
+	<option selected="selected" value="063">North</option>
+	<option value="064">South</option>
+	<option value="065">SVI</option>
+
+</select>
+
+<select name="ctl08$ddlQuarterView" id="ctl08_ddlQuarterView">
+	<option value="B341">SUMMER 13 </option>
+	<option value="B342">FALL 13   </option>
+	<option value="B343">WINTER 14 </option>
+	<option value="B344">SPRING 14 </option>
+	<option value="B451">SUMMER 14 </option>
+	<option value="B452">FALL 14   </option>
+	<option value="B453">WINTER 15 </option>
+	<option value="B454">SPRING 15 </option>
+	<option selected="selected" value="B561">SUMMER 15 </option>
+	<option value="B562">FALL 15   </option>
+
+</select>
+
+<a onclick="clickChoice.reportChoice='all';return ValidateAndOpenWindow2('ctl08_lblItemRequired', 'ctl08_lblCollegeRequired', 'ctl08_txtItemNum', 'ctl08_optAll', 'ctl08_optSingle', 'ctl08_optClassList', 'ctl08_optElearn', 'ctl08_ddlCollegeView', 'ctl08_ddlQuarterView', 'ctl08_chkNonCancelled', '0', 'enrollment/content/displayReport.aspx', 900, 600);" id="ctl08_optAll" class="btnViewReport" href="javascript:WebForm_DoPostBackWithOptions(new WebForm_PostBackOptions(&quot;ctl08$optAll&quot;, &quot;&quot;, false, &quot;&quot;, &quot;enrollment/content/#&quot;, false, true))">View Report</a>
 
 
 

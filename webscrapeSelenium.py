@@ -6,30 +6,45 @@ Created on Thu May 28 17:26:20 2015
 """
 
 from selenium import webdriver
-
+from selenium.webdriver.support.ui import Select
 profile = webdriver.FirefoxProfile()
 profile.set_preference('network.http.phishy-userpass-length', 255)
 driver = webdriver.Firefox(firefox_profile=profile)
 
-driver.get("https://:!@inside.seattlecolleges.com/default.aspx?svc=enrollment&page=enrollment")
+
+#  Add user name and pass word 
+#driver.get("https://:@inside.seattlecolleges.com/default.aspx?svc=enrollment&page=enrollment")
 
 element = driver.find_element_by_id("ctl08_ddlCollegeView")
 
 element.select_by_value(063)
 
-dir(element)
-
-from selenium.webdriver.support.ui import Select
-
-select = Select(driver.find_element_by_id("ctl08_ddlCollegeView"))
-select.select_by_visible_text("North")
-select.select_by_value(063)
 
 
+select = Select(driver.find_element_by_id("ctl08_ddlCollegeView"))  #college choice
+select.select_by_visible_text("South")
+select.select_by_value('063')
+
+selectQN = Select(driver.find_element_by_id("ctl08_ddlQuarterView"))  #quarter choice
+selectQN.select_by_value('B341')
+
+
+reportLink = driver.find_element_by_id('ctl08_optAll') # view report
+
+driver.window_handles
+window_before = driver.window_handles[0]
+reportLink.click()
+window_after = driver.window_handles[1]
+driver.switch_to.window(window_after)
+
+firstTable=driver.find_element_by_tag_name('tbody')
+firstTable.text()
+
+#https://inside.seattlecolleges.com/enrollment/content/displayReport.aspx
 
 
 #ctl08_ddlCollegeView
-<select name="ctl08$ddlCollegeView" id="ctl08_ddlCollegeView">
+"""<select name="ctl08$ddlCollegeView" id="ctl08_ddlCollegeView">
 	<option value="062">Central</option>
 	<option selected="selected" value="063">North</option>
 	<option value="064">South</option>
@@ -53,46 +68,6 @@ select.select_by_value(063)
 
 <a onclick="clickChoice.reportChoice='all';return ValidateAndOpenWindow2('ctl08_lblItemRequired', 'ctl08_lblCollegeRequired', 'ctl08_txtItemNum', 'ctl08_optAll', 'ctl08_optSingle', 'ctl08_optClassList', 'ctl08_optElearn', 'ctl08_ddlCollegeView', 'ctl08_ddlQuarterView', 'ctl08_chkNonCancelled', '0', 'enrollment/content/displayReport.aspx', 900, 600);" id="ctl08_optAll" class="btnViewReport" href="javascript:WebForm_DoPostBackWithOptions(new WebForm_PostBackOptions(&quot;ctl08$optAll&quot;, &quot;&quot;, false, &quot;&quot;, &quot;enrollment/content/#&quot;, false, true))">View Report</a>
 
+"""
 
 
-
-
-
-#Try this#http://stackoverflow.com/questions/12164205/selenium-selecting-a-dropdown-option-with-for-loop-from-dictionary
-#####using selenium 
-#ScriptName : Login.py
-#---------------------
-from selenium import webdriver
-
-#Following are optional required
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import Select
-from selenium.common.exceptions import NoSuchElementException
-
-baseurl = "http://www.mywebsite.com/login.php"
-username = "admin"
-password = "admin"
-
-xpaths = { 'usernameTxtBox' : "//input[@name='username']",
-           'passwordTxtBox' : "//input[@name='password']",
-           'submitButton' :   "//input[@name='login']"
-         }
-
-mydriver = webdriver.Firefox()
-mydriver.get(baseurl)
-mydriver.maximize_window()
-
-#Clear Username TextBox if already allowed "Remember Me" 
-mydriver.find_element_by_xpath(xpaths['usernameTxtBox']).clear()
-
-#Write Username in Username TextBox
-mydriver.find_element_by_xpath(xpaths['usernameTxtBox']).send_keys(username)
-
-#Clear Password TextBox if already allowed "Remember Me" 
-mydriver.find_element_by_xpath(xpaths['passwordTxtBox']).clear()
-
-#Write Password in password TextBox
-mydriver.find_element_by_xpath(xpaths['passwordTxtBox']).send_keys(password)
-
-#Click Login button
-mydriver.find_element_by_xpath(xpaths['submitButton']).click()

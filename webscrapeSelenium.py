@@ -12,8 +12,10 @@ profile.set_preference('network.http.phishy-userpass-length', 255)
 driver = webdriver.Firefox(firefox_profile=profile)
 
 
+
+
 #  Add user name and pass word 
-#driver.get("https://:@inside.seattlecolleges.com/default.aspx?svc=enrollment&page=enrollment")
+#driver.get("https://userID:Pass@inside.seattlecolleges.com/default.aspx?svc=enrollment&page=enrollment")
 
 element = driver.find_element_by_id("ctl08_ddlCollegeView")
 

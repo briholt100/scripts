@@ -51,16 +51,20 @@ answers<-sapply(getNodeSet(root[[1]],'//*/setvar[. > 1]/..//varequal'),xmlValue)
 output=""
 j=1
 
-for (i in 1:20){
+for (i in 1:length(questions)){
+  output<-paste(output,"new set here--------------------------------",sep='\n')
   output<-paste(output,questions[i],sep='\n')
-  #output<-rbind(writeLines(choices[j]))
-  #output<-rbind(writeLines(choices[j+1]))
-  #output<-rbind(writeLines(choices[j+2]))
-  #output<-rbind(writeLines(choices[j+3]))
-    #print ("new set here mother fucker_____--------------------------------")
-   # j=j+4
-  output<-paste(output,"answer: ", answers[i],sep='\n')
-  output<-paste(output,"diff: ", difficulty[i],sep='\n')
+  output<-paste(output,choices[j],sep=' { ~')
+  output<-paste(output,choices[j+1],sep=' ~')
+  output<-paste(output,choices[j+2],sep=' ~')
+  output<-paste(output,choices[j+3],sep=' ~')
+  output<-paste(output,'}',sep='')
+  output<-paste(output,'\n',sep='')
+    j=j+4
+  output<-paste(output,"answer: ", answers[i],sep='')
+  output<-paste(output,'\n',sep='')
+  output<-paste(output,"diff: ", difficulty[i],sep='')
+
 }
 
 

@@ -48,18 +48,19 @@ answers<-sapply(getNodeSet(root[[1]],'//*/setvar[. > 1]/..//varequal'),xmlValue)
 
 
 
-
+output=data.frame()
 j=1
+
 for (i in 1:20){
-  writeLines (questions[i])
-    writeLines(choices[j])
-    writeLines(choices[j+1])
-    writeLines(choices[j+2])
-    writeLines(choices[j+3])
-    print ("new set here mother fucker_____--------------------------------")
-    j=j+4
-  writeLines(c("answer: ",answers[i]))
-  writeLines(c("diff: ",difficulty[i]))
+  output<-rbind(output,questions[i],difficulty[i])
+  #output<-rbind(writeLines(choices[j]))
+  #output<-rbind(writeLines(choices[j+1]))
+  #output<-rbind(writeLines(choices[j+2]))
+  #output<-rbind(writeLines(choices[j+3]))
+    #print ("new set here mother fucker_____--------------------------------")
+   # j=j+4
+  #output<-rbind(writeLines(c("answer: ",answers[i])))
+  #output[i]<-print(c("diff: ",difficulty[i]))
 }
 
 

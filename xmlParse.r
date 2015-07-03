@@ -48,21 +48,21 @@ answers<-sapply(getNodeSet(root[[1]],'//*/setvar[. > 1]/..//varequal'),xmlValue)
 
 
 
-output=data.frame()
+output=""
 j=1
 
 for (i in 1:20){
-  output<-rbind(output,questions[i],difficulty[i])
+  output<-paste(output,questions[i],sep='\n')
   #output<-rbind(writeLines(choices[j]))
   #output<-rbind(writeLines(choices[j+1]))
   #output<-rbind(writeLines(choices[j+2]))
   #output<-rbind(writeLines(choices[j+3]))
     #print ("new set here mother fucker_____--------------------------------")
    # j=j+4
-  #output<-rbind(writeLines(c("answer: ",answers[i])))
-  #output[i]<-print(c("diff: ",difficulty[i]))
+  output<-paste(output,"answer: ", answers[i],sep='\n')
+  output<-paste(output,"diff: ", difficulty[i],sep='\n')
 }
 
 
 
-write.table(Q, file = "output.csv", row.names = FALSE, append = FALSE, col.names = TRUE, sep = ", ")
+write.table(output, file = "output.csv", append = FALSE, sep = ", ")

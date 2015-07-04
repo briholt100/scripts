@@ -1,7 +1,9 @@
 library(XML)
 #setwd("I:\\work\\Lifespan\\ch.2.1.med WebCT 07012015 190950\\QIZ_5553724_M\\data")
 #windater
-setwd("I:\\work\\Lifespan\\ch4 WebCTtest\\QIZ_5553724_M\\data")
+#setwd("I:\\work\\Lifespan\\ch4 WebCTtest\\QIZ_5553724_M\\data")
+#dater
+#setwd("/media/brian/dater_bridge2/work/Lifespan/ch.2.1.med WebCT 07012015 190950/QIZ_5553724_M/data")
 dir()
 
 doc<-xmlTreeParse("./ch.2.1.med.xml" ,useInternalNodes=F)

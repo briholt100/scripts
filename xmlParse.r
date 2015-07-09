@@ -77,7 +77,7 @@ write.table(output, file = "output.csv", append = FALSE, sep = ", ")
 
 
 
-
+output=""
 j=1
 for (i in 1:10){
   output<-paste(output,"new set here--------------------------------",sep='\n')

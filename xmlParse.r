@@ -3,12 +3,11 @@ library(XML)
 #windater
 #setwd("I:\\work\\Lifespan\\ch4 WebCTtest\\QIZ_5553724_M\\data")
 #dater
-#setwd("/media/brian/dater_bridge2/work/Lifespan/ch.2.1.med WebCT 07012015 190950/QIZ_5553724_M/data")
+#setwd("/media/brian/dater_bridge2/work/Lifespan/ch4 WebCTtest/QIZ_5553724_M/data")
 dir()
 
-doc<-xmlTreeParse("./ch.2.1.med.xml" ,useInternalNodes=F)
+doc<-xmlTreeParse("./ch4.xml" ,useInternalNodes=F)
 
-#doc<-xmlTreeParse("./ch4.xml",useInternalNodes=F)
 root<-xmlRoot(doc)
 xmlName(root)
 xmlSize(root[[1]])
@@ -52,59 +51,31 @@ answers<-sapply(getNodeSet(root[[1]],'//*/setvar[. > 1]/..//varequal'),xmlValue)
 
 output=""
 j=1
-
 for (i in 1:length(questions)){
-  output<-paste(output,"new set here--------------------------------",sep='\n')
-  correct<-answers[i]
-  incorrect<-"~"
-  output<-paste(output,'\n',"answer: ", answers[i],sep='')
-  output<-paste(output,'\n',sep='')
-  output<-paste(output,"diff: ", difficulty[i],sep='')
-  output<-paste(output,questions[i],sep='\n')
-  output<-paste(output,choices[j],sep=' { ~')
-  output<-paste(output,choices[j+1],sep=' ~')
-  output<-paste(output,choices[j+2],sep=' ~')
-  output<-paste(output,choices[j+3],sep=' ~')
-  output<-paste(output,'}',sep='')
-  output<-paste(output,'\n',sep='')
-    j=j+4
-
-}
-
-
-
-write.table(output, file = "output.csv", append = FALSE, sep = ", ")
-
-
-
-output=""
-j=1
-for (i in 1:10){
-  output<-paste(output,"new set here--------------------------------",sep='\n')
+  #output<-paste(output,"new set here--------------------------------",sep='\n')
   correct<-as.integer(answers[i])
-  print (correct)
-  output<-paste(output,'\n',"answer: ", answers[i],sep='')
-  output<-paste(output,'\n',sep='')
+  #print (correct)
+  #output<-paste(output,'\n',"answer: ", answers[i],sep='')
+  #output<-paste(output,'\n',sep='')
   output<-paste(output,"diff: ", difficulty[i],sep='')
   output<-paste(output,questions[i],sep='\n')
 
   a_i<-" ~"  #answer identifier
-  #a_c = 1 #answer counter
   ifelse (correct == 1, a_i<-' =', a_i<-" ~")
   output<-paste(output,choices[j],sep=paste(' {',a_i))
-    print (paste('',choices[j],sep=paste(' {',a_i)))
+  print (paste('',choices[j],sep=paste(' {',a_i)))
 
   ifelse (correct == 2,a_i<-' =',a_i<-" ~")
   output<-paste(output,choices[j+1],sep=a_i)
-    print (paste('',choices[j+1],sep=paste(a_i)))
+  print (paste('',choices[j+1],sep=paste(a_i)))
 
   ifelse (correct == 3,a_i<-' =',a_i<-" ~")
   output<-paste(output,choices[j+2],sep=a_i)
-    print (paste('',choices[j+2],sep=paste(a_i)))
+  print (paste('',choices[j+2],sep=paste(a_i)))
 
   ifelse (correct == 4,a_i<-' =',a_i<-" ~")
   output<-paste(output,choices[j+3],sep=a_i)
-    print (paste('',choices[j+3],sep=paste(a_i)))
+  print (paste('',choices[j+3],sep=paste(a_i)))
 
   output<-paste(output,'}',sep='')
   output<-paste(output,'\n',sep='')
@@ -113,8 +84,7 @@ for (i in 1:10){
 }
 
 
-
-
+write.table(output, file = "output.csv", append = FALSE, sep = ", ")
 
 
 

@@ -12,7 +12,7 @@ root<-xmlRoot(doc)
 xmlName(root)
 xmlSize(root[[1]])
 xmlName(root[[1]])
-xmlAttrs(root[[1]])
+xmlAttrs(root[[1]][[1]])
 xmlSApply(root[[1]][[2]],xmlName)
 xmlSApply(root[[1]][[2]],xmlSize)
 
@@ -30,13 +30,7 @@ xmlSApply(root[[1]][[3]],xmlValue)
 
 
 xpathSApply(root[[1]],"//mattext[@texttype='text/html']",xmlValue)  #does an escape / be needed?
-xmlChildren(root[[1]][[2]][["presentation"]][["flow"]][["material"]])
-
-
-
-
-xpathSApply(root[[1]][[2]][["presentation"]],"//mattext[@texttype='text//html']",xmlValue)
-
+xmlChildren(root[[1]][["item@title"]])
 
 
 
@@ -46,7 +40,8 @@ difficulty<-sapply(getNodeSet(root[[1]],'//*/qmd_levelofdifficulty'),xmlValue) #
 questions<-sapply(getNodeSet(root[[1]],'//presentation/flow/material/mattext'),xmlValue)  #question
 choices<-sapply(getNodeSet(root[[1]],'//presentation/flow/response_lid//mattext'),xmlValue)   #choices
 answers<-sapply(getNodeSet(root[[1]],'//*/setvar[. > 1]/..//varequal'),xmlValue) #obtains answers; note the backing up a node
-
+section<-sapply(getNodeSet(root[[1]],'//*/qtimetadatafield/fieldlabel[. = "QuestionID"]/..//fieldentry'),xmlValue)  #obtain section 1,2, or 3
+section<-substr(section,3,3)
 
 
 output=""
@@ -57,34 +52,32 @@ for (i in 1:length(questions)){
   #print (correct)
   #output<-paste(output,'\n',"answer: ", answers[i],sep='')
   #output<-paste(output,'\n',sep='')
-  output<-paste(output,"diff: ", difficulty[i],sep='')
-  output<-paste(output,questions[i],sep='\n')
+  output<-paste(output,"diff: ", difficulty[i],sep='\t')
+  output<-paste(output,"section: ",section[i],sep='\t')
+  output<-paste(output,questions[i],sep='\t')
 
   a_i<-" ~"  #answer identifier
   ifelse (correct == 1, a_i<-' =', a_i<-" ~")
   output<-paste(output,choices[j],sep=paste(' {',a_i))
-  print (paste('',choices[j],sep=paste(' {',a_i)))
+  #print (paste('',choices[j],sep=paste(' {',a_i)))
 
   ifelse (correct == 2,a_i<-' =',a_i<-" ~")
   output<-paste(output,choices[j+1],sep=a_i)
-  print (paste('',choices[j+1],sep=paste(a_i)))
+  #print (paste('',choices[j+1],sep=paste(a_i)))
 
   ifelse (correct == 3,a_i<-' =',a_i<-" ~")
   output<-paste(output,choices[j+2],sep=a_i)
-  print (paste('',choices[j+2],sep=paste(a_i)))
+  ##print (paste('',choices[j+2],sep=paste(a_i)))
 
   ifelse (correct == 4,a_i<-' =',a_i<-" ~")
   output<-paste(output,choices[j+3],sep=a_i)
-  print (paste('',choices[j+3],sep=paste(a_i)))
+  ##print (paste('',choices[j+3],sep=paste(a_i)))
 
   output<-paste(output,'}',sep='')
-  output<-paste(output,'\n',sep='')
+  output<-paste(output,'\n\n\n',sep='')
   j=j+4
 
 }
 
 
 write.table(output, file = "output.csv", append = FALSE, sep = ", ")
-
-
-

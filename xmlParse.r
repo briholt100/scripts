@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 library(XML)
 #setwd("I:\\work\\Lifespan\\ch.2.1.med WebCT 07012015 190950\\QIZ_5553724_M\\data")
 #windater
@@ -77,6 +78,5 @@ for (i in 1:length(questions)){
   j=j+4
 
 }
-
 
 write.table(output, file = "output.csv", append = FALSE, sep = ", ")

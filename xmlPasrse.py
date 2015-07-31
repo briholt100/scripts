@@ -46,12 +46,13 @@ f_loc=os.path.join(directory,f)
 os.listdir(directory)
 
 tree = etree.parse(f_loc)
+
 tree.xpath('//presentation/flow/material/mattext')
 tree.xpath('//presentation/*/mattext[@texttype="text/html"]/text()')
 
-tree.xpath('//presentation/flow/material/mattext/text()')
+tree.xpath('//presentation/flow/material/mattext[@mattext/text()')
 
-[@title="buyer-name"]/text(
+[@title="buyer-name"]/text()
 
 root2 = tree.getroot()
 

@@ -70,3 +70,95 @@ mattext texttype="text/html"
 
 find_text = etree.XPath("//text()")
 find_text(root2)[299]
+
+
+
+
+
+
+import os
+
+dir="/media/brian/dater_bridge2/work/Lifespan/quizzes/ch10/QIZ_5553724_M/data/"
+os.chdir(dir)
+
+
+from lxml import etree
+
+def print_elems(root, path):
+    print( '\033[92m{} \033[96m{}\033[0m'.format(root, path))
+    for i, elem in enumerate(root.xpath(path), 1):
+        print('\t{:2d}: {}'.format(i, elem))
+    print()
+
+with open('1xml.txt') as xml_file:
+    tree = etree.parse(xml_file)  # tree container object
+    root_node = tree.getroot()    # root node
+    resp_node = root_node.find('.//response_lid')  # 1st response_lid node
+
+# various tests
+
+print_elems(tree,      '/presentation/flow/material/mattext[@texttype="text/html"]/text()')
+print_elems(tree,      '//presentation/flow/material/mattext[@texttype="text/html"]/text()')
+print_elems(root_node, './flow/material/mattext[@texttype="text/html"]/text()')
+print_elems(tree,      '//mattext[@texttype="text/html"]/text()')
+print_elems(root_node, './/mattext[@texttype="text/html"]/text()')
+print_elems(resp_node, './/mattext[@texttype="text/html"]/text()')
+
+
+for elem in tree.iterfind("./flow"):
+    print etree.tostring(elem[0])
+    
+print resp_node.xpath("text()")
+tree.getroot().tag
+tree2=etree.XML(tree.xpath("string()"))
+
+print etree.tostring(root_node)
+
+children=list(root_node)
+
+for child in root_node:
+    print (child.tag)
+    
+    
+print(etree.iselement(root_node))  # test if it's some kind of Element
+
+if len(root_node):                 # test if it has children
+   print("The root element has children")
+
+
+
+
+
+
+
+
+from lxml import etree
+
+color_dict = {    'grey': '\033[90m',      'red': '\033[91m',
+                 'green': '\033[92m',   'yellow': '\033[93m',
+                  'blue': '\033[94m',  'magenta': '\033[95m',
+                  'cyan': '\033[96m',    'white': '\033[97m',
+               'default': '\033[0m' }
+
+line_plain = '{}{}:{}{}'    # indentation/tag/text/attrib
+# tag green, text cyan, attrib dict yellow
+line_colors = '{{}}{green}{{}}{default}:{cyan}{{}}{default}{yellow}{{}}{default}'.format(**color_dict)
+line = line_colors
+
+def print_recursive(node, indent=0):
+    pad = ' '*indent
+    tag = node.tag.split('}')[-1]
+    attr = ' ({})'.format(node.attrib) if node.attrib else ''
+    text = ' "{}"'.format(node.text.strip()) if node.text else ''     
+    print(line.format(pad, tag, text, attr))       
+    for n in node:
+        print_recursive(n, indent=indent+4)
+
+
+with open('ch10.xml') as xml_file:
+    tree = etree.parse(xml_file)  # tree container object
+    root_node = tree.getroot()    # root node
+
+print_recursive(root_node)
+
+

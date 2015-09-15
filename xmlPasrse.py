@@ -156,7 +156,7 @@ def print_recursive(node, indent=0):
         print_recursive(n, indent=indent+4)
 
 
-with open('ch10.xml') as xml_file:
+with open('ch11.xml') as xml_file:
     tree = etree.parse(xml_file)  # tree container object
     root_node = tree.getroot()    # root node
 

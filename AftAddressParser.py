@@ -21,7 +21,7 @@ validate with usps?
 """
 
 import usaddress, os
-
+os.getcwd()
 os.chdir("/home/brian/Projects/scripts")
 #directions = ['n','s','w','e','ne','nw','se','sw','North','South','West','East','Northwest','Southwest', 'Northeast','Southeast']
 

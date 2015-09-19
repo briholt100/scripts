@@ -1,12 +1,17 @@
 library(XML)
-
+#setwd("I:\\work\\Lifespan\\ch.2.1.med WebCT 07012015 190950\\QIZ_5553724_M\\data")
 #windater
 #setwd("I:\\work\\Lifespan\\quizzes\\ch6\\QIZ_5553724_M\\data")
+=======
+#setwd("I:\\work\\Lifespan\\ch4 WebCTtest\\QIZ_5553724_M\\data")
 #dater
-#setwd("/media/brian/dater_bridge2/work/Lifespan/ch4 WebCTtest/QIZ_5553724_M/data")
+#setwd("/media/brian/dater_bridge2/work/Lifespan/quizzes/ch10/QIZ_5553724_M/data")
 dir()
 
+
 doc<-xmlTreeParse("./ch6.xml" ,useInternalNodes=F)
+=======
+doc<-xmlTreeParse("./ch10.xml" ,useInternalNodes=F)
 
 root<-xmlRoot(doc)
 xmlName(root)
@@ -41,8 +46,7 @@ questions<-sapply(getNodeSet(root[[1]],'//presentation/flow/material/mattext'),x
 choices<-sapply(getNodeSet(root[[1]],'//presentation/flow/response_lid//mattext'),xmlValue)   #choices
 answers<-sapply(getNodeSet(root[[1]],'//*/setvar[. > 1]/..//varequal'),xmlValue) #obtains answers; note the backing up a node
 section<-sapply(getNodeSet(root[[1]],'//*/qtimetadatafield/fieldlabel[. = "QuestionID"]/..//fieldentry'),xmlValue)  #obtain section 1,2, or 3
-section<-substr(section,3,3)
-
+section<-substr(section,4,4)
 
 output=""
 j=1
@@ -78,6 +82,5 @@ for (i in 1:length(questions)){
   j=j+4
 
 }
-
 
 write.table(output, file = "output.csv", append = FALSE, sep = ", ")

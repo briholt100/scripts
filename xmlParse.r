@@ -1,12 +1,12 @@
 library(XML)
 
 #windater
-#setwd("I:\\work\\Lifespan\\quizzes\\ch5\\QIZ_5553724_M\\data")
+#setwd("I:\\work\\Lifespan\\quizzes\\ch6\\QIZ_5553724_M\\data")
 #dater
 #setwd("/media/brian/dater_bridge2/work/Lifespan/ch4 WebCTtest/QIZ_5553724_M/data")
 dir()
 
-doc<-xmlTreeParse("./ch5.xml" ,useInternalNodes=F)
+doc<-xmlTreeParse("./ch6.xml" ,useInternalNodes=F)
 
 root<-xmlRoot(doc)
 xmlName(root)

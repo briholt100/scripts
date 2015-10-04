@@ -1,12 +1,16 @@
-<<<<<<< HEAD
 library(XML)
 #setwd("I:\\work\\Lifespan\\ch.2.1.med WebCT 07012015 190950\\QIZ_5553724_M\\data")
 #windater
+#setwd("I:\\work\\Lifespan\\quizzes\\ch6\\QIZ_5553724_M\\data")
+=======
 #setwd("I:\\work\\Lifespan\\ch4 WebCTtest\\QIZ_5553724_M\\data")
 #dater
 #setwd("/media/brian/dater_bridge2/work/Lifespan/quizzes/ch10/QIZ_5553724_M/data")
 dir()
 
+
+doc<-xmlTreeParse("./ch6.xml" ,useInternalNodes=F)
+=======
 doc<-xmlTreeParse("./ch10.xml" ,useInternalNodes=F)
 
 root<-xmlRoot(doc)

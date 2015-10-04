@@ -26,7 +26,7 @@ os.chdir("/home/brian/Projects/scripts")
 #directions = ['n','s','w','e','ne','nw','se','sw','North','South','West','East','Northwest','Southwest', 'Northeast','Southeast']
 
 """with open("../data/addresses.csv") as file:
-    while True:
+       while True:
         line = file.readline()
         address = line.title()
         print "\n"+address+"\n"
@@ -41,6 +41,7 @@ os.chdir("/home/brian/Projects/scripts")
 """
 
 with open("../data/addresses.csv") as file:
+    addressDic={} 
     while True:
         line = file.readline()
         print line
@@ -49,6 +50,7 @@ with open("../data/addresses.csv") as file:
         address = usaddress.tag(address)
         for key, value in address[0].items():
             print  value.title()
+            addressDic.update({key:value})
         if not line: break
     file.close()
 

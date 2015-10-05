@@ -42,6 +42,7 @@ os.chdir("/home/brian/Projects/scripts")
 
 with open("../data/addresses.csv") as file:
     addressDic={} 
+    addressList=[]
     while True:
         line = file.readline()
         print line
@@ -51,6 +52,7 @@ with open("../data/addresses.csv") as file:
         for key, value in address[0].items():
             print  value.title()
             addressDic.update({key:value})
+            addressList.append(value)
         if not line: break
     file.close()
 

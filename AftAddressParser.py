@@ -45,16 +45,25 @@ with open("../data/addresses.csv") as file:
     addressList=[]
     while True:
         line = file.readline()
-        print line
+        #print line
         address = line#.title()
         #print "\n"+address+"\n"
         address = usaddress.tag(address)
         for key, value in address[0].items():
-            print  value.title()
-            addressDic.update({key:value})
-            addressList.append(value)
+           print  value.title()
+            #addressDic.update({key:value})
+            #addressList.append(value)
+        for i,(key,value) in enumerate(address[0].items()):
+            #addressDic.update({value[0]:value[1:]})
+            print i, key,value
+            #print address[0].get('Recipent')
+        name=address[0].get('Recipient')
+        print "the recipient's name is "+str(name)
+        address[0].viewkeys()
         if not line: break
     file.close()
+
+addressDic
 
 
     

@@ -23,6 +23,10 @@ validate with usps?
 import usaddress, os
 os.getcwd()
 os.chdir("/home/brian/Projects/scripts")
+#dataPath="/home/brian/Projects/data")
+#for campus
+os.chdir("I:\My Data Sources\Scripts")
+#dataPath=os.chdir("/home/brian/Projects/scripts")
 #directions = ['n','s','w','e','ne','nw','se','sw','North','South','West','East','Northwest','Southwest', 'Northeast','Southeast']
 
 """with open("../data/addresses.csv") as file:

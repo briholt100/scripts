@@ -4,42 +4,35 @@ Created on Mon Sep 14 16:48:52 2015
 
 @author: brian
 
-
+to do:
+verify that there is a recipient name, if not, create a flag of some kind
 make addressDic an ordered dict
+produce a new file with formated address?  separate values with /n?
 validate with usps?
 
 """
-
+scriptLoc = "/home/brian/Projects/scripts"
 import usaddress, os
 os.getcwd()
-os.chdir("/home/brian/Projects/scripts")
-#dataPath="/home/brian/Projects/data")
-#for campus
-#os.chdir("I:\My Data Sources\Scripts")
-#dataPath=os.chdir("/home/brian/Projects/scripts")
-#directions = ['n','s','w','e','ne','nw','se','sw','North','South','West','East','Northwest','Southwest', 'Northeast','Southeast']
-#addr='16614 Stone Ave N, shoreline, wa, 98133-5425'
-with open("../data/addresses.csv") as file:
-    addressDic={} 
-    while True:
+os.chdir(scriptLoc)
+with open("../data/addresses.csv") as file:  #opens file to readeach line
+    addressDic={} #creates dictionary to hold parased data
+    while True: #something about how 'if line then true' else false, closes this while loop
         line = file.readline()
-        #print line
-        address = line#.title()
+        address = line  #could just keep line
         #print "\n"+address+"\n"
-        address = usaddress.tag(address)
-        for i,(key,value) in enumerate(address[0].items()):
+        address = usaddress.tag(address) # this will parse based on usaddress algorithm
+        for i,(key,value) in enumerate(address[0].items()): #iterates over each item pair in the ordered dict
             print key, value 
             addressDic.update({address[0].values()[0].title():{k:v.title() for k,v in address[0].items()}}) 
-            name=address[0].values()[0]
+            #previous line updates dictionary, the key being the first value of address[0] 
+            #while the value is the remaining prased values from the address ordered dictionary
+            # .title() chnages the values to be punctuated
+            # the last portion is a dict comprehension to populate addressDic update
+            name=address[0].values()[0]  #just a test to pull the first ordered value from the address line
         print "the recipient's name is "+str(name)
         print "\n"
         if not line: break
-    file.close()
+    file.close()  #must close the file!
 
-addressDic.items()
-
-
-
-    
-    
-    
+print addressDic.items()[0:3]

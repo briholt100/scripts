@@ -55,7 +55,8 @@ with open("../data/addresses.csv") as file:  #opens file to readeach line
 
 
 
-print "\n\nmissing a recipient includes the following:\n\n " + str(missRecipList)
+print "\n\nEntries that are missing a recipient\
+includes the following: " + str(missRecipList[0])  #note the call of just 1 item
 
 """print addressDic.items()[0:3]
 print addressOrdered.items()[0:3]"""

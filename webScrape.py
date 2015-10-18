@@ -98,3 +98,72 @@ r = requests.get(url, params=payload_str)
 
 
 
+"""
+for scraping doc titles from SCCD
+"""
+
+import BeautifulSoup
+
+import requests
+from requests.auth import HTTPDigestAuth
+import json
+
+from requests.auth import HTTPBasicAuth
+
+# Below is a single url, but the docid can be iterated from 1 to 6k
+# Also, siteID = 275 is financial stuff
+
+
+
+url = 'https://inside.seattlecolleges.edu/\
+default.aspx?svc=documentcenter&page=getdocuments&siteID=275'
+docNumber=3325    
+while docNumber<3380:
+    payload = {'docID': str(docNumber)}
+    payload_str = "&".join("%s=%s" % (k,v) for k,v in payload.items())
+    #  Below is a 'head' request, which is not typical of reading web pages. 
+    # Typically you do a .get request, but that pulls all of the content.  
+    try:    
+        r_head=requests.head(url, params = payload_str, auth=('bholt', '!Tang0Tang0'))
+    except:  print "hmmmm....DocID didn't take"
+
+    try:
+        print r_head.headers['content-disposition']
+        print r_head.headers['content-length']
+    except: print "missing content; no disposition or length"
+    print "\n" + str(docNumber) + "\n\n"
+    docNumber+=1
+
+
+
+# Content-disposition is required (?I think) and includes document title
+# If their were content-length or last-modified, they would be useful
+
+try:
+        for k,v in r_head.headers.items():
+           # print k, v
+
+r_head.headers['content-disposition']
+
+
+r=requests.get(url, auth=('username', '!'))
+
+
+
+
+r.url
+r.text
+r.headers
+r.cookies
+r.encoding
+r.content
+r.raw
+r.json
+
+
+#response = urllib2.urlopen(url)
+html = r.read()
+
+soup = BeautifulSoup(html)
+
+

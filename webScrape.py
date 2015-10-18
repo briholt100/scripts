@@ -124,7 +124,7 @@ while docNumber<3380:
     #  Below is a 'head' request, which is not typical of reading web pages. 
     # Typically you do a .get request, but that pulls all of the content.  
     try:    
-        r_head=requests.head(url, params = payload_str, auth=('bholt', '!Tang0Tang0'))
+        r_head=requests.head(url, params = payload_str, auth=('user','pass'))
     except:  print "hmmmm....DocID didn't take"
 
     try:

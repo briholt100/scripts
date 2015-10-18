@@ -102,18 +102,16 @@ r = requests.get(url, params=payload_str)
 for scraping doc titles from SCCD
 """
 
-import BeautifulSoup
-
-import requests
-from requests.auth import HTTPDigestAuth
-import json
-
-from requests.auth import HTTPBasicAuth
+import requests, collections, BeautifulSoup
+from requests.auth import HTTPDigestAuth, HTTPBasicAuth
 
 # Below is a single url, but the docid can be iterated from 1 to 6k
 # Also, siteID = 275 is financial stuff
 
 
+
+NoTitleList=[]
+SCCDdocDic={}
 
 url = 'https://inside.seattlecolleges.edu/\
 default.aspx?svc=documentcenter&page=getdocuments&siteID=275'
@@ -124,17 +122,23 @@ while docNumber<3380:
     #  Below is a 'head' request, which is not typical of reading web pages. 
     # Typically you do a .get request, but that pulls all of the content.  
     try:    
-        r_head=requests.head(url, params = payload_str, auth=('user','pass'))
+        r_head=requests.head(url, params = payload_str, auth=(user,passwrd))
+        if 'content-disposition' in r_head.headers.keys():
+            print "this has a title"
+            SCCDdocDic.update({r_head.headers.get('content-disposition'):collections.OrderedDict([(docNumber,{'content-length':r_head.headers.get('content-length'),'last-modified':r_head.headers.get('last-modified')})])})
+        else: 
+            NoTitleList.append(docNumber)            
+            print "\nNo Title No Title No Title"
     except:  print "hmmmm....DocID didn't take"
+    print "\n" + str(docNumber) + "\n\n"
+    docNumber+=1
 
+"""
     try:
         print r_head.headers['content-disposition']
         print r_head.headers['content-length']
     except: print "missing content; no disposition or length"
-    print "\n" + str(docNumber) + "\n\n"
-    docNumber+=1
-
-
+    """
 
 # Content-disposition is required (?I think) and includes document title
 # If their were content-length or last-modified, they would be useful

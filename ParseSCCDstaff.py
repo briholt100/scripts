@@ -9,8 +9,8 @@ url='https://inside.seattlecolleges.edu/directory/content/results.asp'
 import requests, collections, BeautifulSoup, re, bs4
 from requests.auth import HTTPDigestAuth, HTTPBasicAuth
 
-user='bholt'
-passwrd='!Tang0Tang0'
+user=
+passwrd=
 r=requests.get(url, auth=(user,passwrd))
 r.status_code
 for i,l in enumerate(r.iter_lines()):

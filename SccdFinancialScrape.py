@@ -15,10 +15,10 @@ SCCDdocDic={}
 
 url = 'https://inside.seattlecolleges.edu/\
 default.aspx?svc=documentcenter&page=getdocuments&siteID=275'
-docNumber=1
+docNumber=1000
 # Below is a single url, but the docid can be iterated from 1 to 6k
 # Also, siteID = 275 is financial stuff
-while docNumber<5570:
+while docNumber<1005:
     payload = {'docID': str(docNumber)}
     payload_str = "&".join("%s=%s" % (k,v) for k,v in payload.items())
     #  Below is a 'head' request, which is not typical of reading web pages. 

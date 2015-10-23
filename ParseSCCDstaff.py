@@ -56,3 +56,16 @@ with open('I://My Data Sources//Data//SCCDstaff.csv') as infile:
                  #fac = re.findall(pattern, line) #this is problematic because it ignores other lines of importance  
         #if fac:
         
+        
+        
+#==============================================================================
+# PseudoCode
+#==============================================================================
+
+"""
+for line in page:
+    if line has text:
+        add to temorar list
+    else: pop all items from list and join them by '\t'
+    write this new line to outfile
+    """

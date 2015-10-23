@@ -36,14 +36,20 @@ with open('I://My Data Sources//Data//SCCDstaff.csv') as infile:
 # Windater
 #==============================================================================
 #with open('/home/brian/Projects/data/SCCDstaff.csv') as infile:
+    tempList=[]
     while True:
-        line = infile.readlines()
+        line = infile.readline()
         if not line: break        
-        if str(line).strip('\n'):
-            for i,x in enumerate(line):
-                print '|'.join(['Contact...%d' % i] +x.strip('\n').split('\n'))            
-            #print line
-        #elif:
+        if not re.match('^ \n',str(line)):
+            #print "empty line"
+            tempList.append(line)
+            #print tempList            
+            #print '|'.join(['Contact...%d' % i] +line.strip('\n').split('\n'))
+        else: 
+            try: print tempList
+            except: 
+                print "list is empty"
+            tempList=[]
         i+=1
     infile.close()
     
@@ -56,8 +62,6 @@ with open('I://My Data Sources//Data//SCCDstaff.csv') as infile:
                  #fac = re.findall(pattern, line) #this is problematic because it ignores other lines of importance  
         #if fac:
         
-        
-        
 #==============================================================================
 # PseudoCode
 #==============================================================================
@@ -65,7 +69,7 @@ with open('I://My Data Sources//Data//SCCDstaff.csv') as infile:
 """
 for line in page:
     if line has text:
-        add to temorar list
+        add to temporary list
     else: pop all items from list and join them by '\t'
     write this new line to outfile
     """

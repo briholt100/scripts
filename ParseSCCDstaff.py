@@ -45,8 +45,10 @@ with open('I://My Data Sources//Data//SCCDstaff.csv') as infile:
             tempList.append(line)
             #print tempList            
             #print '|'.join(['Contact...%d' % i] +line.strip('\n').split('\n'))
-        else: 
-            try: print tempList
+        else: #line should be empty, which will trigger list dump and reset
+            try: 
+                tempList=re.sub('\n','\t',tempList)                
+                print tempList
             except: 
                 print "list is empty"
             tempList=[]

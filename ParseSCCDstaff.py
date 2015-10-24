@@ -9,19 +9,6 @@ url='https://inside.seattlecolleges.edu/directory/content/results.asp'
 import re, requests, collections, BeautifulSoup,  bs4
 from requests.auth import HTTPDigestAuth, HTTPBasicAuth
 
-#user=
-#passwrd=
-r=requests.get(url, auth=(user,passwrd))
-r.status_code
-i=0
-for i,l in enumerate(r.iter_lines()):
-    while i < 500:
-        print i, l
-        i+=1
-    
-text=bs4.BeautifulSoup(r.text)
-print text.prettify()
-
 #==============================================================================
 # Below is openning a saved CSV file
 #==============================================================================
@@ -59,3 +46,25 @@ with open('/home/brian/Projects/data/SCCDstaff.csv') as infile:
     infile.close()
     outfile.close()
     
+
+
+
+"""
+#==============================================================================
+# Below is a request script to get the basic csv to work on above; does not yet work
+#==============================================================================
+
+
+user=''
+passwrd=''
+r=requests.get(url, auth=(user,passwrd))
+r.status_code
+i=0
+for i,l in enumerate(r.iter_lines()):
+    while i < 500:
+        print i, l
+        i+=1
+    
+text=bs4.BeautifulSoup(r.text)
+print text.prettify()
+"""

@@ -31,47 +31,31 @@ i=0
 #==============================================================================
 # Campus
 #==============================================================================
-with open('I://My Data Sources//Data//SCCDstaff.csv') as infile:
+#with open('I://My Data Sources//Data//SCCDstaff.csv') as infile:
 #==============================================================================
 # Windater
 #==============================================================================
-#with open('/home/brian/Projects/data/SCCDstaff.csv') as infile:
+with open('/home/brian/Projects/data/SCCDstaff.csv') as infile:
     tempList=[]
     while True:
         line = infile.readline()
-        if not line: break        
+        if not line: break
         if not re.match('^ \n',str(line)):
-            #print "empty line"
             tempList.append(line)
-            #print tempList            
-            #print '|'.join(['Contact...%d' % i] +line.strip('\n').split('\n'))
         else: #line should be empty, which will trigger list dump and reset
+            #print line
             try: 
-                tempList=re.sub('\n','\t',tempList)                
+                for i,(item) in enumerate(tempList):
+                    tempList[i]=re.sub('\n|Email|mailstop:','',str(item))
                 print tempList
+                tempList.append('\n')
+                with open('/home/brian/Projects/data/outfile.csv',"a") as outfile:
+                    for item in tempList:
+                       outfile.write(str(item))
             except: 
                 print "list is empty"
             tempList=[]
         i+=1
     infile.close()
+    outfile.close()
     
-'|'.join(['line%d' % i] +   x .strip('\n').split('\n')
-    ['|'.join(['line%d' % i] + x.strip('\n').split('\n')) 
-         for i, x in enumerate(re.split('line[0-9]+', l)) 
-             if x.strip('\n')]
-                 
-                 
-                 #fac = re.findall(pattern, line) #this is problematic because it ignores other lines of importance  
-        #if fac:
-        
-#==============================================================================
-# PseudoCode
-#==============================================================================
-
-"""
-for line in page:
-    if line has text:
-        add to temporary list
-    else: pop all items from list and join them by '\t'
-    write this new line to outfile
-    """

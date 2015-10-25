@@ -21,18 +21,29 @@ df_fac<-df_fac[-sccc,]
 
 df_fac<-droplevels(df_fac)
 ##create new column for just PT, FT, or PHL?
+
+keys<- c("FT.*Fac","PT.*Fac|Adjunct","ounse","Emeritus", "ibrar" )
+values<- c("FT", "PT","Counselor","Emeritus", "Librarian")
 df_fac$status<-'other'
-df_fac$status[grep("PT.*Fac|Adjunct",df_fac$emp_status, value=F)]<-"PT"
-df_fac$status[grep("ounse",df_fac$emp_status, value=F)]<-"Counselor"
-df_fac$status[grep("Emeritus",df_fac$emp_status, value=F)]<-"Emeritus"
-df_fac$status[grep("ibrar",df_fac$emp_status, value=F)]<-"Librarian"
-df_fac$status[grep("FT.*Fac",df_fac$emp_status, value=F)]<-"FT"
+for (i in 1:nrow(df_fac)){
+  for (j in 1:length(keys)){
+    if (grepl(keys[j],df_fac$emp_status[i])){
+    df_fac$status[i]<-values[j]
+    }
+  }
+}
+
 df_fac$status[df_fac$status=='other']<-"FT"
 df_fac$status[df_fac$LastName=='Bates']<-"Librarian"
 table(df_fac$status)
 
-df_fac[df_fac$campus=='North Campus',c(1:2,8)]
-head(df_fac[df_fac$campus=='North Campus',])
+
+"
+system.time (c(df_fac$status[grep("PT.*Fac|djunct",df_fac$emp_status, value=F)]<-"PT",
+df_fac$status[grep("ounse",df_fac$emp_status, value=F)]<-"Counselor",
+df_fac$status[grep("Emeritus",df_fac$emp_status, value=F)]<-"Emeritus",
+df_fac$status[grep("ibrar",df_fac$emp_status, value=F)]<-"Librarian",
+df_fac$status[grep("FT.*Fac",df_fac$emp_status, value=F)]<-"FT"))"
+
 df_fac<-df_fac[,c(1,2,8,5,4,6:7,3)]
 write.table(df_fac,"/home/brian/Projects/data/fac_contacts.csv",quote=F,row.names=F,sep="\t")
-

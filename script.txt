@@ -1,0 +1,75 @@
+scratch
+library(choroplethr)
+library(choroplethrMaps)
+
+data("df_pop_state")
+head("df_pop_state")
+state_choropleth((df_pop_state))
+
+data(df_pop_county)
+head(df_pop_county)
+county_choropleth((df_pop_county))
+
+
+server
+
+# This is the server logic for a Shiny web application.
+# You can find out more about building applications with Shiny here:
+#
+# http://shiny.rstudio.com
+#
+library(choroplethr)
+library(choroplethrMaps)
+library(shiny)
+
+shinyServer(function(input, output) {
+  
+  output$countyMap <- renderPlot({
+    
+    data(df_pop_county)
+    county_choropleth((df_pop_county))
+    
+  })    
+ 
+  output$stateMap <- renderPlot({
+    data("df_pop_state")
+    state_choropleth(df_pop_state)
+  })
+
+})
+
+
+
+
+ui
+
+# This is the user-interface definition of a Shiny web application.
+# You can find out more about building applications with Shiny here:
+#
+# http://shiny.rstudio.com
+#
+
+library(shiny)
+
+shinyUI(fluidPage(
+
+  # Application title
+  titlePanel("Census explore"),
+
+  # Sidebar with a slider input for number of bins
+  sidebarLayout(
+    sidebarPanel(
+      sliderInput("bins",
+                  "Number of Bins:",
+                  min = 1,
+                  max = 50,
+                  value = 2)
+    ),
+
+    # Show a plot of the generated distribution
+    mainPanel( 
+      plotOutput("countyMap"),
+      plotOutput("stateMap")
+    )
+  )
+))

@@ -63,7 +63,7 @@ write.table(df_fac,"/home/brian/Projects/data/fac_contacts.csv",quote=F,row.name
 
 
 ##
-# munging of AFnonFee
+# munging of AFTnonFee
 
 AFTnonFee<-read.csv('/home/brian/Projects/data/AFTnonFee.csv',stringsAsFactors=T,sep=',',strip.white=T)
 AFTnonFee

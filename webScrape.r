@@ -14,7 +14,7 @@ names<-as.matrix(tables[[1]][1,])
 df<-data.frame(tables[[1]])
 
 #Traditional Data tidying
-names[,4]<-"CompInMil"
+names[,4]<-'CompInMil'
 
 colnames(df)<-names
 
@@ -27,8 +27,8 @@ for (i in 1:length(df)){
 colnames(a)<-colnames(df)
 
 df<-(a)
-df<-gsub("\\$|\\*","",df,ignore.case=T)
-df[,4]<-gsub(" ","",df[,4],ignore.case=T)
+df<-gsub('\\$|\\*','',df,ignore.case=T)
+df[,4]<-gsub(' ','',df[,4],ignore.case=T)
 df<-as.data.frame(df)
 df[,4]<-as.numeric(as.character(df[,4]))
 
@@ -40,19 +40,21 @@ df %>% filter(CompInMil>20)
 
 
 library(httr)
-url="https://inside.seattlecolleges.com/enrollment/content/displayReport.aspx"
-payload = {'col': '063', 'q': 'B343', 'qn': 'WINTER+14', 'nc': 'false', 'in': '', 'cr': ''}
-payload_str = "&".join("%s=%s" % (k,v) for k,v in payload.items())
+'https://inside.seattlecolleges.com/enrollment/content/displayReport.aspx?col=063&q=B453&qn=Winter%2015&nc=false&in=&cr='
+r<-GET('https://inside.seattlecolleges.com/enrollment/content/displayReport.aspx?col=063&q=B453&qn=Winter%2015&nc=false&in=&cr=',authenticate(user,pass))
 
-r<-GET("https://inside.seattlecolleges.com/",modify_url(url, query = "col=063&q=B343&qn=WINTER%2014&nc=false&in=&cr="), authenticate("user","!"))
+url='https://inside.seattlecolleges.com/enrollment/content/displayReport.aspx'
+
+college <- '063'
+quarter <- 'B453'
+quartName<- 'Winter 15'
+ExcludeCancelled <- 'false'
+inn<-''
+credit<-''
+
+qlist=list(col=college,q=quarter,qn=quartName, nc =  ExcludeCancelled ,'in'=inn,cr=credit)
+
+r<-GET( url,  query = qlist, authenticate(user,pass,'basic'))
+objects(r)
+content(r)$date
 r$url
-r
-
-paramlist=list("col=063","q=B343")
-qlist=list("063","B343")
-modify_url(url, query=qlist)
-
-
-
-
-

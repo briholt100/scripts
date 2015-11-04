@@ -38,24 +38,24 @@ df %>% filter(CompInMil>20)
 
 
 
-
-library(httr,RCurl)
+library(RCurl)
+library(httr)
 'https://inside.seattlecolleges.com/enrollment/content/displayReport.aspx?col=063&q=B453&qn=Winter%2015&nc=false&in=&cr='
-r<-GET('https://inside.seattlecolleges.com/enrollment/content/displayReport.aspx?col=063&q=B453&qn=Winter%2015&nc=false&in=&cr=',authenticate(user,pass))
+r<-GET('https://inside.seattlecolleges.com/enrollment/content/displayReport.aspx?col=063&q=A233&qn=Winter%2003&nc=false&in=&cr=',authenticate(user,pass))
 
 url='https://inside.seattlecolleges.com/enrollment/content/displayReport.aspx'
 
 college <- '063'
-quarter <- 'B453'
-quartName<- 'Winter 15'
+quarter <- 'A233'
+quartName<- 'Winter%03'
 ExcludeCancelled <- 'false'
-inn<-''
+itemNumber<-''
 credit<-''
 
-qlist=list(col=college,q=quarter,qn=quartName, nc =  ExcludeCancelled ,'in'=inn,cr=credit)
+qlist=list(col=college,q=quarter,qn=quartName, nc =  ExcludeCancelled ,'in'=itemNumber,cr=credit)
 r<-GET( modify_url(url, query = qlist, username=user,password = pass))
 
-r<-GET( url,  query = qlist, authenticate(user,pass,'basic'))
+r<-GET( url,  query = qlist, authenticate(user,pass,'basic'),verbose())
 objects(r)
 content(r)$date
 r$url

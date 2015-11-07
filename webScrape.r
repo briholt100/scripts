@@ -40,10 +40,10 @@ df %>% filter(CompInMil>20)
 
 library(RCurl)
 library(httr)
-'https://inside.seattlecolleges.com/enrollment/content/displayReport.aspx?col=063&q=B453&qn=Winter%2015&nc=false&in=&cr='
-r<-GET('https://inside.seattlecolleges.com/enrollment/content/displayReport.aspx?col=063&q=A233&qn=Winter%2003&nc=false&in=&cr=',authenticate(user,pass))
+url<-'https://inside.seattlecolleges.edu/enrollment/content/displayReport.aspx?col=063&q=B453&qn=Winter%2015&nc=false&in=&cr='
+r<-GET('https://inside.seattlecolleges.edu/enrollment/content/displayReport.aspx?col=063&q=A233&qn=Winter%2003&nc=false&in=&cr=',authenticate(user,pass),verbose())
 
-url='https://inside.seattlecolleges.com/enrollment/content/displayReport.aspx'
+url='https://inside.seattlecolleges.edu/enrollment/content/displayReport.aspx'
 
 college <- '063'
 quarter <- 'A233'
@@ -53,10 +53,18 @@ itemNumber<-''
 credit<-''
 
 qlist=list(col=college,q=quarter,qn=quartName, nc =  ExcludeCancelled ,'in'=itemNumber,cr=credit)
-r<-GET( modify_url(url, query = qlist, username=user,password = pass))
+r<-GET( modify_url(url, query = qlist, username=user,password = pass),httpauth = 1L)
 
 r<-GET( url,  query = qlist, authenticate(user,pass,'basic'),verbose())
 objects(r)
 content(r)$date
 r$url
 r$content
+
+
+url<-'https://inside.seattlecolleges.edu/enrollment/content/displayReport.aspx?col=063&q=B453&qn=Winter%2015&nc=false&in=&cr='
+
+r<-getURLContent(url,  httpauth = 1L, .opts = list(userpwd='bholt:!Tang0Tang0'), verbose =T)
+
+
+with_config(verbose(), HEAD(modify_url(url, username=user,password = pass)))

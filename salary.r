@@ -67,7 +67,7 @@ lortz<-colleges[grep('lortz',colleges$Employee,ignore.case=T),]
 
 #Must change wide columns to tall, so that the 4 years 2011-2014 are in one variable, year
 
-dt<-lortz%>%gather(year,value,-Job.Title,-Employee,-Agency,-Code,na.rm=T)
+dt<-deans%>%gather(year,value,-Job.Title,-Employee,-Agency,-Code,na.rm=T)
 plot(dt$year,dt$value)
 
 

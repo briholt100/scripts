@@ -6,7 +6,7 @@ library('ggplot2')
 #set wd
 ####
 #Campus
-wrkdir<-'I:/My Data Sources/'
+#wrkdir<-'I:/My Data Sources/'
 #Home
 wrkdir<-'/home/brian/Projects/scripts'
 
@@ -41,7 +41,7 @@ salary<-read.csv('../Data/WaStEmployeeHistSalary.txt',
 
 
 #home
-salary<-read.csv("/home/brian/Projects/Data/WaStEmployeeHistSalary.txt",
+salary<-read.csv("../Data/WaStEmployeeHistSalary.txt",
                  sep='\t' ,stringsAsFactors=T,strip.white=T,na.strings=c('0',''))
 
 ##convert variables to factors or numeric
@@ -51,8 +51,8 @@ salary[,5:8]<-sapply(salary[,5:8], FUN = function(x)as.numeric(gsub(",","",x)))
 #
 # below is the money earned by Pete at Edmonds.  For some reason, the main file shows he worked at edmonds but received no money; I then saved it
 #salary[56855,5]<-8732
-#write.csv(salary,'./Data/WaStEmployeeHistSalary.txt',sep='\t')
-#write.csv(salary,"/home/brian/Projects/Data/WaStEmployeeHistSalary.txt",sep='\t')
+#write.table(salary,'./Data/WaStEmployeeHistSalary.txt',sep='\t')
+#write.table(salary,"/home/brian/Projects/Data/WaStEmployeeHistSalary.txt",sep='\t')
 str(salary)
 
 job.cat<-"other"
@@ -188,21 +188,23 @@ p+geom_boxplot(notch=F)+
 
 boxplot(dt$Salary~dt$year)
 
-
+seattle$T1<-seattle$X2012-seattle$X2011
+seattle$T2<-seattle$X2013-seattle$X2012
+seattle$T3<-seattle$X2014-seattle$X2013
 
 ##
 ##
 #heat Map. person via title, with color based on sum of salary
 dt<-seattle%>%gather(year,Salary,-job.cat,-Job.Title,-Employee,-Agency,-Code,na.rm=T)
-
+dt<-seattle%>%gather(Time,Salary.Diff,T1,T2,T3,-job.cat,-Job.Title,-Employee,-Agency,-Code,na.rm=T)
 ############
 ##This heatmap is a pretty good start
 ###########
-
-p<-ggplot(dt,aes(y=Job.Title,x=job.cat))
+color_palette <- colorRampPalette(c("#3794bf", "#FFFFFF", "#df8640"))(length(dt$Salary.Diff) - 1)
+p<-ggplot(dt[dt$Time=='T3',],aes(y=Job.Title,x=job.cat))
 p  +
-  geom_tile(aes(fill = log(Salary)), colour = "white")   +
-  scale_fill_gradient(low = "white", high = "steelblue") +
+  geom_tile(aes(fill = (Salary.Diff)), colour = "white")   + #scale_fill_manual(values = color_palette)+
+  scale_fill_gradient(low = "white", high = "green") +
   theme(axis.text.x = element_text(angle = 90, hjust = 1),
         axis.text.y=element_blank())+
   ggtitle("Heatmap of salaries in Seattle. \nX-Axis are 29 Job Clusters while the\nY-axis has all job titles, \nbut have them hidden for aesthetic reasons")

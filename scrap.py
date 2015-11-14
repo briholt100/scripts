@@ -21,3 +21,75 @@ temp
 a = ['a', 'b', 'c']
 res = "".join(a)
 res
+
+
+import requests
+urlFull='https://inside.seattlecolleges.edu/enrollment/content/displayReport.aspx?col=063&q=B563&qn=Winter%2016&nc=false&in=&cr='
+url='https://inside.seattlecolleges.edu/enrollment/content/displayReport.aspx'
+college = '063'
+quarter = 'B233'
+quartName= 'Winter%13'
+ExcludeCancelled = 'false'
+itemNumber=''
+credit=''
+payload={'col':college,'q':quarter,'qn':quartName, 'nc' :  ExcludeCancelled ,'in':itemNumber,'cr':credit}
+payload_str = "&".join("%s=%s" % (k,v) for k,v in payload.items())
+
+r=requests.get(url, params=payload_str,auth=(user,passwrd),stream=True)
+
+payload={'col':'063','q':'B233','qn':'Winter%2013', 'nc' : 'false','in':'','cr':''}
+session = requests.Session()
+resp    = session.post(url,auth=(user,passwrd))
+cookies = requests.utils.cookiejar_from_dict(requests.utils.dict_from_cookiejar(session.cookies))
+resp    = session.post(url,data=payload,cookies =cookies,auth=(user,passwrd))
+r=session.get(url,auth=(user,passwrd))
+r = requests.post(url,data=payload, auth=(user,passwrd))
+print(r.status_code, r.reason)
+print(r.text)
+print(r.url)
+
+
+urlEnrol='https://inside.seattlecolleges.edu/default.aspx?svc=enrollment&page=enrollment'
+payload = {
+    "ctl08$ddlCollegeView":'063' ,
+    'ctl08$ddlQuarterView': 'A013'
+}
+
+
+
+r = requests.post(url, data=payload,auth=(user,passwrd))
+
+
+<form name="form1" method="post" action="default.aspx?svc=enrollment&amp;page=enrollment" id="form1">
+
+
+  <select name="ctl08$ddlCollegeView" id="ctl08_ddlCollegeView">
+  <option value="062">Central</option>
+  <option selected="selected" value="063">North</option>
+  <option value="064">South</option>
+  <option value="065">SVI</option>
+
+  </select>
+
+
+  <select name="ctl08$ddlQuarterView" id="ctl08_ddlQuarterView">
+  <option value="B343">Winter 14</option>
+  <option value="B344">Spring 14</option>
+  <option value="B451">Summer 14</option>
+  <option value="B452">Fall 14</option>
+  <option value="B453">Winter 15</option>
+  <option value="B454">Spring 15</option>
+  <option value="B561">Summer 15</option>
+  <option value="B562">Fall 15</option>
+  <option selected="selected" value="893">Winter 1999</option>
+
+  </select>
+
+
+
+  <a onclick="clickChoice.reportChoice='all';return ValidateAndOpenWindow2('ctl08_lblItemRequired', 'ctl08_lblCollegeRequired', 'ctl08_txtItemNum', 'ctl08_optAll', 'ctl08_optSingle', 'ctl08_optClassList', 'ctl08_optElearn', 'ctl08_ddlCollegeView', 'ctl08_ddlQuarterView', 'ctl08_chkNonCancelled', '0', 'enrollment/content/displayReport.aspx', 900, 600);" id="ctl08_optAll" class="btnViewReport" href='javascript:WebForm_DoPostBackWithOptions(new WebForm_PostBackOptions("ctl08$optAll", "", false, "", "enrollment/content/#", false, true))'>View Report</a>
+
+
+
+
+

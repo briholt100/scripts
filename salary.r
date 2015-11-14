@@ -6,22 +6,28 @@ library('ggplot2')
 #set wd
 ####
 #Campus
-setwd('I:/My Data Sources/')
+wrkdir<-'I:/My Data Sources/'
 #Home
+wrkdir<-'/home/brian/Projects/scripts'
+
+setwd(wrkdir)
 
 fileUrl <- 'http://fiscal.wa.gov/WaStEmployeeHistSalary.txt'
-if (!file.exists("Data")) {
-  dir.create("Data")
+
+if (!file.exists("../Data")) {
+  dir.create("../Data")
   }
 
 ######
 # Check if data already exists; if not, download it.
 ######
 
-ifelse (!file.exists('./Data/WaStEmployeeHistSalary.txt') 
-        , download.file(fileUrl, './Data/WaStEmployeeHistSalary.txt', method='auto')
+#do a join of wrkdir with data/textFile.
+
+ifelse (!file.exists('../Data/WaStEmployeeHistSalary.txt')
+        , download.file(fileUrl, '../Data/WaStEmployeeHistSalary.txt', method='auto')
         , "file exists")
-        
+
 
 
 
@@ -30,12 +36,12 @@ test<-fread("grep 'College' /home/brian/Projects/data/WaStEmployeeHistSalary.txt
 fread("grep 'Holt' /home/brian/Projects/data/addresses.csv")
 
 #campus
-salary<-read.csv('./Data/WaStEmployeeHistSalary.txt',
+salary<-read.csv('../Data/WaStEmployeeHistSalary.txt',
                  sep='\t' ,stringsAsFactors=T,strip.white=T,na.strings=c('0',''))
 
 
 #home
-salary<-read.csv("/home/brian/Projects/data/WaStEmployeeHistSalary.txt",
+salary<-read.csv("/home/brian/Projects/Data/WaStEmployeeHistSalary.txt",
                  sep='\t' ,stringsAsFactors=T,strip.white=T,na.strings=c('0',''))
 
 ##convert variables to factors or numeric
@@ -46,7 +52,7 @@ salary[,5:8]<-sapply(salary[,5:8], FUN = function(x)as.numeric(gsub(",","",x)))
 # below is the money earned by Pete at Edmonds.  For some reason, the main file shows he worked at edmonds but received no money; I then saved it
 #salary[56855,5]<-8732
 #write.csv(salary,'./Data/WaStEmployeeHistSalary.txt',sep='\t')
-#write.csv(salary,"/home/brian/Projects/data/WaStEmployeeHistSalary.txt",sep='\t')
+#write.csv(salary,"/home/brian/Projects/Data/WaStEmployeeHistSalary.txt",sep='\t')
 str(salary)
 
 job.cat<-"other"
@@ -174,7 +180,7 @@ director.salary<-seattle[director.list,]
 #Must change wide columns to tall, so that the 4 years 2011-2014 are in one variable, year
 
 dt<-dean.salary%>%gather(year,Salary,-job.cat,-Job.Title,-Employee,-Agency,-Code,na.rm=T)
-p<-ggplot(dt,aes(x=year,y=Salary)) 
+p<-ggplot(dt,aes(x=year,y=Salary))
 p+geom_boxplot(notch=F)+
   ggtitle("Boxplot of Salaries for jobs category with 'Dean' in the title
           since 2011 in the Seattle District\n\nThis includes Associate Deans, Executive Deans, etc")
@@ -188,18 +194,18 @@ boxplot(dt$Salary~dt$year)
 ##
 #heat Map. person via title, with color based on sum of salary
 dt<-seattle%>%gather(year,Salary,-job.cat,-Job.Title,-Employee,-Agency,-Code,na.rm=T)
-p<-ggplot(dt,aes(y=Job.Title,x=Employee)) 
-p + geom_bin2d()
 
+############
+##This heatmap is a pretty good start
+###########
 
-
-p<-ggplot(dt,aes(x=job.cat,y=Employee)) 
-
-p  + 
-  geom_tile(aes(fill = Salary), colour = "white")   + 
+p<-ggplot(dt,aes(y=Job.Title,x=job.cat))
+p  +
+  geom_tile(aes(fill = log(Salary)), colour = "white")   +
   scale_fill_gradient(low = "white", high = "steelblue") +
   theme(axis.text.x = element_text(angle = 90, hjust = 1),
-        axis.text.y=element_blank())
+        axis.text.y=element_blank())+
+  ggtitle("Heatmap of salaries in Seattle. \nX-Axis are 29 Job Clusters while the\nY-axis has all job titles, \nbut have them hidden for aesthetic reasons")
 
 
 p<-ggplot(dt,aes(x=year,y=Salary))

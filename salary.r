@@ -30,13 +30,13 @@ ifelse (!file.exists('../Data/WaStEmployeeHistSalary.txt')
 
 
 
-
+"
 test<-fread("grep 'College' /home/brian/Projects/data/WaStEmployeeHistSalary.txt",sep='\t')
 
 fread("grep 'Holt' /home/brian/Projects/data/addresses.csv")
-
+"
 #campus
-salary<-read.csv('../Data/WaStEmployeeHistSalary.txt',
+#salary<-read.csv('../Data/WaStEmployeeHistSalary.txt',
                  sep='\t' ,stringsAsFactors=T,strip.white=T,na.strings=c('0',''))
 
 
@@ -50,7 +50,7 @@ salary[,1]<-as.factor(salary[,1])
 salary[,5:8]<-sapply(salary[,5:8], FUN = function(x)as.numeric(gsub(",","",x)))
 #
 # below is the money earned by Pete at Edmonds.  For some reason, the main file shows he worked at edmonds but received no money; I then saved it
-#salary[56855,5]<-8732
+salary[56855,5]<-8732
 #write.table(salary,'./Data/WaStEmployeeHistSalary.txt',sep='\t')
 #write.table(salary,"/home/brian/Projects/Data/WaStEmployeeHistSalary.txt",sep='\t')
 str(salary)
@@ -180,6 +180,7 @@ director.salary<-seattle[director.list,]
 #Must change wide columns to tall, so that the 4 years 2011-2014 are in one variable, year
 
 dt<-dean.salary%>%gather(year,Salary,-job.cat,-Job.Title,-Employee,-Agency,-Code,na.rm=T)
+dt$year[dt$year=='X2011']<-as.date
 p<-ggplot(dt,aes(x=year,y=Salary))
 p+geom_boxplot(notch=F)+
   ggtitle("Boxplot of Salaries for jobs category with 'Dean' in the title
@@ -197,14 +198,18 @@ seattle$T3<-seattle$X2014-seattle$X2013
 #heat Map. person via title, with color based on sum of salary
 dt<-seattle%>%gather(year,Salary,-job.cat,-Job.Title,-Employee,-Agency,-Code,na.rm=T)
 dt<-seattle%>%gather(Time,Salary.Diff,T1,T2,T3,-job.cat,-Job.Title,-Employee,-Agency,-Code,na.rm=T)
+dt$year<-as.character(dt$year)   #converting to date
+dt$year<-gsub('X','',dt$year)
+dt$year<-as.Date(dt$year,'%Y')
+
 ############
 ##This heatmap is a pretty good start
 ###########
 color_palette <- colorRampPalette(c("#3794bf", "#FFFFFF", "#df8640"))(length(dt$Salary.Diff) - 1)
-p<-ggplot(dt[dt$Time=='T3',],aes(y=Job.Title,x=job.cat))
+p<-ggplot(dt,aes(y=Job.Title,x=job.cat))
 p  +
-  geom_tile(aes(fill = (Salary.Diff)), colour = "white")   + #scale_fill_manual(values = color_palette)+
-  scale_fill_gradient(low = "white", high = "green") +
+  geom_tile(aes(fill = (Salary)), colour = "white")   + #scale_fill_manual(values = color_palette)+
+  scale_fill_gradient(low = "white", high = "steelblue") +
   theme(axis.text.x = element_text(angle = 90, hjust = 1),
         axis.text.y=element_blank())+
   ggtitle("Heatmap of salaries in Seattle. \nX-Axis are 29 Job Clusters while the\nY-axis has all job titles, \nbut have them hidden for aesthetic reasons")
@@ -219,6 +224,32 @@ Salary2011<-filter(dt,grepl('dean',Job.Title,ignore.case=T),year=='X2011')
 
 
 
+
+dt<-seattle%>%mutate(tot_sal =X2011+X2012+X2013+X2014)%>%group_by(Job.Title)%>%summarise(employees=n(),total=sum(tot_sal))%>%filter(total>10000)%>%arrange(total)
+
+head(dt)
+
+p<-ggplot(dt,aes(y=Job.Title,x=total))
+p+
+  geom_tile(aes(fill = (total)), colour = "ghostwhite")   + #scale_fill_manual(values = color_palette)+
+  scale_fill_gradient(low = "ghostwhite", high = "steelblue") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1),
+        axis.text.y=element_blank())+
+  ggtitle("Heatmap of salaries in Seattle. \nX-Axis are 29 Job Clusters while the\nY-axis has all job titles, \nbut have them hidden for aesthetic reasons")
+
+
+
+
+##########
+###grouping by title, include mean for each 4 years
+dt<-seattle%>%group_by(Job.Title)%>%select(5:8)%>%summarise_each(funs(mean(.,na.rm=T,trim=.05)))%>%gather(key=Year,value,-Job.Title)
+dt<-seattle%>%group_by(Job.Title)%>%select(5:8)%>%gather(key=Year,value,-Job.Title)
+
+
+
+dt
+p<-ggplot(dt[dt$Job.Title=='Faculty',],aes(x=Year,y=Job.Title))
+p+geom_point()
 
 
 

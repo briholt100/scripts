@@ -202,14 +202,19 @@ dt$year<-as.character(dt$year)   #converting to date
 dt$year<-gsub('X','',dt$year)
 dt$year<-as.Date(dt$year,'%Y')
 
+ggplot(dt,aes(x=Salary,y=job.cat))+geom_point()+facet_wrap(~year)
+
+
 ############
 ##This heatmap is a pretty good start
 ###########
-color_palette <- colorRampPalette(c("#3794bf", "#FFFFFF", "#df8640"))(length(dt$Salary.Diff) - 1)
+#color_palette <- colorRampPalette(c("#3794bf", "#FFFFFF", "#df8640"))(length(dt$Salary.Diff) - 1)
 p<-ggplot(dt,aes(y=Job.Title,x=job.cat))
 p  +
-  geom_tile(aes(fill = (Salary)), colour = "white")   + #scale_fill_manual(values = color_palette)+
+  geom_tile(aes(fill = log(Salary)), colour = "white")   +
+  #scale_fill_manual(values = color_palette) +
   scale_fill_gradient(low = "white", high = "steelblue") +
+  facet_wrap(~ year,ncol=1) +
   theme(axis.text.x = element_text(angle = 90, hjust = 1),
         axis.text.y=element_blank())+
   ggtitle("Heatmap of salaries in Seattle. \nX-Axis are 29 Job Clusters while the\nY-axis has all job titles, \nbut have them hidden for aesthetic reasons")
@@ -236,6 +241,25 @@ p+
   theme(axis.text.x = element_text(angle = 90, hjust = 1),
         axis.text.y=element_blank())+
   ggtitle("Heatmap of salaries in Seattle. \nX-Axis are 29 Job Clusters while the\nY-axis has all job titles, \nbut have them hidden for aesthetic reasons")
+
+
+
+#####
+###overlaying heatmaps
+p<-ggplot(dt,aes(y=Job.Title,x=job.cat,fill=Salary))
+
+p  +
+  geom_tile(aes(fill=year,color=Salary)) +
+  #geom_tile(data=subset(dt, year == "2012-11-15"),aes(fill = (Salary)))   +
+  scale_fill_gradient(low = "ghostwhite", high = "steelblue",bias=10) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1),
+        axis.text.y=element_blank())+
+  ggtitle("Heatmap of salaries in Seattle. \nX-Axis are 29 Job Clusters while the\nY-axis has all job titles, \nbut have them hidden for aesthetic reasons")
+
+
+
+
+
 
 
 

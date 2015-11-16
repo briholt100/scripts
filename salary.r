@@ -180,7 +180,7 @@ director.salary<-seattle[director.list,]
 #Must change wide columns to tall, so that the 4 years 2011-2014 are in one variable, year
 
 dt<-dean.salary%>%gather(year,Salary,-job.cat,-Job.Title,-Employee,-Agency,-Code,na.rm=T)
-dt$year[dt$year=='X2011']<-as.date
+dt$year[dt$year=='X2011']<-as.Date
 p<-ggplot(dt,aes(x=year,y=Salary))
 p+geom_boxplot(notch=F)+
   ggtitle("Boxplot of Salaries for jobs category with 'Dean' in the title
@@ -201,6 +201,13 @@ dt<-seattle%>%gather(Time,Salary.Diff,T1,T2,T3,-job.cat,-Job.Title,-Employee,-Ag
 dt$year<-as.character(dt$year)   #converting to date
 dt$year<-gsub('X','',dt$year)
 dt$year<-as.Date(dt$year,'%Y')
+
+tbl<-as.data.frame(tapply(dt$Salary,list(dt$job.cat,dt$year),mean,na.rm=T))
+tbl<-cbind(rownames(tbl),tbl)
+row.names(tbl)<-NULL
+colnames(tbl)<-c('job.cat','2011','2012','2013','2014')
+apply(tbl,1,plot)
+tbl%>%gather(year,salary,-job.cat)%>%ggplot(aes(x=year,y=(salary)))+geom_point()+facet_wrap(~job.cat)+ggtitle("Mean salaries in Seattle, 2011-2014\nby 29 Job Categories")
 
 ggplot(dt,aes(x=Salary,y=job.cat))+geom_point()+facet_wrap(~year)
 

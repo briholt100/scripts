@@ -207,9 +207,9 @@ tbl<-cbind(rownames(tbl),tbl)
 row.names(tbl)<-NULL
 colnames(tbl)<-c('job.cat','2011','2012','2013','2014')
 apply(tbl,1,plot)
-tbl%>%gather(year,salary,-job.cat)%>%ggplot(aes(x=year,y=(salary)))+geom_point()+facet_wrap(~job.cat)+ggtitle("Mean salaries in Seattle, 2011-2014\nby 29 Job Categories")
+tbl%>%gather(year,salary,-job.cat)%>%ggplot(aes(x=year,y=(salary)))+geom_point()+geom_errorbar()+facet_wrap(~job.cat)+ggtitle("Mean salaries in Seattle, 2011-2014\nby 29 Job Categories")
 
-ggplot(dt,aes(x=Salary,y=job.cat))+geom_point()+facet_wrap(~year)
+ggplot(dt,aes(y=Salary,x=job.cat))+geom_line()+facet_wrap(~year)
 
 
 ############

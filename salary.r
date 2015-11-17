@@ -1,3 +1,4 @@
+library('stringr')
 library('dplyr')
 library('data.table')
 library('tidyr')
@@ -201,15 +202,18 @@ dt<-seattle%>%gather(Time,Salary.Diff,T1,T2,T3,-job.cat,-Job.Title,-Employee,-Ag
 dt$year<-as.character(dt$year)   #converting to date
 dt$year<-gsub('X','',dt$year)
 dt$year<-as.Date(dt$year,'%Y')
-
+dt$year<-str_extract(dt$year, "[0-9]{4}")
 tbl<-as.data.frame(tapply(dt$Salary,list(dt$job.cat,dt$year),mean,na.rm=T))
 tbl<-cbind(rownames(tbl),tbl)
 row.names(tbl)<-NULL
 colnames(tbl)<-c('job.cat','2011','2012','2013','2014')
 apply(tbl,1,plot)
-tbl%>%gather(year,salary,-job.cat)%>%ggplot(aes(x=year,y=(salary)))+geom_point()+geom_errorbar()+facet_wrap(~job.cat)+ggtitle("Mean salaries in Seattle, 2011-2014\nby 29 Job Categories")
+##mean salary per job.cat, for each year.
+tbl%>%gather(year,salary,-job.cat)%>%ggplot(aes(x=year,y=(salary)))+geom_point()+ggtitle("Mean salaries in Seattle, 2011-2014\nby 29 Job Categories")+facet_wrap(~job.cat)
 
-ggplot(dt,aes(y=Salary,x=job.cat))+geom_line()+facet_wrap(~year)
+tbl%>%gather(year,salary,-job.cat)%>%ggplot(aes(x=year,y=(salary)))+geom_errorbar(aes(ymin=0,ymax=300000))+geom_point()+ggtitle("Mean salaries in Seattle, 2011-2014\nby 29 Job Categories")+facet_wrap(~job.cat)
+
+###for error bars, must calcualte the standard error, within subjects.
 
 
 ############

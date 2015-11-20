@@ -3,6 +3,7 @@ library('dplyr')
 library('data.table')
 library('tidyr')
 library('ggplot2')
+library('Hmisc')
 #####
 #set wd
 ####
@@ -209,7 +210,7 @@ row.names(tbl)<-NULL
 colnames(tbl)<-c('job.cat','2011','2012','2013','2014')
 apply(tbl,1,plot)
 ##mean salary per job.cat, for each year.
-tbl%>%gather(year,salary,-job.cat)%>%ggplot(aes(x=year,y=(salary)))+geom_point()+ggtitle("Mean salaries in Seattle, 2011-2014\nby 29 Job Categories")+facet_wrap(~job.cat)
+tbl%>%gather(year,salary,-job.cat)%>%ggplot(aes(x=year,y=(salary)))+geom_point()+ggtitle("Mean salaries in Seattle, 2011-2014\nby 29 Job Categories")+ stat_summary(fun.data = "mean_cl_boot", colour = "red")+facet_wrap(~job.cat)
 
 tbl%>%gather(year,salary,-job.cat)%>%ggplot(aes(x=year,y=(salary)))+geom_errorbar(aes(ymin=0,ymax=300000))+geom_point()+ggtitle("Mean salaries in Seattle, 2011-2014\nby 29 Job Categories")+facet_wrap(~job.cat)
 

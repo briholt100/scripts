@@ -48,7 +48,7 @@ salary<-read.csv("../Data/WaStEmployeeHistSalary.txt",
 ##convert variables to factors or numeric
 salary[,1]<-as.factor(salary[,1])
 ##This, in one step, removes commas from salary data and converts to numeric
-salary[,5:8]<-sapply(salary[,5:8], FUN = function(x)as.numeric(gsub(",","",x)))
+salary[,5:8]<-sapply(salary[,5:8], FUN = function(x) as.numeric(gsub(",","",x)))
 #
 # below is the money earned by Pete at Edmonds.  For some reason, the main file shows he worked at edmonds but received no money; I then saved it
 salary[56855,5]<-8732
@@ -198,7 +198,7 @@ seattle$T3<-seattle$X2014-seattle$X2013
 ##
 #heat Map. person via title, with color based on sum of salary
 dt<-seattle%>%gather(year,Salary,-job.cat,-Job.Title,-Employee,-Agency,-Code,na.rm=T)
-dt<-seattle%>%gather(Time,Salary.Diff,T1,T2,T3,-job.cat,-Job.Title,-Employee,-Agency,-Code,na.rm=T)
+#dt<-seattle%>%gather(Time,Salary.Diff,T1,T2,T3,-job.cat,-Job.Title,-Employee,-Agency,-Code,na.rm=T)
 dt$year<-as.character(dt$year)   #converting to date
 dt$year<-gsub('X','',dt$year)
 dt$year<-as.Date(dt$year,'%Y')

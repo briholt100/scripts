@@ -1,9 +1,11 @@
+library('lme4')
 library('stringr')
 library('dplyr')
 library('data.table')
 library('tidyr')
 library('ggplot2')
 library('Hmisc')
+library('nlme')
 #####
 #set wd
 ####
@@ -32,11 +34,11 @@ ifelse (!file.exists('../Data/WaStEmployeeHistSalary.txt')
 
 
 
-"
-test<-fread("grep 'College' /home/brian/Projects/data/WaStEmployeeHistSalary.txt",sep='\t')
 
-fread("grep 'Holt' /home/brian/Projects/data/addresses.csv")
-"
+#test<-fread("grep 'College' /home/brian/Projects/data/WaStEmployeeHistSalary.txt",sep='\t')
+
+#fread("grep 'Holt' /home/brian/Projects/data/addresses.csv")
+
 #campus
 #salary<-read.csv('../Data/WaStEmployeeHistSalary.txt',
                  sep='\t' ,stringsAsFactors=T,strip.white=T,na.strings=c('0',''))
@@ -204,13 +206,30 @@ dt$year<-as.character(dt$year)   #converting to date
 dt$year<-gsub('X','',dt$year)
 dt$year<-as.Date(dt$year,'%Y')
 dt$year<-str_extract(dt$year, "[0-9]{4}")
+#creats a long df for each job title (employee not tracked)
+longData<-dt%>%group_by(job.cat,year)%>%transmute(Salary=Salary,SalSum=sum(Salary,na.rm=T),mean=mean(Salary,na.rm=T),deviation=Salary-mean(Salary,na.rm=T),count=n(),SS=deviation^2,var=SS/count)%>%arrange(-desc(job.cat))
+
+longData%>%group_by(job.cat)%>%summarise(mean=mean(Salary,na.rm=T),)
+
+tbl$count<-(table(dt$job.cat))
+
 tbl<-as.data.frame(tapply(dt$Salary,list(dt$job.cat,dt$year),mean,na.rm=T))
 tbl<-cbind(rownames(tbl),tbl)
 row.names(tbl)<-NULL
 colnames(tbl)<-c('job.cat','2011','2012','2013','2014')
-apply(tbl,1,plot)
-##mean salary per job.cat, for each year.
-tbl%>%gather(year,salary,-job.cat)%>%ggplot(aes(x=year,y=(salary)))+geom_point()+ggtitle("Mean salaries in Seattle, 2011-2014\nby 29 Job Categories")+ stat_summary(fun.data = "mean_cl_boot", colour = "red")+facet_wrap(~job.cat)
+tbl$count<-(table(dt$job.cat))
+head(dt)
+tbl
+<-cbind(tbl,dt%>%group_by(job.cat)%>%summarise(average=mean(Salary,na.rm=T),variance=var(Salary,na.rm=T))%>%select(average,variance))
+
+
+
+
+
+
+
+  ##mean salary per job.cat, for each year.
+tbl%>%gather(year,salary,-job.cat)%>%ggplot(aes(x=year,y=(salary)))+geom_point()+ggtitle("Mean salaries in Seattle, 2011-2014\nby 29 Job Categories")+ stat_summary(fun.data = "mean_cl_boot", colour = "red")+facet_wrap(~job.cat)+geom_smooth(aes(group = 1))
 
 tbl%>%gather(year,salary,-job.cat)%>%ggplot(aes(x=year,y=(salary)))+geom_errorbar(aes(ymin=0,ymax=300000))+geom_point()+ggtitle("Mean salaries in Seattle, 2011-2014\nby 29 Job Categories")+facet_wrap(~job.cat)
 

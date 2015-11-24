@@ -10,6 +10,33 @@ bogart<-as.data.frame(bogart)
 
 bogart[,2:5]<-apply(bogart[,2:5],2,function(x) as.numeric(x))
 str(bogart)
+
+bogart<-cbind(bogart,apply(bogart[,2:5],1,sum),apply(bogart[,2:5],1,mean),apply(bogart[,2:5],1,var))
+colnames(bogart)<-c('subject','tx1', 'tx2' ,'tx3', 'tx4','sum','mean','var')
+bogart
+grand.mean<-sum(bogart[,2:5])/20
+
+#Below is a very ugly way of calculating the squared deviances of each subject
+a=0
+sq_dev=""
+for (i in 1:nrow(bogart)){
+  for (j in 2:5){
+    a<-((bogart[i,j]-bogart[i,7])^2)+a
+  }
+  sq_dev=c(sq_dev,a)
+  print(paste("this is the sum of squared devaiations:  ",a))
+  a=0
+}
+
+bogart<-cbind(bogart,as.numeric(sq_dev[2:6]))
+colnames(bogart)<-c('subject','tx1', 'tx2' ,'tx3', 'tx4','sum','mean','Var','SS')
+#calcs the SS for each subject
+bogart$calc.Var<-bogart$SS/3
+sum(bogart$SS)
+sum(bogart$calc)
+
+
+
 m.bogart<-melt(bogart,measure=2:5,variable='treatment',value.name='score')
 
 summary(aov(score ~ treatment + Error(subject/score), data=m.bogart))

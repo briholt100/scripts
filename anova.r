@@ -16,7 +16,9 @@ summary(aov(score ~ treatment + Error(subject/score), data=m.bogart))
 
 "m.bogart<-m.bogart%>%mutate(mean=mean(score,na.rm=T),devi= score - mean(score,na.rm=T),sq_dev = devi^2,variance=var(score,na.rm=T))
 m.bogart%>%group_by(subject)%>%summarise(n=n_distinct(treatment))
-sum(m.bogart[,3],na.rm=T)
+mean(m.bogart[,3],na.rm=T) # this should be grand mean
+sum( m.bogart[, 6]) # this should be grand sum of squres
+
 by(m.bogart$score,m.bogart$subject,stat.desc)
 "
 data.for.plot<-m.bogart%>%group_by(subject,treatment)%>%summarise(count=n(),tx_mean=mean(score,na.rm=T))

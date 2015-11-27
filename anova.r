@@ -2,6 +2,7 @@ library('data.table')
 library('ggplot2')
 library('dplyr')
 library('pastecs')
+library('nlme')
 ##the 'na' below is actually a 4
 bogart<-data.frame(rbind(c('subj1',2.0,4,5.0,9.0),c('subj2',3,6,7,10),c('subj3',4,5,6,8),c('subj4',4,6,7,10),c('subj5',5,5,7,9)))
 class(bogart)
@@ -40,6 +41,17 @@ sum(bogart$calc)
 m.bogart<-melt(bogart,measure=2:5,variable='treatment',value.name='score')
 
 summary(aov(score ~ treatment + Error(subject/score), data=m.bogart))
+
+####this looks most similar to Bogart's text
+summary(aov(score ~ treatment + Error(subject), data=m.bogart))
+
+# baseline model
+base<-(lme(score~1, random=~1|subject/treatment,method='ML',data=m.bogart))
+#
+model<-(lme(score~treatment, random=~1|subject/treatment,method='ML',data=m.bogart))
+anova(base,model)
+
+summary(model)
 
 "m.bogart<-m.bogart%>%mutate(mean=mean(score,na.rm=T),devi= score - mean(score,na.rm=T),sq_dev = devi^2,variance=var(score,na.rm=T))
 m.bogart%>%group_by(subject)%>%summarise(n=n_distinct(treatment))

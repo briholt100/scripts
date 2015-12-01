@@ -40,8 +40,7 @@ ifelse (!file.exists('../Data/WaStEmployeeHistSalary.txt')
 #fread("grep 'Holt' /home/brian/Projects/data/addresses.csv")
 
 #campus
-#salary<-read.csv('../Data/WaStEmployeeHistSalary.txt',
-                 sep='\t' ,stringsAsFactors=T,strip.white=T,na.strings=c('0',''))
+#salary<-read.csv('../Data/WaStEmployeeHistSalary.txt',                 sep='\t' ,stringsAsFactors=T,strip.white=T,na.strings=c('0',''))
 
 
 #home
@@ -206,8 +205,20 @@ dt$year<-as.character(dt$year)   #converting to date
 dt$year<-gsub('X','',dt$year)
 dt$year<-as.Date(dt$year,'%Y')
 dt$year<-str_extract(dt$year, "[0-9]{4}")
+
+p<-ggplot(dt,aes(x=year,y=Salary,id=Job.Title))
+p+geom_boxplot()+facet_wrap(~Job.Title)
+
+p<-dt%>%filter(Salary >95000)%>%ggplot(aes(x=year,y=Salary,id=Job.Title))
+p+geom_boxplot()+facet_wrap(~Job.Title)
+
 #creats a long df for each job title (employee not tracked)
 longData<-dt%>%group_by(job.cat,year)%>%transmute(Salary=Salary,SalSum=sum(Salary,na.rm=T),mean=mean(Salary,na.rm=T),deviation=Salary-mean(Salary,na.rm=T),count=n(),SS=deviation^2,var=SS/count)%>%arrange(-desc(job.cat))
+
+
+p<-longData%>%ggplot(aes(x=year,y=Salary,id=job.cat))
+p+geom_boxplot()
+p+geom_line()+stat_summary(aes(group=1),geom='point',fun.y=mean)+facet_wrap(~job.cat) +stat_smooth(aes(group = 1),method = "lm", se = T)
 
 longData%>%group_by(job.cat)%>%summarise(mean=mean(Salary,na.rm=T),)
 

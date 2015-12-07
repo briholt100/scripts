@@ -62,8 +62,9 @@ job.cat<-"other"
 salary<-cbind(salary, job.cat)
 
 
-colleges<-salary[grep('college',salary$Agency,ignore.case=T),]
+colleges<-salary[grep('college|university',salary$Agency,ignore.case=T),]
 colleges<-droplevels(colleges)
+collegeCodes<-sort(unique(colleges$Code))
 str(colleges)
 
 seattle<-salary[grep('seattle',salary$Agency,ignore.case=T),]
@@ -319,3 +320,24 @@ p+geom_point()
 
 
 
+
+
+
+
+#########################
+############################
+#Downloading by agency by agency, year by year
+
+temp <- tempfile()
+download.file("http://www.ofm.wa.gov/persdetail/2011/2011persdetail.zip",temp)
+
+zipFileInfo <- unzip(temp, list=TRUE)
+for (agency in 1:nrow(zipFileInfo)) {
+  print (zipFileInfo[agency,1])
+  #so, from here, for each agency, I'd want to read.text and ideally pull out specific queries
+}
+
+
+data <- read.table(unz(temp, "a1.dat"))
+unlink(temp)
+  

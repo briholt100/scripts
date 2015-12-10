@@ -207,8 +207,10 @@ dt$year<-gsub('X','',dt$year)
 dt$year<-as.Date(dt$year,'%Y')
 dt$year<-str_extract(dt$year, "[0-9]{4}")
 
-p<-ggplot(dt,aes(x=year,y=Salary,id=Job.Title))
-p+geom_boxplot()+facet_wrap(~Job.Title)
+#ggplot object sorted by some fuction, like median, or standard dev.
+p<-ggplot(dt,aes(x=reorder(job.cat,Salary,FUN=median), y=Salary))
+
+p+geom_boxplot()+theme(axis.text.x = element_text(angle = 90, hjust = 1))+facet_wrap(~year)
 
 p<-dt%>%filter(Salary >95000)%>%ggplot(aes(x=year,y=Salary,id=Job.Title))
 p+geom_boxplot()+facet_wrap(~Job.Title)

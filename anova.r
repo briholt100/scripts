@@ -35,10 +35,10 @@ m.bogart
 #lci<-by(m.bogart$score,m.bogart$subject,FUN=sd)
 #uci<-
 p<-ggplot(m.bogart,aes(x=treatment,y=score,group=subject,color=subject))
-p+stat_summary(fun.y=mean,geom='line',position = position_jitter(w = 0.3, h = 0.3)) +ylim(0, 12)
-p+geom_line(position = position_jitter(w = 0.3, h = 0.3))+stat_summary(fun.data='mean_cl_normal',geom='errorbar',mult=5,color='blue')+ylim(0, 12)
+p+stat_summary(fun.y=mean,geom='point',position = position_jitter(w = 0.15, h = 0.05)) +ylim(0, 12)
+p+geom_line(position = position_jitter(w = 0.15, h = 0.15))+stat_summary(fun.data='mean_cl_normal',geom='errorbar',mult=5,color='blue')+ylim(0, 12)
 p+geom_point(position = position_jitter(w = 0.3, h = 0.3))
-
+p+geom_smooth(method='glm',level=.7)
 
 
 "m.bogart<-m.bogart%>%mutate(mean=mean(score,na.rm=T),devi= score - mean(score,na.rm=T),sq_dev = devi^2,variance=var(score,na.rm=T))

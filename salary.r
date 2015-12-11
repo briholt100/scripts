@@ -82,7 +82,7 @@ lortz<-colleges[grep('lortz',colleges$Employee,ignore.case=T),]
 
 
 adminOther.list<-grep("admin", seattle$Job.Title, ignore.case=T, value=F)
-chancellor.list<-grep("chance", seattle$Job.Title, ignore.case=T, value=F)
+chancellor.list<-grep("CHANCELLOR", seattle$Job.Title, ignore.case=T, value=F)
 childhood.list<-grep("childho", seattle$Job.Title, ignore.case=T, value=F)
 communication.list<-grep("commun", seattle$Job.Title, ignore.case=T, value=F)
 coordination.list<-grep("coord,", seattle$Job.Title, ignore.case=T, value=F)
@@ -110,6 +110,7 @@ supervisory.list<-grep("superv|spv", seattle$Job.Title, ignore.case=T, value=F)
 support.list<-grep("supt", seattle$Job.Title, ignore.case=T, value=F)
 vice.list<-grep("vice p|vp", seattle$Job.Title, ignore.case=T, value=F)
 
+vChanc.list<-grep("VICE CHANCELLOR|V\\.C.", seattle$Job.Title, ignore.case=T, value=F)
 
 seattle$job.cat<-factor(seattle$job.cat,
 sort(c(
@@ -141,7 +142,8 @@ sort(c(
 "specialist",
 "supervisory",
 "support",
-"vicepres"
+"vicepres",
+"viceChanc"
 )
 ))
 
@@ -161,7 +163,7 @@ seattle$job.cat[library.list]<-"library"
 seattle$job.cat[supervisory.list]<-"supervisory"
 seattle$job.cat[counselor.list]<-"counselor"
 seattle$job.cat[retail.list]<-"retail"
-seattle$job.cat[specialist.list]<-"specialist"
+
 seattle$job.cat[programCoord.list]<-"program coordinator"
 seattle$job.cat[director.list]<-"director"
 seattle$job.cat[hour.list]<-"hourly"
@@ -173,15 +175,23 @@ seattle$job.cat[exec.list]<-"executive"
 seattle$job.cat[secretary.list]<-"secretary"
 seattle$job.cat[officeAssist.list]<-"assistant"
 seattle$job.cat[chancellor.list]<-"chancellor"
+seattle$job.cat[specialist.list]<-"specialist"
 seattle$job.cat[president.list]<-"pres"
 seattle$job.cat[vice.list]<-"vicepres"
+seattle$job.cat[vChanc.list]<-"viceChanc"
 
 director.salary<-seattle[director.list,]
 dean.salary<-seattle[dean.list,]
 sec.salary<-seattle[secretary.list,]
 director.salary<-seattle[director.list,]
 
-#Must change wide columns to tall, so that the 4 years 2011-2014 are in one variable, year
+dt<-seattle%>%gather(year,Salary,-job.cat,-Job.Title,-Employee,-Agency,-Code,na.rm=T)
+#dt<-seattle%>%gather(Time,Salary.Diff,T1,T2,T3,-job.cat,-Job.Title,-Employee,-Agency,-Code,na.rm=T)
+dt$year<-as.character(dt$year)   #converting to date
+dt$year<-gsub('X','',dt$year)
+dt$year<-as.Date(dt$year,'%Y')
+dt$year<-str_extract(dt$year, "[0-9]{4}")
+
 
 dt<-dean.salary%>%gather(year,Salary,-job.cat,-Job.Title,-Employee,-Agency,-Code,na.rm=T)
 dt$year[dt$year=='X2011']<-as.Date
@@ -191,24 +201,12 @@ p+geom_boxplot(notch=F)+
           since 2011 in the Seattle District\n\nThis includes Associate Deans, Executive Deans, etc")
 
 
-boxplot(dt$Salary~dt$year)
-
-seattle$T1<-seattle$X2012-seattle$X2011
-seattle$T2<-seattle$X2013-seattle$X2012
-seattle$T3<-seattle$X2014-seattle$X2013
-
 ##
 ##
 #heat Map. person via title, with color based on sum of salary
-dt<-seattle%>%gather(year,Salary,-job.cat,-Job.Title,-Employee,-Agency,-Code,na.rm=T)
-#dt<-seattle%>%gather(Time,Salary.Diff,T1,T2,T3,-job.cat,-Job.Title,-Employee,-Agency,-Code,na.rm=T)
-dt$year<-as.character(dt$year)   #converting to date
-dt$year<-gsub('X','',dt$year)
-dt$year<-as.Date(dt$year,'%Y')
-dt$year<-str_extract(dt$year, "[0-9]{4}")
 
 #ggplot object sorted by some fuction, like median, or standard dev.
-p<-ggplot(dt,aes(x=reorder(job.cat,Salary,FUN=median), y=Salary))
+p<-ggplot(dt,aes(x=reorder(job.cat,Salary,FUN=median), y=Salary,group=job.cat))
 
 p+geom_boxplot()+theme(axis.text.x = element_text(angle = 90, hjust = 1))+facet_wrap(~year)
 
@@ -216,10 +214,17 @@ p<-dt%>%filter(Salary >95000)%>%ggplot(aes(x=year,y=Salary,id=Job.Title))
 p+geom_boxplot()+facet_wrap(~Job.Title)
 
 #creats a long df for each job title (employee not tracked)
-longData<-dt%>%group_by(job.cat,year)%>%transmute(Salary=Salary,SalSum=sum(Salary,na.rm=T),mean=mean(Salary,na.rm=T),deviation=Salary-mean(Salary,na.rm=T),count=n(),SS=deviation^2,var=SS/count)%>%arrange(-desc(job.cat))
+longData<-dt%>%group_by(job.cat,year)%>%
+      transmute(Salary=Salary,SalSum=sum(Salary,na.rm=T),mean=mean(Salary,na.rm=T),deviation=Salary-mean(Salary,na.rm=T),count=n(),SS=deviation^2,var=SS/count)%>%
+    arrange(-desc(job.cat))
 
 
-p<-longData%>%ggplot(aes(x=year,y=Salary,id=job.cat))
+p<-longData%>%ggplot(aes(x=year,y=Salary,group=job.cat))
+p+geom_smooth(aes(group = 1),method='glm',level=.95)+facet_wrap(~job.cat)
+
+
+
+
 p+geom_boxplot()
 p+geom_line()+stat_summary(aes(group=1),geom='point',fun.y=mean)+facet_wrap(~job.cat) +stat_smooth(aes(group = 1),method = "lm", se = T)
 
@@ -293,32 +298,16 @@ p+
 ###overlaying heatmaps
 p<-ggplot(dt,aes(y=Job.Title,x=job.cat,fill=Salary))
 
-p  +
-  geom_tile(aes(fill=year,color=Salary)) +
+p  + #facet_wrap(~year)+
+  geom_tile(aes(color=Salary)) +
   #geom_tile(data=subset(dt, year == "2012-11-15"),aes(fill = (Salary)))   +
-  scale_fill_gradient(low = "ghostwhite", high = "steelblue",bias=10) +
+  #scale_fill_gradient(low = "ghostwhite", high = "steelblue") +
   theme(axis.text.x = element_text(angle = 90, hjust = 1),
         axis.text.y=element_blank())+
-  ggtitle("Heatmap of salaries in Seattle. \nX-Axis are 29 Job Clusters while the\nY-axis has all job titles, \nbut have them hidden for aesthetic reasons")
+  ggtitle("Heatmap of salaries in Seattle. \nX-Axis are 30 Job Clusters while the\nY-axis has all job titles, \nbut have them hidden for aesthetic reasons")
 
 
 
-
-
-
-
-
-
-##########
-###grouping by title, include mean for each 4 years
-dt<-seattle%>%group_by(Job.Title)%>%select(5:8)%>%summarise_each(funs(mean(.,na.rm=T,trim=.05)))%>%gather(key=Year,value,-Job.Title)
-dt<-seattle%>%group_by(Job.Title)%>%select(5:8)%>%gather(key=Year,value,-Job.Title)
-
-
-
-dt
-p<-ggplot(dt[dt$Job.Title=='Faculty',],aes(x=Year,y=Job.Title))
-p+geom_point()
 
 
 
@@ -342,4 +331,3 @@ for (agency in 1:nrow(zipFileInfo)) {
 
 data <- read.table(unz(temp, "a1.dat"))
 unlink(temp)
-  

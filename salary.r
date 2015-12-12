@@ -222,6 +222,15 @@ longData<-dt%>%group_by(job.cat,year)%>%
 p<-longData%>%ggplot(aes(x=year,y=Salary,group=job.cat))
 p+geom_smooth(aes(group = 1),method='glm',level=.95)+facet_wrap(~job.cat)
 
+longData
+
+#the following will create a df that includes the sd and se for longData.
+longData.summary<-longData%>%group_by(job.cat,year)%>%summarise(mean=mean(Salary),sd=sd(Salary),N=n())%>%mutate(se=sd/sqrt(N))
+
+p<-ggplot(longData.summary,aes(x=year,y=mean,group=job.cat))
+
+
+p+geom_smooth()+facet_wrap(~job.cat)+geom_errorbar(aes(ymin=mean-se,ymax=mean+se))
 
 
 

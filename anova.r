@@ -35,10 +35,17 @@ m.bogart
 #lci<-by(m.bogart$score,m.bogart$subject,FUN=sd)
 #uci<-
 p<-ggplot(m.bogart,aes(x=treatment,y=score,group=subject,color=subject))
-p+stat_summary(fun.y=mean,geom='point',position = position_jitter(w = 0.15, h = 0.05)) +ylim(0, 12)
-p+geom_line(position = position_jitter(w = 0.15, h = 0.15))+stat_summary(fun.data='mean_cl_normal',geom='errorbar',mult=5,color='blue')+ylim(0, 12)
-p+geom_point(position = position_jitter(w = 0.3, h = 0.3))
+p+stat_summary(fun.y=mean,geom='point',position = position_jitter(w = 0.15, h = 0.01)) +ylim(0, 12)
+p+geom_line(position = position_jitter(w = 0.15, h = 0.01))+stat_summary(fun.data='mean_cl_normal',geom='errorbar',mult=5,color='blue')+ylim(0, 12)
+p+geom_point(position = position_jitter(w = 0.1, h = 0.01))
 p+geom_smooth(method='glm',level=.7)
+
+
+#the following will create a df that includes the sd and se for m.bogart.
+#NA's exist because it's a small sample with 1 obs per sub/treat
+m.bogart.summary<-m.bogart%>%group_by(subject,treatment)%>%summarise(mean=mean(score),sd=sd(score),N=n())%>%mutate(se=sd/sqrt(N))
+
+m.bogart()
 
 
 "m.bogart<-m.bogart%>%mutate(mean=mean(score,na.rm=T),devi= score - mean(score,na.rm=T),sq_dev = devi^2,variance=var(score,na.rm=T))

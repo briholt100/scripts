@@ -340,3 +340,19 @@ for (agency in 1:nrow(zipFileInfo)) {
 
 data <- read.table(unz(temp, "a1.dat"))
 unlink(temp)
+
+#reading webpages  NOTE, each year of webpages look a bit different
+#some have 4 columns (including a percent FT)
+#some have duplicate names with different titles, so for example reg sal and moonlight
+
+library(httr)
+url<-'http://lbloom.net/secc01.html'
+con = url(url)
+htmlCode = readLines(con)
+close(con)
+strsplit(htmlCode[58:2944],'\\t')[2][2]
+
+library(plyr)
+listing<-strsplit(htmlCode[59:2942],'\\t') #this crops off comments
+df<-ldply(listing)
+colnames(df)<-c('name','title','salary')

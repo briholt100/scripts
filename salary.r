@@ -359,7 +359,8 @@ listing<-strsplit(htmlCode[59:2942],'\\t') #this crops off comments
 df<-ldply(listing)
 colnames(df)<-c('name','title','salary')
 
-
+getHTMLLinks(htmlCode)
+test<-readHTMLList(htmlCode)[[1]]
 #The following comes up with 36 universitie sand colleges using index
 count=0
 for (i in 1:length(test)){

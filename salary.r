@@ -346,7 +346,9 @@ unlink(temp)
 #some have duplicate names with different titles, so for example reg sal and moonlight
 
 library(httr)
+library(XML)
 url<-'http://lbloom.net/secc01.html'
+url<-"http://lbloom.net/index01.html" # use this to get all links in the code using XML package getHTMLLinks(htmlCode)
 con = url(url)
 htmlCode = readLines(con)
 close(con)
@@ -356,3 +358,18 @@ library(plyr)
 listing<-strsplit(htmlCode[59:2942],'\\t') #this crops off comments
 df<-ldply(listing)
 colnames(df)<-c('name','title','salary')
+
+
+#The following comes up with 36 universitie sand colleges using index
+count=0
+for (i in 1:length(test)){
+  if (grepl(' col |univ|wsu|college',test[i],ignore.case=T)){
+    #so if true, then I'd like to open the page and scrape the page data
+    #once scraped, clean data
+    #add to table/df
+    print(test[i])
+    count=count + 1
+  }
+  print (count)
+}
+

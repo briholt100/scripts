@@ -348,7 +348,7 @@ unlink(temp)
 library(httr)
 library(XML)
 url<-'http://lbloom.net/secc01.html'
-url<-"http://lbloom.net/index01.html" # use this to get all links in the code using XML package getHTMLLinks(htmlCode)
+url<-"http://lbloom.net/index11.html" # use this to get all links in the code using XML package getHTMLLinks(htmlCode)
 con = url(url)
 htmlCode = readLines(con)
 close(con)
@@ -363,14 +363,36 @@ getHTMLLinks(htmlCode)
 test<-readHTMLList(htmlCode)[[1]]
 #The following comes up with 36 universitie sand colleges using index
 count=0
-for (i in 1:length(test)){
-  if (grepl(' col |univ|wsu|college',test[i],ignore.case=T)){
+tempDF<-data.frame()
+
+count=0
+#tempDF<-data.frame()
+for (i in 1:length(htmlCode)){
+  if (grepl(' col |univ|wsu|college',htmlCode[i],ignore.case=T)){
+
     #so if true, then I'd like to open the page and scrape the page data
     #once scraped, clean data
     #add to table/df
-    print(test[i])
+
+    print (htmlCode[i])
     count=count + 1
   }
-  print (count)
+}
+
+
+
+
+for (i in 1:100){
+  if (grepl(' col |univ|wsu|college',readHTMLList(htmlCode)[[1]][i],ignore.case=T)){
+    tempDF<-cbind(readHTMLList(htmlCode)[[1]][i],
+                  getHTMLLinks(htmlCode)[i])
+    #so if true, then I'd like to open the page and scrape the page data
+    #once scraped, clean data
+    #add to table/df
+
+  #  print (getHTMLLinks(htmlCode[[1]])[i])
+    count=count + 1
+  }
+  print (i)
 }
 

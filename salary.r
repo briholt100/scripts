@@ -366,9 +366,9 @@ count=0
 tempDF<-data.frame()
 
 count=0
-#tempDF<-data.frame()
+tempDF<-data.frame()
 for (i in 1:length(htmlCode)){
-  if (grepl(' col |univ|wsu|college',htmlCode[i],ignore.case=T)){
+  if (grepl(' col |univ|wsu|college|-//college',htmlCode[i],ignore.case=T)){
 
     #so if true, then I'd like to open the page and scrape the page data
     #once scraped, clean data
@@ -377,15 +377,16 @@ for (i in 1:length(htmlCode)){
     print (htmlCode[i])
     count=count + 1
   }
+  else print("no match")
 }
 
 
 
-
-for (i in 1:100){
-  if (grepl(' col |univ|wsu|college',readHTMLList(htmlCode)[[1]][i],ignore.case=T)){
-    tempDF<-cbind(readHTMLList(htmlCode)[[1]][i],
-                  getHTMLLinks(htmlCode)[i])
+count=0
+tempDF<-data.frame()
+for (i in 1:length(htmlCode)){
+  if (grepl(' col |univ|wsu|college',htmlCode[i],ignore.case=T)==T){
+    tempDF<-rbind(tempDF,(c(htmlCode[i], getHTMLLinks(htmlCode[i]))))
     #so if true, then I'd like to open the page and scrape the page data
     #once scraped, clean data
     #add to table/df
@@ -393,6 +394,6 @@ for (i in 1:100){
   #  print (getHTMLLinks(htmlCode[[1]])[i])
     count=count + 1
   }
-  print (i)
+
 }
 

@@ -1,11 +1,15 @@
 library('lme4')
+library('nlme')
 library('stringr')
+library('plyr')
 library('dplyr')
 library('data.table')
 library('tidyr')
 library('ggplot2')
 library('Hmisc')
-library('nlme')
+library('XML')
+library('httr')
+library('RTidyHTML')
 #####
 #set wd
 ####
@@ -344,9 +348,6 @@ unlink(temp)
 #reading webpages  NOTE, each year of webpages look a bit different
 #some have 4 columns (including a percent FT)
 #some have duplicate names with different titles, so for example reg sal and moonlight
-
-library(httr)
-library(XML)
 url<-'http://lbloom.net/secc01.html'
 url<-"http://lbloom.net/index11.html" # use this to get all links in the code using XML package getHTMLLinks(htmlCode)
 con = url(url)
@@ -354,7 +355,6 @@ htmlCode = readLines(con)
 close(con)
 strsplit(htmlCode[58:2944],'\\t')[2][2]
 
-library(plyr)
 listing<-strsplit(htmlCode[59:2942],'\\t') #this crops off comments
 df<-ldply(listing)
 colnames(df)<-c('name','title','salary')
@@ -397,3 +397,18 @@ for (i in 1:length(htmlCode)){
 
 }
 
+bloom<-htmlTreeParse(url,useInternalNodes=T)  # for the xpath to work below, True
+bloomRoot<-xmlRoot(bloom)
+xmlSize(bloomRoot)
+xmlAttrs(bloomRoot)
+bloomBody<-xmlChildren(bloomRoot)$body
+xpathSApply(bloomBody,"//table/..//a",xmlValue)
+head(xpathSApply(bloomRoot,"//table/..//a",xmlGetAttr,'href'),n=70)
+
+grep(' col|univ|wsu|college',xpathSApply(bloomBody,"//table/..//a",xmlValue,"href"),ignore.case=T,value=T)
+#may have to grep just the titles, the neames of wanted agencies instead of greping college
+
+
+hrefList<-getNodeSet(bloom,"//li/a")  #works
+xpathSApply(bloom,"//a/@href")
+xpathSApply(bloom,"//a[@href]",xmlValue)

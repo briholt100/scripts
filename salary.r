@@ -382,20 +382,6 @@ for (i in 1:length(htmlCode)){
 
 
 
-count=0
-tempDF<-data.frame()
-for (i in 1:length(htmlCode)){
-  if (grepl(' col |univ|wsu|college',htmlCode[i],ignore.case=T)==T){
-    tempDF<-rbind(tempDF,(c(htmlCode[i], getHTMLLinks(htmlCode[i]))))
-    #so if true, then I'd like to open the page and scrape the page data
-    #once scraped, clean data
-    #add to table/df
-
-  #  print (getHTMLLinks(htmlCode[[1]])[i])
-    count=count + 1
-  }
-
-}
 
 bloom<-htmlTreeParse(url,useInternalNodes=T)  # for the xpath to work below, True
 bloomRoot<-xmlRoot(bloom)
@@ -405,10 +391,16 @@ bloomBody<-xmlChildren(bloomRoot)$body
 xpathSApply(bloomBody,"//table/..//a",xmlValue)
 head(xpathSApply(bloomRoot,"//table/..//a",xmlGetAttr,'href'),n=70)
 
-grep(' col|univ|wsu|college',xpathSApply(bloomBody,"//table/..//a",xmlValue,"href"),ignore.case=T,value=T)
-#may have to grep just the titles, the neames of wanted agencies instead of greping college
+
+searchTerms<- "//a[contains(text(),' Col ')] |
+                  //a[contains(text(),'WSU')] |
+                      //a[contains(text(),'Olympic Co')] |
+                         //a[contains(text(),'Univ ')] "
+cbind(xpathSApply(bloom,searchTerms,xmlValue), # this pulls the <a> names of link
+getHTMLLinks(bloom,xpQuery=gsub(']',']/@href',searchTerms))) # this pulls the links themselves.
 
 
-hrefList<-getNodeSet(bloom,"//li/a")  #works
-xpathSApply(bloom,"//a/@href")
-xpathSApply(bloom,"//a[@href]",xmlValue)
+
+
+
+

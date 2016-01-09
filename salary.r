@@ -396,11 +396,20 @@ searchTerms<- "//a[contains(text(),' Col ')] |
                   //a[contains(text(),'WSU')] |
                       //a[contains(text(),'Olympic Co')] |
                          //a[contains(text(),'Univ ')] "
-cbind(xpathSApply(bloom,searchTerms,xmlValue), # this pulls the <a> names of link
-getHTMLLinks(bloom,xpQuery=gsub(']',']/@href',searchTerms))) # this pulls the links themselves.
+links<-cbind(xpathSApply(bloom,searchTerms,xmlValue), # this pulls the <a> names of link
+          getHTMLLinks(bloom,xpQuery=gsub(']',']/@href',searchTerms))) # this pulls the links themselves.
 
+nrow(links)
+db<-matrix()
+for(i in 1:3){
+  con = url(links[i,2])
+  htmlCode = readLines(con)
+  close(con)
+  name<-grep('Name',htmlCode,value=F)+1
+  end<-grep('</pre>',htmlCode,value=F)-1
+  
+  db[i]<-strsplit(htmlCode[name:end],"[:space:]"))
+}
 
-
-
-
-
+##the problem is that asshole is using spaces to separate data.  blah  Use grep for non 'space'
+How to convert a list of items (htmlCode strsplit) into a dataframe. 

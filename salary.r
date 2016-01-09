@@ -382,7 +382,7 @@ for (i in 1:length(htmlCode)){
 
 
 
-
+url<-"http://lbloom.net/index11.html" # use this to get all links in the code using XML package getHTMLLink
 bloom<-htmlTreeParse(url,useInternalNodes=T)  # for the xpath to work below, True
 bloomRoot<-xmlRoot(bloom)
 xmlSize(bloomRoot)
@@ -407,9 +407,8 @@ for(i in 1:3){
   close(con)
   name<-grep('Name',htmlCode,value=F)+1
   end<-grep('</pre>',htmlCode,value=F)-1
-  
-  db[i]<-strsplit(htmlCode[name:end],"[:space:]"))
+  htmlCode<-gsub('([A-z0-9]|\\.) {2,}([A-z0-9])',"\\1\\\t\\2",htmlCode)
+  db[i]<-strsplit(htmlCode[name:end],"\\t")
 }
 
-##the problem is that asshole is using spaces to separate data.  blah  Use grep for non 'space'
-How to convert a list of items (htmlCode strsplit) into a dataframe. 
+strsplit(gsub('([A-z0-9]|\\.) {2,}([A-z0-9])',"\\1\\\t\\2",test),'\t')

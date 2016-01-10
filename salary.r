@@ -197,7 +197,7 @@ dt$year<-as.Date(dt$year,'%Y')
 dt$year<-str_extract(dt$year, "[0-9]{4}")
 
 
-dt<-dean.salary%>%gather(year,Salary,-job.cat,-Job.Title,-Employee,-Agency,-Code,na.rm=T)
+#dt<-dean.salary%>%gather(year,Salary,-job.cat,-Job.Title,-Employee,-Agency,-Code,na.rm=T)
 dt$year[dt$year=='X2011']<-as.Date
 p<-ggplot(dt,aes(x=year,y=Salary))
 p+geom_boxplot(notch=F)+
@@ -399,16 +399,22 @@ searchTerms<- "//a[contains(text(),' Col ')] |
 links<-cbind(xpathSApply(bloom,searchTerms,xmlValue), # this pulls the <a> names of link
           getHTMLLinks(bloom,xpQuery=gsub(']',']/@href',searchTerms))) # this pulls the links themselves.
 
+
+get_pull<-function(htmlCode){
+  name<-grep('Name',htmlCode,value=F)  ##each page's data has a header "name"
+  end<-grep('</pre>',htmlCode,value=F)-1  ##each page's data has a footer html </pre>
+  htmlCode<-gsub('([A-z0-9]|\\.) {2,}([A-z0-9])',"\\1\t\\2",htmlCode)  # the format of the data has a series of alnum with 2 or more spaces or tabs in between.
+  #str_split_fixed(htmlCode[name:end],"\t",3)  #experiment with stringr
+  strsplit(htmlCode[name:end],"\t")
+}
+
 nrow(links)
-db<-matrix()
-for(i in 1:3){
+db<-matrix()  #preform empty matrix
+for(i in 1:1){
   con = url(links[i,2])
   htmlCode = readLines(con)
   close(con)
-  name<-grep('Name',htmlCode,value=F)+1
-  end<-grep('</pre>',htmlCode,value=F)-1
-  htmlCode<-gsub('([A-z0-9]|\\.) {2,}([A-z0-9])',"\\1\\\t\\2",htmlCode)
-  db[i]<-strsplit(htmlCode[name:end],"\\t")
+  get_pull(htmlCode)
 }
 
-strsplit(gsub('([A-z0-9]|\\.) {2,}([A-z0-9])',"\\1\\\t\\2",test),'\t')
+tst<-(get_pull(htmlCode))

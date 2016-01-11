@@ -418,3 +418,11 @@ for(i in 1:1){
 }
 
 tst<-(get_pull(htmlCode))
+
+
+#write(htmlCode[name:end],'../data/htmlCode.txt')
+#tst<-read.fwf('../data/htmlCode.txt',widths = c(32, 33, 81),header=F,row.names=NULL,skip=1,col.names=c('name','title','salary'))
+txt<-unlist(htmlCode[name:end])
+tst<-read.fwf(txt,widths = c(32, 33, 81),header=F,row.names=NULL,skip=0,col.names=c('name','title','salary'))
+
+##read about 'connection', reading a url(url) okay, but need to skip several lines (find 'name or pre' and skip to that)

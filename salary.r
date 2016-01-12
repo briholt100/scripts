@@ -426,3 +426,4 @@ txt<-unlist(htmlCode[name:end])
 tst<-read.fwf(txt,widths = c(32, 33, 81),header=F,row.names=NULL,skip=0,col.names=c('name','title','salary'))
 
 ##read about 'connection', reading a url(url) okay, but need to skip several lines (find 'name or pre' and skip to that)
+http://stackoverflow.com/questions/29663107/using-read-fwf-with-https

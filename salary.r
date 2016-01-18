@@ -405,7 +405,7 @@ get_pull<-function(htmlCode){
   end<-grep('</pre>',htmlCode,value=F)-1  ##each page's data has a footer html </pre>
   htmlCode<-gsub('([A-z0-9]|\\.) {2,}([A-z0-9])',"\\1\t\\2",htmlCode)  # the format of the data has a series of alnum with 2 or more spaces or tabs in between.
   #str_split_fixed(htmlCode[name:end],"\t",3)  #experiment with stringr
-  strsplit(htmlCode[name:end],"\t")
+#  strsplit(htmlCode[name:end],"\t")
 }
 
 nrow(links)
@@ -426,4 +426,15 @@ txt<-unlist(htmlCode[name:end])
 tst<-read.fwf(txt,widths = c(32, 33, 81),header=F,row.names=NULL,skip=0,col.names=c('name','title','salary'))
 
 ##read about 'connection', reading a url(url) okay, but need to skip several lines (find 'name or pre' and skip to that)
-http://stackoverflow.com/questions/29663107/using-read-fwf-with-https
+#http://stackoverflow.com/questions/29663107/using-read-fwf-with-https
+
+read.fwf(url(links[4,2]),widths = c(32, 33, 81),header=F,row.names=NULL)
+#
+
+x<-readLines(con=url(links[4,2]),skipNul=T)
+x<-x[grep('Name',x,value=F)+2:grep('</pre>',x,value=F)-5]
+
+df<-data.frame(name = substr(x,1,32),
+           title = substr(x, 33,80),
+           sal = substr(x, 81, 105))
+get_pull(x)

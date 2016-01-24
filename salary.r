@@ -9,7 +9,7 @@ library('ggplot2')
 library('Hmisc')
 library('XML')
 library('httr')
-library('RTidyHTML')
+library('rvest')
 #####
 #set wd
 ####
@@ -399,6 +399,16 @@ searchTerms<- "//a[contains(text(),' Col ')] |
 links<-cbind(xpathSApply(bloom,searchTerms,xmlValue), # this pulls the <a> names of link
           getHTMLLinks(bloom,xpQuery=gsub(']',']/@href',searchTerms))) # this pulls the links themselves.
 
+text<-links[11,2] %>% url %>% read_html() %>% html_nodes (xpath= '//pre')%>%html_text() #this pulls out the actual pre text
+df<-(read.fwf(textConnection(text),widths=c(32,32,81),skip=3,col.names=c('name','title','salary')))
+
+####---------------
+"""links1<-url %>% read_html( ) %>% xml_nodes(xpath=searchTerms)  #using Rvest creates node set
+tmp<-html_attrs(links1)# creates a nested but named list; each element has 2 sub elements "target" and 'href', which is what we want.
+links[11,2] %>% url %>% read_html() %>% html_node() %>% magrittr::extract('pre')
+#This takes the 11th link and extracts the full 'pre' table. fwf does NOT work on this..yet
+"""
+####---------------
 
 get_pull<-function(htmlCode){
   name<-grep('Name',htmlCode,value=F)  ##each page's data has a header "name"
@@ -407,6 +417,8 @@ get_pull<-function(htmlCode){
   #str_split_fixed(htmlCode[name:end],"\t",3)  #experiment with stringr
 #  strsplit(htmlCode[name:end],"\t")
 }
+
+
 
 nrow(links)
 db<-matrix()  #preform empty matrix
@@ -428,7 +440,7 @@ tst<-read.fwf(txt,widths = c(32, 33, 81),header=F,row.names=NULL,skip=0,col.name
 ##read about 'connection', reading a url(url) okay, but need to skip several lines (find 'name or pre' and skip to that)
 #http://stackoverflow.com/questions/29663107/using-read-fwf-with-https
 
-read.fwf(url(links[4,2]),widths = c(32, 33, 81),header=F,row.names=NULL)
+
 #
 
 x<-readLines(con=url(links[4,2]),skipNul=T)

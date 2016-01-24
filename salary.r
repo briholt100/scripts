@@ -384,13 +384,6 @@ for (i in 1:length(htmlCode)){
 
 url<-"http://lbloom.net/index11.html" # use this to get all links in the code using XML package getHTMLLink
 bloom<-htmlTreeParse(url,useInternalNodes=T)  # for the xpath to work below, True
-bloomRoot<-xmlRoot(bloom)
-xmlSize(bloomRoot)
-xmlAttrs(bloomRoot)
-bloomBody<-xmlChildren(bloomRoot)$body
-xpathSApply(bloomBody,"//table/..//a",xmlValue)
-head(xpathSApply(bloomRoot,"//table/..//a",xmlGetAttr,'href'),n=70)
-
 
 searchTerms<- "//a[contains(text(),' Col ')] |
                   //a[contains(text(),'WSU')] |
@@ -399,9 +392,9 @@ searchTerms<- "//a[contains(text(),' Col ')] |
 links<-cbind(xpathSApply(bloom,searchTerms,xmlValue), # this pulls the <a> names of link
           getHTMLLinks(bloom,xpQuery=gsub(']',']/@href',searchTerms))) # this pulls the links themselves.
 
-text<-links[11,2] %>% url %>% read_html() %>% html_nodes (xpath= '//pre')%>%html_text() #this pulls out the actual pre text
+text<-links[11,2] %>% url %>% read_html() %>% html_nodes (xpath= '//pre')%>%html_text(trim=F) #this pulls out the actual pre text
 df<-(read.fwf(textConnection(text),widths=c(32,32,81),skip=3,col.names=c('name','title','salary')))
-
+df
 ####---------------
 """links1<-url %>% read_html( ) %>% xml_nodes(xpath=searchTerms)  #using Rvest creates node set
 tmp<-html_attrs(links1)# creates a nested but named list; each element has 2 sub elements "target" and 'href', which is what we want.

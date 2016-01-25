@@ -392,9 +392,21 @@ searchTerms<- "//a[contains(text(),' Col ')] |
 links<-cbind(xpathSApply(bloom,searchTerms,xmlValue), # this pulls the <a> names of link
           getHTMLLinks(bloom,xpQuery=gsub(']',']/@href',searchTerms))) # this pulls the links themselves.
 
-text<-links[11,2] %>% url %>% read_html() %>% html_nodes (xpath= '//pre')%>%html_text(trim=F) #this pulls out the actual pre text
-df<-(read.fwf(textConnection(text),widths=c(32,32,81),skip=3,col.names=c('name','title','salary')))
-df
+df<-(read.fwf(textConnection(text),
+              widths=c(32,32,81),
+              skip=3,
+              col.names=c('Employee','Job_title','Salary')
+))
+nrow(links)
+head(links)
+mylist<-list()
+for (i in 1:12){
+  text<-links[i,2] %>% url %>% read_html() %>% html_nodes (xpath= '//pre')%>%html_text(trim=F) #this pulls out the actual pre text
+  mylist[[i]]<-text
+  mylist[[i]][2]<-links[i,1]
+}
+#do.call("rbind",mylist)
+
 ####---------------
 """links1<-url %>% read_html( ) %>% xml_nodes(xpath=searchTerms)  #using Rvest creates node set
 tmp<-html_attrs(links1)# creates a nested but named list; each element has 2 sub elements "target" and 'href', which is what we want.
@@ -403,26 +415,7 @@ links[11,2] %>% url %>% read_html() %>% html_node() %>% magrittr::extract('pre')
 """
 ####---------------
 
-get_pull<-function(htmlCode){
-  name<-grep('Name',htmlCode,value=F)  ##each page's data has a header "name"
-  end<-grep('</pre>',htmlCode,value=F)-1  ##each page's data has a footer html </pre>
-  htmlCode<-gsub('([A-z0-9]|\\.) {2,}([A-z0-9])',"\\1\t\\2",htmlCode)  # the format of the data has a series of alnum with 2 or more spaces or tabs in between.
-  #str_split_fixed(htmlCode[name:end],"\t",3)  #experiment with stringr
-#  strsplit(htmlCode[name:end],"\t")
-}
 
-
-
-nrow(links)
-db<-matrix()  #preform empty matrix
-for(i in 1:1){
-  con = url(links[i,2])
-  htmlCode = readLines(con)
-  close(con)
-  get_pull(htmlCode)
-}
-
-tst<-(get_pull(htmlCode))
 
 
 #write(htmlCode[name:end],'../data/htmlCode.txt')

@@ -6,7 +6,7 @@ library(XML)
 #  colleges, opens each, creates 1 big dataframe for that year.
 
 
-d<-"http://lbloom.net/index"
+d<-"http://lbloom.net/index"   # for "code book" see http://lbloom.net/dshsz.html
 d_yr<-c('01','03','05','07','09','11')
 d_pg<-".html"
 page_list<-list()
@@ -48,6 +48,14 @@ str(mylist)
     #  adds a 4 column dataframe to newly created 'df_list'
 
 #######PROBLEM.  2001-2009 HAS ODD 'FWF', or other odd column formats.  Yuck
+
+#2001 has tab deliminted data, name, title, salary
+#2003 has tab deliminted data, name, title, salary
+#2005 has mulit-tab deliminted data, name, title, salary
+#2007 has fwf data, but 6 columns: name, title,  ET-PU, MP, %FT, Salary 
+#2009 has fwf data, but 6 columns: name, title,  ET-PU, MP, %FT, Salary 
+#2011 has fwf data, name, title, salary
+
 
 
 df_list<-list()

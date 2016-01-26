@@ -2,7 +2,8 @@ library(rvest)
 library(XML)
 
 ###
-#The following reads the first URL and scrapes the links for the colleges, opens each, creates 1 big dataframe for that year.
+# The following reads the first URL and scrapes the links for the
+#  colleges, opens each, creates 1 big dataframe for that year.
 
 
 d<-"http://lbloom.net/index"
@@ -10,8 +11,8 @@ d_yr<-c('01','03','05','07','09','11')
 d_pg<-".html"
 page_list<-list()
 for (i in 1:length(d_yr)){
-     url<-paste0(d,d_yr[i],d_pg)  # use this to get all links in the code using XML package getHTMLLink
-     bloom<-htmlTreeParse(url,useInternalNodes=T) # for the xpath to work below, True
+     url<-paste0(d,d_yr[i],d_pg) # Gets all links in code using XML::getHTMLLink
+     bloom<-htmlTreeParse(url,useInternalNodes=T) # for xpath to work below, 'T'
      page_list[[i]]<-bloom
 }
 

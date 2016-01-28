@@ -1,3 +1,20 @@
+
+#######PROBLEM.  2001-2009 HAS ODD 'FWF', or other odd column formats.  Yuck
+# Several pages have different lines to 'skip'.  fuck off
+
+
+#2001 has tab deliminted data, name, title, salary, but many have 2 column sets!!!!! fuck off lbloom
+#2003 has tab deliminted data, name, title, salary
+#2005 has mulit-tab deliminted data, name, title, salary
+#2007 has fwf data, but 6 columns: name, title,  ET-PU, MP, %FT, Salary
+#2009 has fwf data, but 6 columns: name, title,  ET-PU, MP, %FT, Salary
+#2011 has fwf data, name, title, salary
+
+# grep("2005",links)
+#  Let's start with 2003 and move forward, go back to 2001
+
+
+
 library(rvest)
 library(XML)
 
@@ -47,23 +64,15 @@ str(mylist)
 # The following loops through each element of 'mylist',
     #  adds a 4 column dataframe to newly created 'df_list'
 
-#######PROBLEM.  2001-2009 HAS ODD 'FWF', or other odd column formats.  Yuck
-
-#2001 has tab deliminted data, name, title, salary
-#2003 has tab deliminted data, name, title, salary
-#2005 has mulit-tab deliminted data, name, title, salary
-#2007 has fwf data, but 6 columns: name, title,  ET-PU, MP, %FT, Salary 
-#2009 has fwf data, but 6 columns: name, title,  ET-PU, MP, %FT, Salary 
-#2011 has fwf data, name, title, salary
-
-
 
 df_list<-list()
-for (i in 181:216){
-  df_list[[i]]<-cbind(mylist[[i]][2],read.fwf(textConnection(mylist[[i]][1]),
-                                         widths=c(32,32,81),
-                                         skip=3,
-                                         col.names=c('Employee','Job_title','Salary')
+for (i in 1:length(mylist)){
+  df_list[[i]]<-cbind(mylist[[i]][2],read.delim(textConnection(mylist[[i]][1]),  # fwf also applies
+                                         header=F,
+                                         #strip.white=T,
+                                         #widths=c(32,32,81),
+                                         skip=2,
+                                         #col.names=c('Employee','Job_title','Salary')
   ))
 
 }

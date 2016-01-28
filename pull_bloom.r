@@ -3,6 +3,10 @@
 # Several pages have different lines to 'skip'.  fuck off
 
 
+
+# go here https://www.youtube.com/watch?feature=player_detailpage&v=q8SzNKib5-4#t=945
+
+
 #2001 has tab deliminted data, name, title, salary, but many have 2 column sets!!!!! fuck off lbloom
 #2003 has tab deliminted data, name, title, salary
 #2005 has mulit-tab deliminted data, name, title, salary

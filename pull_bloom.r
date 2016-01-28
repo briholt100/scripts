@@ -65,6 +65,11 @@ for (i in 1:nrow(links)){
 }
 str(mylist)
 
+text<-as.character(mylist[1])
+r<-gregexpr('\\\\r\\\\n[A-Z]*, \\*[A-Z]* [A-Z]*\\\\t',text)
+regmatches(text,r)
+
+
 # The following loops through each element of 'mylist',
     #  adds a 4 column dataframe to newly created 'df_list'
 

@@ -15,10 +15,25 @@
 #2011 has fwf data, name, title, salary
 
 # grep("2005",links)
-#  Let's start with 2003 and move forward, go back to 2001
+#  Let's start with 2011 and move back, go back to 2001
+
+                  title_width<-gregexpr('Job T',)
+                  #name_width<-gregexpr('^+',test)  OY, THIS ISN'T EVEN NEEDED
+                  sal_width<-gregexpr(' [0-9]',mylist)
+                  wid<-c(title_width[[1]][1],sal_width[[1]][2]-title_width[[1]][1],nchar(test[1])-sal_width[[1]][1]) 
+                  ###Notice that sal_width picks the 2nd element [[1]][2]
 
 
-
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
 library(rvest)
 library(XML)
 

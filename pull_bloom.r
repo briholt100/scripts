@@ -23,14 +23,7 @@
                   wid<-c(title_width[[1]][1],sal_width[[1]][2]-title_width[[1]][1],nchar(test[1])-sal_width[[1]][1]) 
                   ###Notice that sal_width picks the 2nd element [[1]][2]
 
-
-                  
-                  
-                  
-                  
-                  
-                  
-                  
+            
                   
                   
                   

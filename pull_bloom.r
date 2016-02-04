@@ -39,16 +39,29 @@ str(links)
 # go here https://www.youtube.com/watch?feature=player_detailpage&v=q8SzNKib5-4#t=945
 
 
+#...done....2011 has fwf data, name, title, salary
+"""
+############
+#########
+##For 2011:
+wid<-list()
+for(i in 1:length(mylist)){
+  text<-as.character(mylist[[i]][1])
+  title_start<-gregexpr('  [A-Z]',substr(text,1,200))
+  #name_width<-gregexpr('^+',test)  OY, THIS ISN'T EVEN NEEDED
+  sal_start<-gregexpr(' [0-9]',substr(text,1,200))
+  wid[[i]]<-c(title_start[[1]][1]-3,sal_start[[1]][1]-title_start[[1]][1]+5,40)
+  ###Notice that sal_width might need to pick the 2nd element [[1]][2]
+}
+"""
 #2001 has tab deliminted data, name, title, salary, but many have 2 column sets!!!!! fuck off lbloom
 #2003 has tab deliminted data, name, title, salary
 #2005 has mulit-tab deliminted data, name, title, salary
 #2007 has fwf data, but 6 columns: name, title,  ET-PU, MP, %FT, Salary
 #2009 has fwf data, but 6 columns: name, title,  ET-PU, MP, %FT, Salary
-#2011 has fwf data, name, title, salary
 
-
-#  Let's start with 2011 and move back, go back to 2001
-links<-links[ grep("2011",links),]
+#  Let's start with 2009 and move back, go back to 2001
+links<-links[ grep("2009",links),]
 links<-links[-c(1:3),]
 links<-links[c(1:3),]
 
@@ -64,25 +77,31 @@ for (i in 1:nrow(links)){
   mylist[[i]][2]<-links[i,1] # Puts agency info into the 2nd element of the list
 }
 str(mylist[1])
-
+mylist<-mylist[1]
 ############
-#note to self, attempt to read text from mulitpl schools
-
-text<-as.character(mylist[[1]][1])
-title_start<-gregexpr('  [A-Z]',text)
-#name_width<-gregexpr('^+',test)  OY, THIS ISN'T EVEN NEEDED
-sal_start<-gregexpr(' [0-9]',text)
-endline<-gregexpr('gs\\\\r\\\\n',mylist[[1]][1])
-wid<-c(title_start[[1]][1]-3,sal_start[[1]][1]-title_start[[1]][1],40)
-###Notice that sal_width might need to pick the 2nd element [[1]][2]
-
-trial<-read.fwf(textConnection(mylist[[1]]),widths=wid,skip=2,strip.white=T)
-head(trial)
-
+#########
+"""
 text<-as.character(mylist[1])
 r<-gregexpr('\\\\r\\\\n[A-Z]*, \\*[A-Z]* [A-Z]*\\\\t',text)
-regmatches(text,r)
+regmatches(text,emp_type_start)
+"""
 
+##For 2009:
+wid<-list()
+for(i in 1:length(mylist)){
+  text<-as.character(mylist[[i]][1])
+  title_start<-gregexpr('  [A-Z]',substr(text,101,200))
+  emp_type_start<-gregexpr('   [0-9]M|H|C|D',substr(text,101,200))
+  
+  #MP_start<-gregexpr('  MP',substr(text,101,200))
+  #PercentFT_start<-gregexpr('  %FT',substr(text,101,200))
+    
+  #sal_start<-gregexpr('  [0-9]',substr(text,101,200))
+  wid[[i]]<-c(title_start[[1]][1]-3,emp_type_start[[1]][2]-title_start[[1]][1],20,25)
+}
+
+trial<-read.fwf(textConnection(mylist[[1]]),widths=wid[[1]],skip=2,strip.white=T)
+head(trial)
 
 
 
@@ -92,18 +111,21 @@ regmatches(text,r)
 
 df_list<-list()
 for (i in 1:length(mylist)){
-  df_list[[i]]<-cbind(mylist[[i]][2],read.delim(textConnection(mylist[[i]][1]),  # fwf also applies
+  df_list[[i]]<-cbind(mylist[[i]][2],read.fwf(textConnection(mylist[[i]][1]),  # fwf also applies
                                          header=F,
-                                         #strip.white=T,
-                                         #widths=c(32,32,81),
+                                         strip.white=T,
+                                         widths=wid[i],
                                          skip=2,
-                                         #col.names=c('Employee','Job_title','Salary')
+                                         col.names=c('Employee','Job_title','Salary')
   ))
 
 }
 final_df<-do.call("rbind",df_list)  # this converts df_list into a dataframe.
 colnames(final_df)<-c('Institution','Employee','Job_title','Salary')
 final_df$Salary<-as.numeric(final_df$Salary)
-
+str(final_df)
 head(final_df)
 tail(final_df)
+final_df<-final_df[(is.na(final_df$Salary))==F,]
+mean(as.numeric(final_df$Salary))
+boxplot(final_df$Salary~final_df$Job_title)

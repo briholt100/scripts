@@ -1,39 +1,3 @@
-
-#######PROBLEM.  2001-2009 HAS ODD 'FWF', or other odd column formats.  Yuck
-# Several pages have different lines to 'skip'.  fuck off
-
-
-
-# go here https://www.youtube.com/watch?feature=player_detailpage&v=q8SzNKib5-4#t=945
-
-
-#2001 has tab deliminted data, name, title, salary, but many have 2 column sets!!!!! fuck off lbloom
-#2003 has tab deliminted data, name, title, salary
-#2005 has mulit-tab deliminted data, name, title, salary
-#2007 has fwf data, but 6 columns: name, title,  ET-PU, MP, %FT, Salary
-#2009 has fwf data, but 6 columns: name, title,  ET-PU, MP, %FT, Salary
-#2011 has fwf data, name, title, salary
-
-# grep("2005",links)
-#  Let's start with 2011 and move back, go back to 2001
-
-                  title_width<-gregexpr('Job T',)
-                  #name_width<-gregexpr('^+',test)  OY, THIS ISN'T EVEN NEEDED
-                  sal_width<-gregexpr(' [0-9]',mylist)
-                  wid<-c(title_width[[1]][1],sal_width[[1]][2]-title_width[[1]][1],nchar(test[1])-sal_width[[1]][1]) 
-                  ###Notice that sal_width picks the 2nd element [[1]][2]
-
-
-                  
-                  
-                  
-                  
-                  
-                  
-                  
-                  
-                  
-                  
 library(rvest)
 library(XML)
 
@@ -67,6 +31,27 @@ for (i in 1:length(page_list)){
 links<-do.call('rbind',links)
 str(links)
 
+#######PROBLEM.  2001-2009 HAS ODD 'FWF', or other odd column formats.  Yuck
+# Several pages have different lines to 'skip'.  fuck off
+
+
+
+# go here https://www.youtube.com/watch?feature=player_detailpage&v=q8SzNKib5-4#t=945
+
+
+#2001 has tab deliminted data, name, title, salary, but many have 2 column sets!!!!! fuck off lbloom
+#2003 has tab deliminted data, name, title, salary
+#2005 has mulit-tab deliminted data, name, title, salary
+#2007 has fwf data, but 6 columns: name, title,  ET-PU, MP, %FT, Salary
+#2009 has fwf data, but 6 columns: name, title,  ET-PU, MP, %FT, Salary
+#2011 has fwf data, name, title, salary
+
+
+#  Let's start with 2011 and move back, go back to 2001
+links<-links[ grep("2011",links),]
+links<-links[-c(1:3),]
+links<-links[c(1:3),]
+
 # The following loops through 'links', using the URL to read the html
 # and pull the text out of the <pre> tag
 # then adds it to 'mylist', a nested list
@@ -78,11 +63,27 @@ for (i in 1:nrow(links)){
   mylist[[i]]<-text  # This puts the text into each element
   mylist[[i]][2]<-links[i,1] # Puts agency info into the 2nd element of the list
 }
-str(mylist)
+str(mylist[1])
+
+############
+#note to self, attempt to read text from mulitpl schools
+
+text<-as.character(mylist[[1]][1])
+title_start<-gregexpr('  [A-Z]',text)
+#name_width<-gregexpr('^+',test)  OY, THIS ISN'T EVEN NEEDED
+sal_start<-gregexpr(' [0-9]',text)
+endline<-gregexpr('gs\\\\r\\\\n',mylist[[1]][1])
+wid<-c(title_start[[1]][1]-3,sal_start[[1]][1]-title_start[[1]][1],40)
+###Notice that sal_width might need to pick the 2nd element [[1]][2]
+
+trial<-read.fwf(textConnection(mylist[[1]]),widths=wid,skip=2,strip.white=T)
+head(trial)
 
 text<-as.character(mylist[1])
 r<-gregexpr('\\\\r\\\\n[A-Z]*, \\*[A-Z]* [A-Z]*\\\\t',text)
 regmatches(text,r)
+
+
 
 
 # The following loops through each element of 'mylist',

@@ -38,11 +38,28 @@ str(links)
 
 # go here https://www.youtube.com/watch?feature=player_detailpage&v=q8SzNKib5-4#t=945
 
-
+#2009 has fwf data, but 6 columns: name, title,  ET-PU, MP, %FT, Salary
 #...done....2011 has fwf data, name, title, salary
 """
 ############
-#########
+########
+###For 2009:
+wid<-list()
+#i=3
+for(i in 1:length(mylist)){
+  text<-as.character(mylist[[i]][1])
+  title_start<-gregexpr('  [A-Z]',substr(text,102,200))
+  emp_type_start<-gregexpr('   [0-9](M|D|C|H)',substr(text,102,200))
+  num_col_start<-gregexpr('   [0-9]',substr(text,102,200))# this should pick up the last 4 cols
+  end_point<-gregexpr('\\r\\n',substr(text,1,200))
+  wid[[i]]<-c(title_start[[1]][1]-2,
+              num_col_start[[1]][1]-title_start[[1]][1],
+              num_col_start[[1]][2]-num_col_start[[1]][1],
+              num_col_start[[1]][3]-num_col_start[[1]][2],
+              8,#num_col_start[[1]][4]-num_col_start[[1]][3],
+              end_point[[1]][2]-num_col_start[[1]][4]+20     )
+}
+
 ##For 2011:
 wid<-list()
 for(i in 1:length(mylist)){
@@ -58,10 +75,10 @@ for(i in 1:length(mylist)){
 #2003 has tab deliminted data, name, title, salary
 #2005 has mulit-tab deliminted data, name, title, salary
 #2007 has fwf data, but 6 columns: name, title,  ET-PU, MP, %FT, Salary
-#2009 has fwf data, but 6 columns: name, title,  ET-PU, MP, %FT, Salary
+
 
 #  Let's start with 2009 and move back, go back to 2001
-links<-links[ grep("2009",links),]
+links<-links[ grep("2007",links),]
 links<-links[-c(1:3),]
 links<-links[c(1:3),]
 
@@ -88,21 +105,24 @@ regmatches(text,emp_type_start)
 
 ##For 2009:
 wid<-list()
+#i=3
 for(i in 1:length(mylist)){
   text<-as.character(mylist[[i]][1])
-  title_start<-gregexpr('  [A-Z]',substr(text,101,200))
-  num_col_start<-gregexpr('   [0-9]',substr(text,101,200))  # this should pick up the last 4 cols
-  end_point<-gregexpr('\\r\\n',substr(text,3,205))
+  title_start<-gregexpr('  [A-Z]',substr(text,102,200))
+  emp_type_start<-gregexpr('   [0-9](M|D|C|H)',substr(text,102,200))
+  num_col_start<-gregexpr('   [0-9]',substr(text,102,200))# this should pick up the last 4 cols
+  end_point<-gregexpr('\\r\\n',substr(text,1,200))
   wid[[i]]<-c(title_start[[1]][1]-2,
               num_col_start[[1]][1]-title_start[[1]][1],
               num_col_start[[1]][2]-num_col_start[[1]][1],
               num_col_start[[1]][3]-num_col_start[[1]][2],
-              8,
-              19     )
+              8,#num_col_start[[1]][4]-num_col_start[[1]][3],
+              end_point[[1]][2]-num_col_start[[1]][4]+20     )
 
 }
-
-trial<-read.fwf(textConnection(mylist[[1]]),widths=wid[[1]],skip=2,strip.white=T)
+wid
+i=1
+trial<-read.fwf(textConnection(mylist[[i]]),widths=wid[[i]],skip=2,strip.white=T)
 head(trial)
 
 
@@ -123,7 +143,7 @@ for (i in 1:length(mylist)){
 
 }
 final_df<-do.call("rbind",df_list)  # this converts df_list into a dataframe.
-colnames(final_df)<-c('Institution','Employee','Job_title','Salary')
+colnames(final_df)<-c('Institution','Employee','Job_title','et','mp','percent_ft','Salary')
 final_df$Salary<-as.numeric(final_df$Salary)
 str(final_df)
 head(final_df)

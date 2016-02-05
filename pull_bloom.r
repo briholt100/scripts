@@ -78,7 +78,7 @@ for(i in 1:length(mylist)){
 
 
 #  Let's start with 2009 and move back, go back to 2001
-links<-links[ grep("2007",links),]
+links<-links[ grep("2009",links),]
 links<-links[-c(1:3),]
 links<-links[c(1:3),]
 

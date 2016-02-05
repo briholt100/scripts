@@ -91,13 +91,15 @@ wid<-list()
 for(i in 1:length(mylist)){
   text<-as.character(mylist[[i]][1])
   title_start<-gregexpr('  [A-Z]',substr(text,101,200))
-  emp_type_start<-gregexpr('   [0-9]M|H|C|D',substr(text,101,200))
-  
-  #MP_start<-gregexpr('  MP',substr(text,101,200))
-  #PercentFT_start<-gregexpr('  %FT',substr(text,101,200))
-    
-  #sal_start<-gregexpr('  [0-9]',substr(text,101,200))
-  wid[[i]]<-c(title_start[[1]][1]-3,emp_type_start[[1]][2]-title_start[[1]][1],20,25)
+  num_col_start<-gregexpr('   [0-9]',substr(text,101,200))  # this should pick up the last 4 cols
+  end_point<-gregexpr('\\r\\n',substr(text,3,205))
+  wid[[i]]<-c(title_start[[1]][1]-2,
+              num_col_start[[1]][1]-title_start[[1]][1],
+              num_col_start[[1]][2]-num_col_start[[1]][1],
+              num_col_start[[1]][3]-num_col_start[[1]][2],
+              8,
+              19     )
+
 }
 
 trial<-read.fwf(textConnection(mylist[[1]]),widths=wid[[1]],skip=2,strip.white=T)
@@ -116,7 +118,7 @@ for (i in 1:length(mylist)){
                                          strip.white=T,
                                          widths=wid[i],
                                          skip=2,
-                                         col.names=c('Employee','Job_title','Salary')
+                                         col.names=c('Employee','Job_title','et','mp','percent_ft','Salary')
   ))
 
 }

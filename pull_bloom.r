@@ -105,11 +105,24 @@ regmatches(text,emp_type_start)
 
 ##For 2009:
 wid<-list()
-#i=3
+i=3
+white<-'\\s{3,}'
+Emp_name<-gregexpr('[[:print:]]*\\b, [[:print:]]*\\b',text)
+employee<-regmatches(text,Emp_name)
+employee
+
+title_string<-'( [[:graph:]]{2,}){2,}'
 for(i in 1:length(mylist)){
   text<-as.character(mylist[[i]][1])
-  title_start<-gregexpr('  [A-Z]',substr(text,102,200))
-  emp_type_start<-gregexpr('   [0-9](M|D|C|H)',substr(text,102,200))
+  white_space<-gregexpr(white,text)
+  attr(white_space[[1]], 'match.length')[1]
+
+  ########check stringr
+  w<-regmatches(text,white_space)
+  title_start<-gregexpr(paste0(title_string,),text)
+  title<-regmatches(text,title_start)
+title
+                    emp_type_start<-gregexpr('   [0-9](M|D|C|H)',substr(text,102,200))
   num_col_start<-gregexpr('   [0-9]',substr(text,102,200))# this should pick up the last 4 cols
   end_point<-gregexpr('\\r\\n',substr(text,1,200))
   wid[[i]]<-c(title_start[[1]][1]-2,

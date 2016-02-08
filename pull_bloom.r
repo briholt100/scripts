@@ -1,5 +1,6 @@
 library(rvest)
 library(XML)
+library(stringr)
 
 ###
 # The following reads the first URL and scrapes the links for the
@@ -102,16 +103,28 @@ text<-as.character(mylist[1])
 r<-gregexpr('\\\\r\\\\n[A-Z]*, \\*[A-Z]* [A-Z]*\\\\t',text)
 regmatches(text,emp_type_start)
 """
-
+grepexpr('')
 ##For 2009:
 wid<-list()
 i=3
-white<-'\\s{3,}'
-Emp_name<-gregexpr('[[:print:]]*\\b, [[:print:]]*\\b',text)
+
+
+Emp_name<-gregexpr('\\n[A-Z]+, |\\n[A-Z]+ [A-Z]+, |\\n[A-Z]+-[A-Z]+, [[:graph:]]* [A-Z]{0,2}  ',text,perl=T)
 employee<-regmatches(text,Emp_name)
 employee
 
-title_string<-'( [[:graph:]]{2,}){2,}'
+
+
+Emp_name<-gregexpr('\\n([[:print:]]*[A-Z]{1}), [[:graph:]]* [[:graph:]]* [A-Z]{0,2}  ',
+                   text
+                   )
+employee<-regmatches(text,Emp_name)
+employee
+
+
+
+
+
 for(i in 1:length(mylist)){
   text<-as.character(mylist[[i]][1])
   white_space<-gregexpr(white,text)

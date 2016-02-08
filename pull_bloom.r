@@ -108,7 +108,8 @@ grepexpr('')
 wid<-list()
 i=3
 
-
+last<-gregexpr('([[:print:]]*),',text)
+lst<-regmatches(text,last)
 Emp_name<-gregexpr('\\n[A-Z]+, |\\n[A-Z]+ [A-Z]+, |\\n[A-Z]+-[A-Z]+, [[:graph:]]* [A-Z]{0,2}  ',text,perl=T)
 employee<-regmatches(text,Emp_name)
 employee

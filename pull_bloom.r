@@ -107,6 +107,17 @@ grepexpr('')
 ##For 2009:
 wid<-list()
 i=3
+spaces<-gregexpr('[[:alnum:]] {4,}[[:alnum:]]',substr(text,1,102))
+s<-regmatches(text,spaces)
+
+#The following does appear to split the columns by spaces numbering more than 4
+space_list<-list()
+for (i in 1:length(spaces[[1]])){
+  space_list[i]<-(substr(text,spaces[[1]][i],
+               spaces[[1]][i]+
+                 attr(spaces[[1]],'match.length')[i]))
+}
+
 
 last<-regexec('([[:print:]]*,)',substr(text,100,400))
 regmatches(text,last)

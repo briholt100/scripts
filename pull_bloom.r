@@ -108,6 +108,9 @@ grepexpr('')
 wid<-list()
 i=3
 
+last<-regexec('([[:print:]]*,)',substr(text,1450,1500))
+regmatches(text,last)
+
 last<-gregexpr('([[:print:]]*,){1}',text)
 lst<-regmatches(text,last)
 Emp_name<-gregexpr('\\n[A-Z]+, |\\n[A-Z]+ [A-Z]+, |\\n[A-Z]+-[A-Z]+, [[:graph:]]* [A-Z]{0,2}  ',text,perl=T)

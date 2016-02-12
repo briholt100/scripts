@@ -107,8 +107,21 @@ grepexpr('')
 ##For 2009:
 wid<-list()
 i=3
-spaces<-gregexpr('[[:alnum:]] {4,}[[:alnum:]]',substr(text,1,102))
-s<-regmatches(text,spaces)
+text<-as.character(mylist[[i]][1])
+
+recursive_replace<-function(text,replace='  ',with= '\t\t'){
+	
+}
+
+text<-gsub('  ','\t',text)
+grep('  ',text)
+text<-gsub('\t\t','\t',text)
+grep('\t\t',text)
+df<-read.delim(textConnection(text),skip=1,stringsAsFactors=F,strip.white=T)
+head(df)
+
+
+
 
 #The following does appear to split the columns by spaces numbering more than 4
 space_list<-list()

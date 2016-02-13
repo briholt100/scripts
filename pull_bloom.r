@@ -61,7 +61,7 @@ for(i in 1:length(mylist)){
               end_point[[1]][2]-num_col_start[[1]][4]+20     )
 }
 
-##For 2011:
+##For 2011:  Note that Z is added to all last names
 wid<-list()
 for(i in 1:length(mylist)){
   text<-as.character(mylist[[i]][1])
@@ -73,7 +73,7 @@ for(i in 1:length(mylist)){
 }
 """
 #2001 has tab deliminted data, name, title, salary, but many have 2 column sets!!!!! fuck off lbloom
-#2003 has tab deliminted data, name, title, salary
+#2003 has tab deliminted data, name, title, salary; also astricks first letter first name
 #2005 has mulit-tab deliminted data, name, title, salary
 #2007 has fwf data, but 6 columns: name, title,  ET-PU, MP, %FT, Salary
 
@@ -96,110 +96,47 @@ for (i in 1:nrow(links)){
 }
 str(mylist[1])
 mylist<-mylist[1]
-############
-#########
-"""
-text<-as.character(mylist[1])
-r<-gregexpr('\\\\r\\\\n[A-Z]*, \\*[A-Z]* [A-Z]*\\\\t',text)
-regmatches(text,emp_type_start)
-"""
-grepexpr('')
+
 ##For 2009:
-wid<-list()
-i=3
-text<-as.character(mylist[[i]][1])
 
-recursive_replace<-function(text,replace='  ',with= '\t\t'){
-	
+recursive_replace<-function(text=text){
+  text<-gsub(' {2}',' ',text)
+  while (grepl(' {2}',text)){
+    text<-gsub(' {2}','\t',text)
+  }
+  while (grepl('\t\t',text)){
+    text<-gsub('\t\t','\t',text)
+    print (grepl('\t\t',text))
+  }
+  return(text)
 }
-
-text<-gsub('  ','\t',text)
-grep('  ',text)
-text<-gsub('\t\t','\t',text)
-grep('\t\t',text)
-df<-read.delim(textConnection(text),skip=1,stringsAsFactors=F,strip.white=T)
-head(df)
-
-
-
-
-#The following does appear to split the columns by spaces numbering more than 4
-space_list<-list()
-for (i in 1:length(spaces[[1]])){
-  space_list[i]<-(substr(text,spaces[[1]][i],
-               spaces[[1]][i]+
-                 attr(spaces[[1]],'match.length')[i]))
-}
-
-
-last<-regexec('([[:print:]]*,)',substr(text,100,400))
-regmatches(text,last)
-
-last<-gregexpr('([[:print:]]*,){1}',text)
-lst<-regmatches(text,last)
-Emp_name<-gregexpr('(\\n[A-Z]+[ -]*[A-Z]*,)',text,perl=T)
-Emp_name<-gregexpr('[[:print:]]*  ',text,perl=T)
-
-employee<-regmatches(text,Emp_name)
-employee
-
-
-, [A-Z]* [[:graph:]]* [A-Z]{0,2})
-
-
-Emp_name<-gregexpr('\\n([[:print:]]*[A-Z]{1}), [[:graph:]]* [[:graph:]]* [A-Z]{0,2}  ',
-                   text
-                   )
-employee<-regmatches(text,Emp_name)
-employee
-
-
-
-
-
-for(i in 1:length(mylist)){
-  text<-as.character(mylist[[i]][1])
-  white_space<-gregexpr(white,text)
-  attr(white_space[[1]], 'match.length')[1]
-
-  ########check stringr
-  w<-regmatches(text,white_space)
-  title_start<-gregexpr(paste0(title_string,),text)
-  title<-regmatches(text,title_start)
-title
-                    emp_type_start<-gregexpr('   [0-9](M|D|C|H)',substr(text,102,200))
-  num_col_start<-gregexpr('   [0-9]',substr(text,102,200))# this should pick up the last 4 cols
-  end_point<-gregexpr('\\r\\n',substr(text,1,200))
-  wid[[i]]<-c(title_start[[1]][1]-2,
-              num_col_start[[1]][1]-title_start[[1]][1],
-              num_col_start[[1]][2]-num_col_start[[1]][1],
-              num_col_start[[1]][3]-num_col_start[[1]][2],
-              8,#num_col_start[[1]][4]-num_col_start[[1]][3],
-              end_point[[1]][2]-num_col_start[[1]][4]+20     )
-
-}
-wid
-i=1
-trial<-read.fwf(textConnection(mylist[[i]]),widths=wid[[i]],skip=2,strip.white=T)
-head(trial)
-
-
 
 # The following loops through each element of 'mylist',
     #  adds a 4 column dataframe to newly created 'df_list'
 
-
+######
+# This works except for UW, b/c the last few columns are separated by 2 spaces
+# which makes my recursive replace backfire in the first iteration.
+i=1
 df_list<-list()
 for (i in 1:length(mylist)){
-  df_list[[i]]<-cbind(mylist[[i]][2],read.fwf(textConnection(mylist[[i]][1]),  # fwf also applies
-                                         header=F,
-                                         strip.white=T,
-                                         widths=wid[i],
-                                         skip=2,
-                                         col.names=c('Employee','Job_title','et','mp','percent_ft','Salary')
-  ))
-
+  text<-as.character(mylist[[i]][1])
+  text<-gsub('ET-PU  MP  %FT','ET-PU     MP     %FT',text)
+  text<-recursive_replace(text=text)
+  df_list[[i]]<-cbind(mylist[[i]][2],read.delim(textConnection(text),
+              header=F,
+              strip.white=T,
+              skip=2)
+              )
+  if(length(df_list[[i]])>7){
+    ifelse(sum(is.na(df_list[[i]][,8]))!=nrow(df_list[[i]]),
+      print("error in read.delim; data in extra column"),
+      df_list[[i]]<-df_list[[i]][,-8])
+    }
 }
+
+#col.names=c('Employee','Job_title','et','mp','percent_ft','Salary'
+
 final_df<-do.call("rbind",df_list)  # this converts df_list into a dataframe.
 colnames(final_df)<-c('Institution','Employee','Job_title','et','mp','percent_ft','Salary')
 final_df$Salary<-as.numeric(final_df$Salary)

@@ -117,9 +117,15 @@ recursive_replace<-function(text=text){
 ######
 # This works except for UW, b/c the last few columns are separated by 2 spaces
 # which makes my recursive replace backfire in the first iteration.
+s<-readLines(textConnection(mylist[[3]][1]))
+
+Do bunch of gsubs
+
+s.df<-read.delim(textConnection(s),header=F,skip=2,strip.white=T,stringsAsFactors=F)
+
 i=1
 df_list<-list()
-for (i in 1:length(mylist)){
+for (i in 2:length(mylist)){
   text<-as.character(mylist[[i]][1])
   text<-gsub('ET-PU  MP  %FT','ET-PU     MP     %FT',text)
   text<-recursive_replace(text=text)

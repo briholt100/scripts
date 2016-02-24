@@ -98,7 +98,7 @@ str(mylist[1])
 mylist<-mylist[1]
 
 ##For 2009:
-
+text<-as.character(mylist[[i]][1])
 recursive_replace<-function(text=text){
   text<-gsub(' {2}',' ',text)
   while (grepl(' {2}',text)){
@@ -119,7 +119,9 @@ recursive_replace<-function(text=text){
 # which makes my recursive replace backfire in the first iteration.
 s<-readLines(textConnection(mylist[[3]][1]))
 
-Do bunch of gsubs
+#Do bunch of gsubs using recursive_replace
+
+s<-recursive_replace(textConnection(mylist[[3]][1]))
 
 s.df<-read.delim(textConnection(s),header=F,skip=2,strip.white=T,stringsAsFactors=F)
 

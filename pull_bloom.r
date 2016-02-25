@@ -127,7 +127,7 @@ s.df<-read.delim(textConnection(s),header=F,skip=2,strip.white=T,stringsAsFactor
 
 i=1
 df_list<-list()
-for (i in 2:length(mylist)){
+for (i in 1:length(mylist)){
   text<-as.character(mylist[[i]][1])
   text<-gsub('ET-PU  MP  %FT','ET-PU     MP     %FT',text)
   text<-recursive_replace(text=text)

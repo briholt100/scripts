@@ -96,11 +96,11 @@ for (i in 1:nrow(links)){
 }
 str(mylist[1])
 mylist<-mylist[1]
-
+i=1
 ##For 2009:
 text<-as.character(mylist[[i]][1])
 recursive_replace<-function(text=text){
-  text<-gsub(' {2}',' ',text)
+  text<-gsub('([[:alpha:]]) {2}([[:alpha:]])','\1 \2',text)
   while (grepl(' {2}',text)){
     text<-gsub(' {2}','\t',text)
   }
@@ -121,10 +121,10 @@ s<-readLines(textConnection(mylist[[3]][1]))
 
 #Do bunch of gsubs using recursive_replace
 
-s<-recursive_replace(textConnection(mylist[[3]][1]))
+s<-recursive_replace(textConnection(text))
 
 s.df<-read.delim(textConnection(s),header=F,skip=2,strip.white=T,stringsAsFactors=F)
-
+head(s.df)
 i=1
 df_list<-list()
 for (i in 1:length(mylist)){
@@ -134,7 +134,8 @@ for (i in 1:length(mylist)){
   df_list[[i]]<-cbind(mylist[[i]][2],read.delim(textConnection(text),
               header=F,
               strip.white=T,
-              skip=2)
+              skip=2,
+              stringsAsFactors=F)
               )
   if(length(df_list[[i]])>7){
     ifelse(sum(is.na(df_list[[i]][,8]))!=nrow(df_list[[i]]),

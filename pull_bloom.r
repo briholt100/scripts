@@ -125,8 +125,8 @@ for(i in 1:length(mylist)){
   )
 }
 
-final_df<-do.call("rbind",df_list)  # this converts df_list into a dataframe.
-colnames(final_df)<-c('Institution','Employee','Job_title','Salary')
-final_df$Salary<-as.numeric(final_df$Salary)
-final_df<-final_df[(is.na(final_df$Salary))==F,]
+2011_final_df<-do.call("rbind",df_list)  # this converts df_list into a dataframe.
+colnames(2011_final_df)<-c('Institution','Employee','Job_title','Salary')
+2011_final_df$Salary<-as.numeric(2011_final_df$Salary)
+2011_final_df<-2011_final_df[(is.na(2011_final_df$Salary))==F,]
 

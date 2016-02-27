@@ -81,28 +81,6 @@ final_df<-final_df[(is.na(final_df$Salary))==F,]
 
 
 
-
-##For 2011:  Note that Z is added to all last names
-wid<-list()
-for(i in 1:length(mylist)){
-  text<-as.character(mylist[[i]][1])
-  title_start<-gregexpr('  [A-Z]',substr(text,1,200))
-  #name_width<-gregexpr('^+',test)  OY, THIS ISN'T EVEN NEEDED
-  sal_start<-gregexpr(' [0-9]',substr(text,1,200))
-  wid[[i]]<-c(title_start[[1]][1]-3,sal_start[[1]][1]-title_start[[1]][1]+5,40)
-  ###Notice that sal_width might need to pick the 2nd element [[1]][2]
-}
-df_list<-list()
-for(i in 1:length(mylist)){
-  text<-as.character(mylist[[i]][1])
-  df_list[[i]]<-cbind(mylist[[i]][2],read.fwf(textConnection(text),widths=wid[[i]],
-                                                header=F,
-                                                strip.white=T,
-                                                skip=2,
-                                                stringsAsFactors=F)
-  )
-
-
 #2001 has tab deliminted data, name, title, salary, but many have 2 column sets!!!!! fuck off lbloom
 #2003 has tab deliminted data, name, title, salary; also astricks first letter first name
 #2005 has mulit-tab deliminted data, name, title, salary
@@ -124,4 +102,31 @@ for (i in 1:nrow(links)){
   mylist[[i]]<-text  # This puts the text into each element
   mylist[[i]][2]<-links[i,1] # Puts agency info into the 2nd element of the list
 }
+
+
+##For 2011:  Note that Z is added to all last names
+wid<-list()
+for(i in 1:length(mylist)){
+  text<-as.character(mylist[[i]][1])
+  title_start<-gregexpr('  [A-Z]',substr(text,1,200))
+  #name_width<-gregexpr('^+',test)  OY, THIS ISN'T EVEN NEEDED
+  sal_start<-gregexpr(' [0-9]',substr(text,1,200))
+  wid[[i]]<-c(title_start[[1]][1]-3,sal_start[[1]][1]-title_start[[1]][1]+5,40)
+  ###Notice that sal_width might need to pick the 2nd element [[1]][2]
+}
+df_list<-list()
+for(i in 1:length(mylist)){
+  text<-as.character(mylist[[i]][1])
+  df_list[[i]]<-cbind(mylist[[i]][2],read.fwf(textConnection(text),widths=wid[[i]],
+                                                header=F,
+                                                strip.white=T,
+                                                skip=2,
+                                                stringsAsFactors=F)
+  )
+}
+
+final_df<-do.call("rbind",df_list)  # this converts df_list into a dataframe.
+colnames(final_df)<-c('Institution','Employee','Job_title','Salary')
+final_df$Salary<-as.numeric(final_df$Salary)
+final_df<-final_df[(is.na(final_df$Salary))==F,]
 

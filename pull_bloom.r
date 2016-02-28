@@ -1,3 +1,8 @@
+##
+# After links are made, the creation of 'mylist' is used,
+# then followed by tailored read.table commands
+##
+
 library(rvest)
 library(XML)
 library(stringr)
@@ -39,7 +44,7 @@ str(links)
 
 #2011...done....2011 has fwf data, name, title, salary
 #2009...done....  6 columns: name, title,  ET-PU, MP, %FT, Salary
-"""
+
 ############
 ########
 ###For 2009:
@@ -74,10 +79,9 @@ for (i in 1:length(mylist)){
   }
 }
 
-final_df<-do.call("rbind",df_list)  # this converts df_list into a dataframe.
-colnames(final_df)<-c('Institution','Employee','Job_title','et','mp','percent_ft','Salary')
-final_df<-final_df[(is.na(final_df$Salary))==F,]
-"""
+final_df_2009<-do.call("rbind",df_list)  # this converts df_list into a dataframe.
+colnames(final_df_2009)<-c('Institution','Employee','Job_title','et','mp','percent_ft','Salary')
+final_df_2009<-final_df_2009[(is.na(final_df_2009$Salary))==F,]
 
 
 
@@ -88,9 +92,11 @@ final_df<-final_df[(is.na(final_df$Salary))==F,]
 
 
 #  Let's start with 2009 and move back, go back to 2001
-links<-links[ grep("2011",links),]
+links<-links[ grep("2009",links),]
 links<-links[-c(1:3),]
 links<-links[c(1:3),]
+
+
 # The following loops through 'links', using the URL to read the html
 # and pull the text out of the <pre> tag
 # then adds it to 'mylist', a nested list
@@ -125,8 +131,9 @@ for(i in 1:length(mylist)){
   )
 }
 
-2011_final_df<-do.call("rbind",df_list)  # this converts df_list into a dataframe.
-colnames(2011_final_df)<-c('Institution','Employee','Job_title','Salary')
-2011_final_df$Salary<-as.numeric(2011_final_df$Salary)
-2011_final_df<-2011_final_df[(is.na(2011_final_df$Salary))==F,]
+final_df_2011<-do.call("rbind",df_list)  # this converts df_list into a dataframe.
+colnames(final_df_2011)<-c('Institution','Employee','Job_title','Salary')
+final_df_2011$Salary<-as.numeric(final_df_2011$Salary)
+final_df_2011<-final_df_2011[(is.na(final_df_2011$Salary))==F,]
+final_df_2011$Employee<-gsub('Z,',',',final_df_2011$Employee)
 

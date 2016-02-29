@@ -15,6 +15,7 @@ library(stringr)
 d<-"http://lbloom.net/index"   # for "code book" see http://lbloom.net/dshsz.html
 d_yr<-c('01','03','05','07','09','11')
 d_pg<-".html"
+
 page_list<-list()
 for (i in 1:length(d_yr)){
      url<-paste0(d,d_yr[i],d_pg) # Gets all links in code using XML::getHTMLLink
@@ -82,8 +83,7 @@ for (i in 1:length(mylist)){
 final_df_2009<-do.call("rbind",df_list)  # this converts df_list into a dataframe.
 colnames(final_df_2009)<-c('Institution','Employee','Job_title','et','mp','percent_ft','Salary')
 final_df_2009<-final_df_2009[(is.na(final_df_2009$Salary))==F,]
-
-
+final_df_2009<-final_df_2009[,c(1:3,7,4:6)]
 
 #2001 has tab deliminted data, name, title, salary, but many have 2 column sets!!!!! fuck off lbloom
 #2003 has tab deliminted data, name, title, salary; also astricks first letter first name
@@ -136,4 +136,12 @@ colnames(final_df_2011)<-c('Institution','Employee','Job_title','Salary')
 final_df_2011$Salary<-as.numeric(final_df_2011$Salary)
 final_df_2011<-final_df_2011[(is.na(final_df_2011$Salary))==F,]
 final_df_2011$Employee<-gsub('Z,',',',final_df_2011$Employee)
+final_df_2011$et<-NA
+final_df_2011$mp<-NA
+final_df_2011$percent_ft<-NA
+head(final_df_2011)
 
+df<-rbind(final_df_2009,final_df_2011)
+str(df)
+table(is.na(df$Salary))
+df[is.na(df$Salary)==T,]

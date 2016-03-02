@@ -100,14 +100,21 @@ links<-links[c(1:3),]
 # The following loops through 'links', using the URL to read the html
 # and pull the text out of the <pre> tag
 # then adds it to 'mylist', a nested list
-mylist<-list()
-for (i in 1:nrow(links)){
-  text<-links[i,2] %>% url %>% read_html() %>%
-    html_nodes(xpath= '//pre')%>%
-    html_text(trim=F) #this pulls out the actual pre text
-  mylist[[i]]<-text  # This puts the text into each element
-  mylist[[i]][2]<-links[i,1] # Puts agency info into the 2nd element of the list
+make_list<-function(links,year){
+  mylist<-list()
+  link<-links[grep(year,links),]
+  for(i in 1:nrow(link)){
+    text<-link[i,2] %>% url %>% read_html() %>%
+      html_nodes(xpath= '//pre') %>%
+      html_text(trim=F) #this pulls out the actual pre text
+    mylist[[i]]<-text  # This puts the text into each element
+    mylist[[i]][2]<-link[i,1] # Puts agency info into the 2nd element of the list
+  }
+  return(mylist)
 }
+
+mylist<-make_list(links,'2009')
+str(mylist)
 
 
 ##For 2011:  Note that Z is added to all last names

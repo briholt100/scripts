@@ -16,7 +16,7 @@ d<-"http://lbloom.net/index"   # for "code book" see http://lbloom.net/dshsz.htm
 d_yr<-c('01','03','05','07','09','11')
 d_pg<-".html"
 
-page_list<-list()
+page_list<-vector("list",length(d_yr))
 for (i in 1:length(d_yr)){
      url<-paste0(d,d_yr[i],d_pg) # Gets all links in code using XML::getHTMLLink
      bloom<-htmlTreeParse(url,useInternalNodes=T) # for xpath to work below, 'T'
@@ -28,7 +28,7 @@ searchTerms<- "//a[contains(text(),' Col ')] |
 //a[contains(text(),'Olympic Co')] |
 //a[contains(text(),'Univ ')] "
 
-links<-list()
+links<-vector("list",length(page_list))
 for (i in 1:length(page_list)){
        # This pulls the <a> names of link
   links[[i]]<-cbind(xpathSApply(page_list[[i]],searchTerms,xmlValue),
@@ -52,8 +52,8 @@ str(links)
 
 recursive_replace<-function(text=text){
   text<-gsub('([[:alpha:]]) {2}([[:alpha:]])','\1 \2',text)
-  while (grepl(' {2}',text)){
-    text<-gsub(' {2}','\t',text)
+    while (grepl(' {2}',text)){
+    text<-gsub(' {2}','\t',tex)t
   }
   while (grepl('\t\t',text)){
     text<-gsub('\t\t','\t',text)
@@ -101,8 +101,8 @@ links<-links[c(1:3),]
 # and pull the text out of the <pre> tag
 # then adds it to 'mylist', a nested list
 make_list<-function(links,year){
-  mylist<-list()
   link<-links[grep(year,links),]
+  mylist<-vector("list", length=nrow(link))
   for(i in 1:nrow(link)){
     text<-link[i,2] %>% url %>% read_html() %>%
       html_nodes(xpath= '//pre') %>%
@@ -118,7 +118,7 @@ str(mylist)
 
 
 ##For 2011:  Note that Z is added to all last names
-wid<-list()
+wid<-vector("list",length(mylist))
 for(i in 1:length(mylist)){
   text<-as.character(mylist[[i]][1])
   title_start<-gregexpr('  [A-Z]',substr(text,1,200))

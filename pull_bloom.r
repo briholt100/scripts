@@ -66,6 +66,7 @@ df_list<-list()
 for (i in 1:length(mylist)){
   text<-as.character(mylist[[i]][1])
   text<-gsub('ET-PU  MP  %FT','ET-PU     MP     %FT',text)
+  #if school is UW, then do X, then skip recurisive, else, recursive
   text<-recursive_replace(text=text)
   df_list[[i]]<-cbind(mylist[[i]][2],read.delim(textConnection(text),
                                                 header=F,

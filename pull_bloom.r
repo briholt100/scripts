@@ -54,7 +54,7 @@ make_list<-function(links,year){
   return(mylist)
 }
 
-mylist<-make_list(links,'2009')
+mylist<-make_list(links,'2011')
 str(mylist)
 
 
@@ -115,18 +115,25 @@ final_df_2009<-do.call("rbind",df_list)  # this converts df_list into a datafram
 colnames(final_df_2009)<-c('Institution','Employee','Job_title','et','mp','percent_ft','Salary')
 final_df_2009<-final_df_2009[(is.na(final_df_2009$Salary))==F,]
 final_df_2009<-final_df_2009[,c(1:3,7,4:6)]
-
+##########
+##########
+##########
 ##For 2011:  Note that Z is added to all last names
+
+#To fix the calc of 'wid' below, remove all characters occuring before "Name" because there are different \r\n combos
+
+
 wid<-vector("list",length(mylist))
 for(i in 1:length(mylist)){
   text<-as.character(mylist[[i]][1])
   title_start<-gregexpr(' Job Title',text)
   sal_start<-gregexpr('2010 Gross',text)
   sal_end<-gregexpr('2010 Gross',text)
-  wid[[i]]<-c(title_start[[1]][1]-2,sal_start[[1]][1]+3-title_start[[1]][1]-3,60)
+  wid[[i]]<-c(title_start[[1]][1]-1,sal_start[[1]][1]+3-title_start[[1]][1]-3,60)
   ###Notice that sal_width might need to pick the 2nd element [[1]][2]
 }
-wid[[1]]
+l[[1]]
+wid[[36]]
 
 df_list<-list()
 for(i in 1:length(mylist)){

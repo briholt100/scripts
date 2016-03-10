@@ -122,6 +122,14 @@ final_df_2009<-final_df_2009[,c(1:3,7,4:6)]
 
 #To fix the calc of 'wid' below, remove all characters occuring before "Name" because there are different \r\n combos
 
+for (i in 1:length(mylist)){
+  string<-substr(mylist[[i]][1],1,20)
+  m<-gregexpr('((\r)*(\n)*)*N',string)
+  print(mylist[[i]][2])
+  print(m)
+  print(regmatches(string,m))
+}
+
 
 wid<-vector("list",length(mylist))
 for(i in 1:length(mylist)){
@@ -132,7 +140,7 @@ for(i in 1:length(mylist)){
   wid[[i]]<-c(title_start[[1]][1]-1,sal_start[[1]][1]+3-title_start[[1]][1]-3,60)
   ###Notice that sal_width might need to pick the 2nd element [[1]][2]
 }
-l[[1]]
+wid[[1]]
 wid[[36]]
 
 df_list<-list()

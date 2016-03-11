@@ -31,13 +31,8 @@ for i in xrange(n_trials):
             groupA.append(draw) 
         else:
             groupB.append(draw)
-<<<<<<< HEAD
-    #print "\nGroup A looks like " + str(groupA)
-    #print "Group B looks like " + str(groupB)
-=======
     print "\nGroup A looks like " + str(groupA)
     print "Group B looks like " + str(groupB)
->>>>>>> 547ec09e55bea8867ea110a10c49b2e44b0fd595
 
     if sum(groupA)==2 or sum(groupB)==2: #if sum's to 2, then both '1's are in same group
         select_tagged +=1

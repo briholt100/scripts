@@ -130,14 +130,17 @@ for (i in 1:length(mylist)){
   print(regmatches(string,m))
 }
 
-
 wid<-vector("list",length(mylist))
 for(i in 1:length(mylist)){
   text<-as.character(mylist[[i]][1])
+  r<-regexpr("^.*\nName ",t)
+  carriage_ret_length<-attr(r,'match.length') - 4
   title_start<-gregexpr(' Job Title',text)
   sal_start<-gregexpr('2010 Gross',text)
   sal_end<-gregexpr('2010 Gross',text)
-  wid[[i]]<-c(title_start[[1]][1]-1,sal_start[[1]][1]+3-title_start[[1]][1]-3,60)
+  wid[[i]]<-c(title_start[[1]][1]-2,
+              sal_start[[1]][1]-carriage_ret_length-title_start[[1]][1]+1,
+              60)
   ###Notice that sal_width might need to pick the 2nd element [[1]][2]
 }
 wid[[1]]

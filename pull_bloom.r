@@ -133,7 +133,7 @@ for (i in 1:length(mylist)){
 wid<-vector("list",length(mylist))
 for(i in 1:length(mylist)){
   text<-as.character(mylist[[i]][1])
-  r<-regexpr("^.*\nName ",t)
+  r<-regexpr("^.*\nName ",text)
   carriage_ret_length<-attr(r,'match.length') - 4
   title_start<-gregexpr(' Job Title',text)
   sal_start<-gregexpr('2010 Gross',text)
@@ -145,6 +145,23 @@ for(i in 1:length(mylist)){
 }
 wid[[1]]
 wid[[36]]
+
+
+tab_insert<-function(text=text){
+  http://stackoverflow.com/questions/13863599/insert-a-character-at-a-specific-location-in-a-string
+  text<-gsub('(.){spaces after \r\n}','\1\t',text)
+  while (grepl(' {2}',text)){
+    text<-gsub(' {2}','\t',text)
+  }
+  while (grepl('\t\t',text)){
+    text<-gsub('\t\t','\t',text)
+    print (grepl('\t\t',text))
+  }
+  return(text)
+}
+
+
+
 
 df_list<-list()
 for(i in 1:length(mylist)){

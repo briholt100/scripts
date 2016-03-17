@@ -121,17 +121,7 @@ final_df_2009<-final_df_2009[,c(1:3,7,4:6)]
 ##########
 ##For 2011:  Note that Z is added to all last names
 
-#To fix the calc of 'wid' below, remove all characters occuring before "Name" because there are different \r\n combos
-
-for (i in 1:length(mylist)){
-  string<-substr(mylist[[i]][1],1,20)
-  m<-gregexpr('((\r)*(\n)*)*N',string)
-  print(mylist[[i]][2])
-  print(m)
-  print(regmatches(string,m))
-}
-
-wid<-vector("list",length(mylist))
+wid<-vector("list",length(mylist))  # this simply works for finding the name.  Now salary and title need distinguishing
 for(i in 1:length(mylist)){
   text<-as.character(mylist[[i]][1])
   title_start<-gregexpr('Job Title',text)
@@ -144,17 +134,45 @@ for(i in 1:length(mylist)){
 wid[[1]]
 wid[[36]]
 
-n<-vector("integer",length(sb))
+n<-vector("integer",length(mylist))
 for (i in 1:length(wid)){
   n[i]<-as.integer(wid[[i]][1]-1) #the 'minus' 1 moves the cursor to just before the beginning of the word
 }
+n
 
-rhs<-'\\1\t'
-for (i in 1:length(sb)){
-  lhs<-paste0('(\n.{', n[i],'})')
-  sb[i]<-gsub(lhs,rhs,sb[i])  #this works.  
-  sb[i]<-recursive_replace(text=sb[i])
+
+recursive_replace<-function(text=text){
+  text<-gsub('([[:alpha:]]) {2}([[:alpha:]])','\1 \2',text)
+  while (grepl(' {2}',text)){
+    text<-gsub(' {2}','\t',text)
+  }
+  while (grepl('\t\t|\t \t',text)){
+    text<-gsub('\t\t|\t \t','\t',text)
+    print (grepl('\t\t|\t \t',text))
+  }
+  return(text)
 }
+i=1
+#what follows below is a loop that addes a tab chara to a specific numerical position in mylist[[i]], and converts double spaces into single tabs
+rhs<-'\\1\t'
+for (i in 1:length(mylist)){
+  lhs<-paste0('(\n.{', n[i],'})')
+  mylist[[i]][1]<-gsub(lhs,rhs,mylist[[i]][1])  #this works.  
+  mylist[[i]][1]<-recursive_replace(text=mylist[[i]][1])  #these last two lines might be resource hungry. way to simplfly?
+}
+
+text<-mylist[[i]][1]
+tail(read.delim(textConnection(text),
+           header=T,
+           strip.white=T,
+           skip=1,
+           stringsAsFactors=F),30)
+
+
+###The code above works.  Next, use do.call to perform this function on each element of mylist
+###then consider a better recursive replacing of \t, using a base case of recurision?
+
+
 
 
 df_list<-list()

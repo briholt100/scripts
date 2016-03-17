@@ -85,12 +85,13 @@ recursive_replace<-function(text=text){
   while (grepl(' {2}',text)){
     text<-gsub(' {2}','\t',text)
   }
-  while (grepl('\t\t',text)){
-    text<-gsub('\t\t','\t',text)
-    print (grepl('\t\t',text))
+  while (grepl('\t\t|\t \t',text)){
+    text<-gsub('\t\t|\t \t','\t',text)
+    print (grepl('\t\t|\t \t',text))
   }
   return(text)
 }
+
 
 df_list<-list()
 for (i in 1:length(mylist)){
@@ -133,34 +134,27 @@ for (i in 1:length(mylist)){
 wid<-vector("list",length(mylist))
 for(i in 1:length(mylist)){
   text<-as.character(mylist[[i]][1])
-  r<-regexpr("^.*\nName ",text)
-  carriage_ret_length<-attr(r,'match.length') - 4
-  title_start<-gregexpr(' Job Title',text)
+  title_start<-gregexpr('Job Title',text)
   sal_start<-gregexpr('2010 Gross',text)
   sal_end<-gregexpr('2010 Gross',text)
-  wid[[i]]<-c(title_start[[1]][1]-2,
-              sal_start[[1]][1]-carriage_ret_length-title_start[[1]][1]+1,
+  wid[[i]]<-c(title_start[[1]][1]-2,  # the 'minus 2' accounts for some carraiage return, hidden characters at front of line.
+              #sal_start[[1]][1]-title_start[[1]][1],
               60)
-  ###Notice that sal_width might need to pick the 2nd element [[1]][2]
 }
 wid[[1]]
 wid[[36]]
 
-
-tab_insert<-function(text=text){
-  http://stackoverflow.com/questions/13863599/insert-a-character-at-a-specific-location-in-a-string
-  text<-gsub('(.){spaces after \r\n}','\1\t',text)
-  while (grepl(' {2}',text)){
-    text<-gsub(' {2}','\t',text)
-  }
-  while (grepl('\t\t',text)){
-    text<-gsub('\t\t','\t',text)
-    print (grepl('\t\t',text))
-  }
-  return(text)
+n<-vector("integer",length(sb))
+for (i in 1:length(wid)){
+  n[i]<-as.integer(wid[[i]][1]-1) #the 'minus' 1 moves the cursor to just before the beginning of the word
 }
 
-
+rhs<-'\\1\t'
+for (i in 1:length(sb)){
+  lhs<-paste0('(\n.{', n[i],'})')
+  sb[i]<-gsub(lhs,rhs,sb[i])  #this works.  
+  sb[i]<-recursive_replace(text=sb[i])
+}
 
 
 df_list<-list()

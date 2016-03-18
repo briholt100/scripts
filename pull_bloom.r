@@ -160,6 +160,9 @@ for (i in 1:length(mylist)){
 ##Item #6, eastern state has a case where there are no spaces between end of name and beginning of job title.
 #But this does't explain why for that school, the job start number is '34' when on note pad it's 33.  job start number should be on '32' (33-1) 
 
+for ( i in 4:7)(print(substr(mylist_bak[[i]][1],1,n[i]+4)))
+
+
 #Next, use do.call to perform this function on each element of mylist
 
 

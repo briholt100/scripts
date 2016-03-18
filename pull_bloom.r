@@ -55,6 +55,8 @@ make_list<-function(links,year){
 }
 
 mylist<-make_list(links,'2011')
+mylist_bak<-mylist
+#mylist<-mylist_bak
 str(mylist)
 
 
@@ -93,6 +95,7 @@ recursive_replace<-function(text=text){
 }
 
 
+
 df_list<-list()
 for (i in 1:length(mylist)){
   text<-as.character(mylist[[i]][1])
@@ -125,52 +128,45 @@ wid<-vector("list",length(mylist))  # this simply works for finding the name.  N
 for(i in 1:length(mylist)){
   text<-as.character(mylist[[i]][1])
   title_start<-gregexpr('Job Title',text)
-  sal_start<-gregexpr('2010 Gross',text)
+  sal_start<-gregexpr('2010 Gross Earnings',text)
   sal_end<-gregexpr('2010 Gross',text)
   wid[[i]]<-c(title_start[[1]][1]-2,  # the 'minus 2' accounts for some carraiage return, hidden characters at front of line.
-              #sal_start[[1]][1]-title_start[[1]][1],
-              60)
+              sal_start[[1]][1]+15)
 }
 wid[[1]]
 wid[[36]]
 
 n<-vector("integer",length(mylist))
+s<-vector("integer",length(mylist))
 for (i in 1:length(wid)){
   n[i]<-as.integer(wid[[i]][1]-1) #the 'minus' 1 moves the cursor to just before the beginning of the word
+  s[i]<-as.integer(wid[[i]][2])
 }
 n
+s
 
 
-recursive_replace<-function(text=text){
-  text<-gsub('([[:alpha:]]) {2}([[:alpha:]])','\1 \2',text)
-  while (grepl(' {2}',text)){
-    text<-gsub(' {2}','\t',text)
-  }
-  while (grepl('\t\t|\t \t',text)){
-    text<-gsub('\t\t|\t \t','\t',text)
-    print (grepl('\t\t|\t \t',text))
-  }
-  return(text)
-}
-i=1
 #what follows below is a loop that addes a tab chara to a specific numerical position in mylist[[i]], and converts double spaces into single tabs
 rhs<-'\\1\t'
 for (i in 1:length(mylist)){
-  lhs<-paste0('(\n.{', n[i],'})')
-  mylist[[i]][1]<-gsub(lhs,rhs,mylist[[i]][1])  #this works.  
+  lhs1<-paste0('(\n.{', n[i],'})')
+  lhs2<-paste0('(\n.{', s[i],'})')
+  mylist[[i]][1]<-gsub(lhs1,rhs,mylist[[i]][1])  #this adds a tab after last space before title.
+  mylist[[i]][1]<-gsub(lhs2,rhs,mylist[[i]][1])  #this adds a tab after last space before salary
   mylist[[i]][1]<-recursive_replace(text=mylist[[i]][1])  #these last two lines might be resource hungry. way to simplfly?
 }
 
+###The code above is inconsistently creating tabs.  See i=4, 5, 6,7; check wid and the gsub 'n' position on notepad
+#Next, use do.call to perform this function on each element of mylist
+###then consider a better recursive replacing of \t, using a base case of recurision?
+i=6
 text<-mylist[[i]][1]
-tail(read.delim(textConnection(text),
-           header=T,
+head(read.delim(textConnection(text),
+           header=F,
            strip.white=T,
            skip=1,
-           stringsAsFactors=F),30)
+           stringsAsFactors=F))
 
-
-###The code above works.  Next, use do.call to perform this function on each element of mylist
-###then consider a better recursive replacing of \t, using a base case of recurision?
 
 
 
@@ -178,11 +174,11 @@ tail(read.delim(textConnection(text),
 df_list<-list()
 for(i in 1:length(mylist)){
   text<-as.character(mylist[[i]][1])
-  df_list[[i]]<-cbind(mylist[[i]][2],read.fwf(textConnection(text),widths=wid[[i]],
-                                              header=F,
-                                              strip.white=T,
-                                              skip=2,
-                                              stringsAsFactors=F)
+  df_list[[i]]<-cbind(mylist[[i]][2],read.delim(textConnection(text),
+                                                header=F,
+                                                strip.white=T,
+                                                skip=2,
+                                                stringsAsFactors=F)
   )
 }
 

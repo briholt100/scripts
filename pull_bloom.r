@@ -157,7 +157,12 @@ for (i in 1:length(mylist)){
 }
 
 ###The code above is inconsistently creating tabs.  See i=4, 5, 6,7; check wid and the gsub 'n' position on notepad
+##Item #6, eastern state has a case where there are no spaces between end of name and beginning of job title.
+#But this does't explain why for that school, the job start number is '34' when on note pad it's 33.  job start number should be on '32' (33-1) 
+
 #Next, use do.call to perform this function on each element of mylist
+
+
 ###then consider a better recursive replacing of \t, using a base case of recurision?
 i=6
 text<-mylist[[i]][1]

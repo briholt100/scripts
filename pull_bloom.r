@@ -178,6 +178,11 @@ head(read.delim(textConnection(text),
 
 
 
+if(length(df_list[[i]])>4){
+  ifelse(sum(is.na(df_list[[i]][,5]))!=nrow(df_list[[i]]),
+         print("error in read.delim; data in extra column"),
+         df_list[[i]]<-df_list[[i]][,-5])
+}
 
 df_list<-list()
 for(i in 1:length(mylist)){
@@ -188,6 +193,7 @@ for(i in 1:length(mylist)){
                                                 skip=2,
                                                 stringsAsFactors=F)
   )
+  
 }
 
 final_df_2011<-do.call("rbind",df_list)  # this converts df_list into a dataframe.

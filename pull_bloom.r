@@ -123,6 +123,8 @@ final_df_2009<-final_df_2009[,c(1:3,7,4:6)]
 ##########
 ##########
 ##For 2011:  Note that Z is added to all last names
+#mylist<-mylist_bak
+#I think the culprit is those \r\n multiples.  Maybe first do a recursive replace on all \r\n duplicates into 1, then proceed
 
 wid<-vector("list",length(mylist))  # this simply works for finding the name.  Now salary and title need distinguishing
 for(i in 1:length(mylist)){
@@ -131,7 +133,7 @@ for(i in 1:length(mylist)){
   sal_start<-gregexpr('2010 Gross Earnings',text)
   sal_end<-gregexpr('2010 Gross',text)
   wid[[i]]<-c(title_start[[1]][1]-2,  # the 'minus 2' accounts for some carraiage return, hidden characters at front of line.
-              sal_start[[1]][1]+15)
+              sal_start[[1]][1]+17)
 }
 wid[[1]]
 wid[[36]]
@@ -153,21 +155,21 @@ for (i in 1:length(mylist)){
   lhs2<-paste0('(\n.{', s[i],'})')
   mylist[[i]][1]<-gsub(lhs1,rhs,mylist[[i]][1])  #this adds a tab after last space before title.
   mylist[[i]][1]<-gsub(lhs2,rhs,mylist[[i]][1])  #this adds a tab after last space before salary
-  mylist[[i]][1]<-recursive_replace(text=mylist[[i]][1])  #these last two lines might be resource hungry. way to simplfly?
+  #mylist[[i]][1]<-recursive_replace(text=mylist[[i]][1])  #these last two lines might be resource hungry. way to simplfly?
 }
 
 ###The code above is inconsistently creating tabs.  See i=4, 5, 6,7; check wid and the gsub 'n' position on notepad
 ##Item #6, eastern state has a case where there are no spaces between end of name and beginning of job title.
-#But this does't explain why for that school, the job start number is '34' when on note pad it's 33.  job start number should be on '32' (33-1) 
+#But this does't explain why for that school, the job start number is '34' when on note pad it's 33.  job start number should be on '32' (33-1)
 
-for ( i in 4:7)(print(substr(mylist_bak[[i]][1],1,n[i]+4)))
+for ( i in 4:7)(print(substr(mylist[[i]][1],1,500)))
 
 
 #Next, use do.call to perform this function on each element of mylist
 
 
 ###then consider a better recursive replacing of \t, using a base case of recurision?
-i=6
+i=5
 text<-mylist[[i]][1]
 head(read.delim(textConnection(text),
            header=F,
@@ -193,7 +195,7 @@ for(i in 1:length(mylist)){
                                                 skip=2,
                                                 stringsAsFactors=F)
   )
-  
+
 }
 
 final_df_2011<-do.call("rbind",df_list)  # this converts df_list into a dataframe.

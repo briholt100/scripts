@@ -138,6 +138,10 @@ for(i in 1:length(mylist)){
 wid[[1]]
 wid[[36]]
 
+gregexpr('\r\n',as.character(mylist[[36]][1]))
+text<-as.character(mylist[[36]][1])
+while(grepl('\r\n{2}',text)){text<-gsub('\r\n{2}','\r\n',text)}
+
 n<-vector("integer",length(mylist))
 s<-vector("integer",length(mylist))
 for (i in 1:length(wid)){

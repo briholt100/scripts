@@ -138,9 +138,14 @@ for(i in 1:length(mylist)){
 wid[[1]]
 wid[[36]]
 
-gregexpr('\r\n',as.character(mylist[[36]][1]))
+gregexpr('\\R{2,}',text,perl=T)
 text<-as.character(mylist[[36]][1])
-while(grepl('\r\n{2}',text)){text<-gsub('\r\n{2}','\r\n',text)}
+while(
+  grepl('\\R{2,}',text,perl=T)
+  )
+  {
+  text<-gsub('\\R{2,}','\r\n',text,perl=T)
+}
 
 n<-vector("integer",length(mylist))
 s<-vector("integer",length(mylist))
@@ -159,7 +164,7 @@ for (i in 1:length(mylist)){
   lhs2<-paste0('(\n.{', s[i],'})')
   mylist[[i]][1]<-gsub(lhs1,rhs,mylist[[i]][1])  #this adds a tab after last space before title.
   mylist[[i]][1]<-gsub(lhs2,rhs,mylist[[i]][1])  #this adds a tab after last space before salary
-  #mylist[[i]][1]<-recursive_replace(text=mylist[[i]][1])  #these last two lines might be resource hungry. way to simplfly?
+  mylist[[i]][1]<-recursive_replace(text=mylist[[i]][1])  #these last two lines might be resource hungry. way to simplfly?
 }
 
 ###The code above is inconsistently creating tabs.  See i=4, 5, 6,7; check wid and the gsub 'n' position on notepad
@@ -175,7 +180,7 @@ for ( i in 4:7)(print(substr(mylist[[i]][1],1,500)))
 ###then consider a better recursive replacing of \t, using a base case of recurision?
 i=5
 text<-mylist[[i]][1]
-head(read.delim(textConnection(text),
+tail(read.delim(textConnection(text),
            header=F,
            strip.white=T,
            skip=1,

@@ -93,3 +93,82 @@ r = requests.post(url, data=payload,auth=(user,passwrd))
 
 
 
+# -*- coding: utf-8 -*-
+"""
+Created on Sat Mar 26 18:36:07 2016
+
+@author: brian
+"""
+
+import socket
+
+mysock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+mysock.connect(('www.pythonlearn.com', 80))
+mysock.send('GET http://www.pythonlearn.com/code/intro-short.txt HTTP/1.0\n\n')
+
+while True:
+    data = mysock.recv(512)
+    if ( len(data) < 1 ) :
+        break
+    print data;
+
+mysock.close()
+
+
+
+# Note - this code must run in Python 2.x and you must download
+# http://www.pythonlearn.com/code/BeautifulSoup.py
+# Into the same folder as this program
+
+import urllib
+from BeautifulSoup import *
+
+url = raw_input('Enter - ')
+html = urllib.urlopen(url).read()
+
+soup = BeautifulSoup(html)
+
+# Retrieve all of the anchor tags
+tags = soup('span')
+
+total=0
+for tag in tags:
+    print tag.contents[0]
+    total+= int(tag.contents[0])    
+    
+print total
+
+       
+    
+    
+# Note - this code must run in Python 2.x and you must download
+# http://www.pythonlearn.com/code/BeautifulSoup.py
+# Into the same folder as this program
+
+import urllib
+from BeautifulSoup import *
+import re
+
+position = int(raw_input('Enter which link '))-1
+repeat = int(raw_input('Enter repeat number '))-1
+url = raw_input('Enter - ')
+url = "http://python-data.dr-chuck.net/known_by_Fikret.html"
+url = "http://python-data.dr-chuck.net/known_by_Kamron.html"
+html = urllib.urlopen(url).read()
+soup = BeautifulSoup(html)
+
+# Retrieve all of the anchor tags
+tags = soup('a')
+print tags[position]    
+i=0
+while i < repeat:
+    #strip out url from a tag, use above code to redo
+    url = tags[position].get('href', None)
+    html = urllib.urlopen(url).read()
+    soup = BeautifulSoup(html)
+    tags = soup('a')
+    print tags[position]
+    i+=1
+    
+    
+    

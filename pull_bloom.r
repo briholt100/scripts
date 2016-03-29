@@ -138,7 +138,7 @@ for(i in 1:length(mylist)){
 wid[[1]]
 wid[[36]]
 
-gregexpr('\\R{2,}',text,perl=T)
+gregexpr('\\R{1,}',text,perl=T)
 text<-as.character(mylist[[36]][1])
 while(
   grepl('\\R{2,}',text,perl=T)
@@ -150,7 +150,7 @@ while(
 n<-vector("integer",length(mylist))
 s<-vector("integer",length(mylist))
 for (i in 1:length(wid)){
-  n[i]<-as.integer(wid[[i]][1]-1) #the 'minus' 1 moves the cursor to just before the beginning of the word
+  n[i]<-as.integer(wid[[i]][1]+2) #the 'minus' 1 moves the cursor to just before the beginning of the word
   s[i]<-as.integer(wid[[i]][2])
 }
 n
@@ -178,13 +178,13 @@ for ( i in 4:7)(print(substr(mylist[[i]][1],1,500)))
 
 
 ###then consider a better recursive replacing of \t, using a base case of recurision?
-i=5
+i=36
 text<-mylist[[i]][1]
 tail(read.delim(textConnection(text),
            header=F,
            strip.white=T,
            skip=1,
-           stringsAsFactors=F))
+           stringsAsFactors=F),30)
 
 
 

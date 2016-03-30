@@ -123,7 +123,7 @@ final_df_2009<-final_df_2009[,c(1:3,7,4:6)]
 ##########
 ##########
 ##For 2011:  Note that Z is added to all last names
-#mylist<-mylist_bak
+mylist<-mylist_bak
 #I think the culprit is those \r\n multiples.  Maybe first do a recursive replace on all \r\n duplicates into 1, then proceed
 
 wid<-vector("list",length(mylist))  # this simply works for finding the name.  Now salary and title need distinguishing
@@ -132,26 +132,25 @@ for(i in 1:length(mylist)){
   title_start<-gregexpr('Job Title',text)
   sal_start<-gregexpr('2010 Gross Earnings',text)
   sal_end<-gregexpr('2010 Gross',text)
-  wid[[i]]<-c(title_start[[1]][1]-2,  # the 'minus 2' accounts for some carraiage return, hidden characters at front of line.
-              sal_start[[1]][1]+17)
+  wid[[i]]<-c(title_start[[1]][1]-2)  # the 'minus 2' accounts for some carraiage return, hidden characters at front of line.
+              #sal_start[[1]][1]+17)
 }
 wid[[1]]
 wid[[36]]
 
-gregexpr('\\R{1,}',text,perl=T)
-text<-as.character(mylist[[36]][1])
-while(
-  grepl('\\R{2,}',text,perl=T)
-  )
-  {
+gregexpr('\\R{2,}',text,perl=T)
+for(i in 1:length(mylist)){
+  text<-as.character(mylist[[i]][1])
+  while(grepl('\\R{2,}',text,perl=T))  {
   text<-gsub('\\R{2,}','\r\n',text,perl=T)
+  }
 }
 
 n<-vector("integer",length(mylist))
-s<-vector("integer",length(mylist))
+#s<-vector("integer",length(mylist))
 for (i in 1:length(wid)){
-  n[i]<-as.integer(wid[[i]][1]+2) #the 'minus' 1 moves the cursor to just before the beginning of the word
-  s[i]<-as.integer(wid[[i]][2])
+  n[i]<-as.integer(wid[[i]][1]-2) #the 'minus' 1 moves the cursor to just before the beginning of the word
+  #s[i]<-as.integer(wid[[i]][2])
 }
 n
 s
@@ -161,9 +160,9 @@ s
 rhs<-'\\1\t'
 for (i in 1:length(mylist)){
   lhs1<-paste0('(\n.{', n[i],'})')
-  lhs2<-paste0('(\n.{', s[i],'})')
+  #lhs2<-paste0('(\n.{', s[i],'})')
   mylist[[i]][1]<-gsub(lhs1,rhs,mylist[[i]][1])  #this adds a tab after last space before title.
-  mylist[[i]][1]<-gsub(lhs2,rhs,mylist[[i]][1])  #this adds a tab after last space before salary
+  #mylist[[i]][1]<-gsub(lhs2,rhs,mylist[[i]][1])  #this adds a tab after last space before salary
   mylist[[i]][1]<-recursive_replace(text=mylist[[i]][1])  #these last two lines might be resource hungry. way to simplfly?
 }
 
@@ -185,8 +184,9 @@ tail(read.delim(textConnection(text),
            strip.white=T,
            skip=1,
            stringsAsFactors=F),30)
-
-
+wid[[36]]
+n[36]
+s[36]
 
 
 if(length(df_list[[i]])>4){

@@ -138,7 +138,7 @@ for(i in 1:length(mylist)){
 wid[[1]]
 wid[[36]]
 
-gregexpr('\\R{2,}',text,perl=T)
+#gregexpr('\\R{2,}',text,perl=T)
 for(i in 1:length(mylist)){
   text<-as.character(mylist[[i]][1])
   while(grepl('\\R{2,}',text,perl=T))  {
@@ -177,9 +177,9 @@ for ( i in 4:7)(print(substr(mylist[[i]][1],1,500)))
 
 
 ###then consider a better recursive replacing of \t, using a base case of recurision?
-i=36
+i=6
 text<-mylist[[i]][1]
-tail(read.delim(textConnection(text),
+head(read.delim(textConnection(text),
            header=F,
            strip.white=T,
            skip=1,
@@ -195,17 +195,19 @@ if(length(df_list[[i]])>4){
          df_list[[i]]<-df_list[[i]][,-5])
 }
 
-df_list<-list()
+df_list<-vector("list",length(mylist))
 for(i in 1:length(mylist)){
   text<-as.character(mylist[[i]][1])
   df_list[[i]]<-cbind(mylist[[i]][2],read.delim(textConnection(text),
                                                 header=F,
                                                 strip.white=T,
-                                                skip=2,
+                                                skip=1,
                                                 stringsAsFactors=F)
   )
 
 }
+
+sapply(df_list,length)####for some reason some of the colleges have 5 columns instead of 4
 
 final_df_2011<-do.call("rbind",df_list)  # this converts df_list into a dataframe.
 colnames(final_df_2011)<-c('Institution','Employee','Job_title','Salary')

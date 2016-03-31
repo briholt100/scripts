@@ -126,8 +126,16 @@ final_df_2009<-final_df_2009[,c(1:3,7,4:6)]
 mylist<-mylist_bak
 #I think the culprit is those \r\n multiples.  Maybe first do a recursive replace on all \r\n duplicates into 1, then proceed
 
+for(i in 1:length(mylist)){ #ideally this should be an apply funciton
+  ###
+###  The problem with this code is that it's inserting a tab before the first name, of the first record, after the column titles, thus pushing the first line to the right 1 too many collumns.  So, I need to have it igore the first carriage return ^(\r\n)...this is tricky because the caret here can mean either the front of the line or a negation.  I sorta want both.
+  ####
+  mylist[[i]][1]<-gsub('(\r\n){2,}','\r\n',mylist[[i]][1])
+}
+gregexpr("(\r\n){2,}",mylist[[5]][1])
+
 wid<-vector("list",length(mylist))  # this simply works for finding the name.  Now salary and title need distinguishing
-test<-vector("list",length(mylist))
+
 for(i in 1:length(mylist)){
   text<-as.character(mylist[[i]][1])
   title_start<-gregexpr('Job Title',text)
@@ -135,25 +143,18 @@ for(i in 1:length(mylist)){
   end_line<-gregexpr("(\r*\n)+",text)
   wid[[i]]<-c(title_start[[1]][1]-2,sal_start[[1]][1]+21)  # the 'minus 2' accounts for some carraiage return, hidden characters at front of line. The 2nd element of end_line goes to 2nd match
   test[[i]]<-c(title_start[[1]][1],sal_start[[1]][1],end_line[[1]][2])
+  #if(end_line[[1]][2] > sal_start[[1]][1]+21){print (paste("salary start position begins early for list item ",i))}
 }
 wid[[1]]
 wid[[36]]
-test
-i=6
-substr(as.character(mylist[[i]][1]),1,s[i])
 
-for(i in 1:length(mylist)){
-  #text<-as.character(mylist[[i]][1])
-  while(grepl('(\r\n){2,}',text,perl=T))  {
-    mylist[[i]][1]<-gsub('(\r\n){2,}','\r\n',mylist[[i]][1],perl=T)
-  }
-}
+
 
 n<-vector("integer",length(mylist))
 s<-vector("integer",length(mylist))
 for (i in 1:length(wid)){
   n[i]<-as.integer(wid[[i]][1]-2) #the 'minus' 1 moves the cursor to just before the beginning of the word
-  s[i]<-as.integer(wid[[i]][2]) #this moves 10 positions sooner in the line
+  s[i]<-as.integer(wid[[i]][2]-2) #this moves 10 positions sooner in the line
 }
 n
 s
@@ -173,7 +174,7 @@ for (i in 1:length(mylist)){
 ##Item #6, eastern state has a case where there are no spaces between end of name and beginning of job title.
 #But this does't explain why for that school, the job start number is '34' when on note pad it's 33.  job start number should be on '32' (33-1)
 
-for ( i in 1:36)(print(paste(i,substr(mylist[[i]][1],1,s[i]))))
+for ( i in 1:36)(print(paste(i,substr(mylist[[i]][1],1,s[i]+100))))
 
 
 #Next, use do.call to perform this function on each element of mylist

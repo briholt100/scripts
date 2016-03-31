@@ -127,30 +127,33 @@ mylist<-mylist_bak
 #I think the culprit is those \r\n multiples.  Maybe first do a recursive replace on all \r\n duplicates into 1, then proceed
 
 wid<-vector("list",length(mylist))  # this simply works for finding the name.  Now salary and title need distinguishing
+test<-vector("list",length(mylist))
 for(i in 1:length(mylist)){
   text<-as.character(mylist[[i]][1])
   title_start<-gregexpr('Job Title',text)
   sal_start<-gregexpr('2010 Gross Earnings',text)
-  sal_end<-gregexpr('2010 Gross',text)
-  wid[[i]]<-c(title_start[[1]][1]-2)  # the 'minus 2' accounts for some carraiage return, hidden characters at front of line.
-              #sal_start[[1]][1]+17)
+  end_line<-gregexpr("(\r*\n)+",text)
+  wid[[i]]<-c(title_start[[1]][1]-2,sal_start[[1]][1]+21)  # the 'minus 2' accounts for some carraiage return, hidden characters at front of line. The 2nd element of end_line goes to 2nd match
+  test[[i]]<-c(title_start[[1]][1],sal_start[[1]][1],end_line[[1]][2])
 }
 wid[[1]]
 wid[[36]]
+test
+i=6
+substr(as.character(mylist[[i]][1]),1,s[i])
 
-#gregexpr('\\R{2,}',text,perl=T)
 for(i in 1:length(mylist)){
-  text<-as.character(mylist[[i]][1])
-  while(grepl('\\R{2,}',text,perl=T))  {
-  text<-gsub('\\R{2,}','\r\n',text,perl=T)
+  #text<-as.character(mylist[[i]][1])
+  while(grepl('(\r\n){2,}',text,perl=T))  {
+    mylist[[i]][1]<-gsub('(\r\n){2,}','\r\n',mylist[[i]][1],perl=T)
   }
 }
 
 n<-vector("integer",length(mylist))
-#s<-vector("integer",length(mylist))
+s<-vector("integer",length(mylist))
 for (i in 1:length(wid)){
   n[i]<-as.integer(wid[[i]][1]-2) #the 'minus' 1 moves the cursor to just before the beginning of the word
-  #s[i]<-as.integer(wid[[i]][2])
+  s[i]<-as.integer(wid[[i]][2]) #this moves 10 positions sooner in the line
 }
 n
 s
@@ -160,29 +163,29 @@ s
 rhs<-'\\1\t'
 for (i in 1:length(mylist)){
   lhs1<-paste0('(\n.{', n[i],'})')
-  #lhs2<-paste0('(\n.{', s[i],'})')
+  lhs2<-paste0('(\n.{', s[i],'})')
   mylist[[i]][1]<-gsub(lhs1,rhs,mylist[[i]][1])  #this adds a tab after last space before title.
-  #mylist[[i]][1]<-gsub(lhs2,rhs,mylist[[i]][1])  #this adds a tab after last space before salary
-  mylist[[i]][1]<-recursive_replace(text=mylist[[i]][1])  #these last two lines might be resource hungry. way to simplfly?
+  mylist[[i]][1]<-gsub(lhs2,rhs,mylist[[i]][1])  #this adds a tab 10 spaces before  end of line (salary)
+  #mylist[[i]][1]<-recursive_replace(text=mylist[[i]][1])  #these last two lines might be resource hungry. way to simplfly?
 }
 
 ###The code above is inconsistently creating tabs.  See i=4, 5, 6,7; check wid and the gsub 'n' position on notepad
 ##Item #6, eastern state has a case where there are no spaces between end of name and beginning of job title.
 #But this does't explain why for that school, the job start number is '34' when on note pad it's 33.  job start number should be on '32' (33-1)
 
-for ( i in 4:7)(print(substr(mylist[[i]][1],1,500)))
+for ( i in 1:36)(print(paste(i,substr(mylist[[i]][1],1,s[i]))))
 
 
 #Next, use do.call to perform this function on each element of mylist
 
 
 ###then consider a better recursive replacing of \t, using a base case of recurision?
-i=6
+i=36
 text<-mylist[[i]][1]
 head(read.delim(textConnection(text),
            header=F,
            strip.white=T,
-           skip=1,
+           skip=2,
            stringsAsFactors=F),30)
 wid[[36]]
 n[36]

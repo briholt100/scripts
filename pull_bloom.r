@@ -54,7 +54,7 @@ make_list<-function(links,year){
   return(mylist)
 }
 
-mylist<-make_list(links,'2011')
+mylist<-make_list(links,'2009')
 mylist_bak<-mylist
 #mylist<-mylist_bak
 str(mylist)
@@ -124,10 +124,10 @@ final_df_2009<-final_df_2009[,c(1:3,7,4:6)]
 ##########
 ##For 2011:  Note that Z is added to all last names
 mylist<-mylist_bak
-#I think the culprit is those \r\n multiples.  Maybe first do a recursive replace on all \r\n duplicates into 1, then proceed
+
 
 for(i in 1:length(mylist)){ #ideally this should be an apply funciton
-  mylist[[i]][1]<-gsub('(\r\n){2,}','\r\n',mylist[[i]][1])
+  mylist[[i]][1]<-gsub('^\n|(\r\n){2,}','\r\n',mylist[[i]][1])
 }
 
 test<-vector("list",length(mylist))  # this simply works for finding the name.  Now salary and title need distinguishing
@@ -171,37 +171,8 @@ for (i in 1:length(mylist)){
   mylist[[i]][1]<-gsub(lhs1,rhs,mylist[[i]][1])  #this adds a tab after last space before title.
   mylist[[i]][1]<-gsub(lhs2,rhs,mylist[[i]][1])  #this adds a tab 10 spaces before  end of line (salary)
   mylist[[i]][1]<-gsub(lhs3,rhs,mylist[[i]][1])  #this adds a tab 10 spaces before  end of line (salary)
-  mylist[[i]][1]<-gsub('Earnings\r\n\t','Earnings\r\n',mylist[[i]][1])
+  mylist[[i]][1]<-gsub('Earnings(\r)*\n\t','Earnings\r\n',mylist[[i]][1])
   mylist[[i]][1]<-recursive_replace(mylist[[i]][1])
-}
-substr(mylist[[1]][1],1,300)
-###The code above is inconsistently creating tabs.  See i=4, 5, 6,7; check wid and the gsub 'n' position on notepad
-##Item #6, eastern state has a case where there are no spaces between end of name and beginning of job title.
-#But this does't explain why for that school, the job start number is '34' when on note pad it's 33.  job start number should be on '32' (33-1)
-
-for ( i in 1:36)(print(paste(i,substr(mylist[[i]][1],1,s[i]+100))))
-
-
-#Next, use do.call to perform this function on each element of mylist
-
-
-###then consider a better recursive replacing of \t, using a base case of recurision?
-i=1
-text<-mylist[[i]][1]
-head(read.delim(textConnection(text),
-           header=F,
-           strip.white=T,
-           skip=1,
-           stringsAsFactors=F),10)
-wid[[36]]
-n[36]
-s[36]
-
-
-if(length(df_list[[i]])>4){
-  ifelse(sum(is.na(df_list[[i]][,5]))!=nrow(df_list[[i]]),
-         print("error in read.delim; data in extra column"),
-         df_list[[i]]<-df_list[[i]][,-5])
 }
 
 df_list<-vector("list",length(mylist))
@@ -210,7 +181,7 @@ for(i in 1:length(mylist)){
   df_list[[i]]<-cbind(mylist[[i]][2],read.delim(textConnection(text),
                                                 header=F,
                                                 strip.white=T,
-                                                skip=1,
+                                                skip=2,
                                                 stringsAsFactors=F)
   )
 
@@ -235,3 +206,12 @@ df<-rbind(final_df_2009,final_df_2011)
 str(df)
 table(is.na(df$Salary))
 median(df$Salary)
+plot(table(total$Salary[total$Salary>1000]))
+abline(v=median(total$Salary),col='red')
+(total[total$Salary>0&total$Salary<1,])
+
+if(length(df_list[[i]])>4){
+  ifelse(sum(is.na(df_list[[i]][,5]))!=nrow(df_list[[i]]),
+         print("error in read.delim; data in extra column"),
+         df_list[[i]]<-df_list[[i]][,-5])
+}

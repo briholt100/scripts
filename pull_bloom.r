@@ -54,7 +54,7 @@ make_list<-function(links,year){
   return(mylist)
 }
 
-mylist<-make_list(links,'2009')
+mylist<-make_list(links,'2001')
 mylist_bak<-mylist
 #mylist<-mylist_bak
 str(mylist)
@@ -66,21 +66,25 @@ str(mylist)
 # go here https://www.youtube.com/watch?feature=player_detailpage&v=q8SzNKib5-4#t=945
 
 #2001 has tab deliminted data, name, title, salary, but many have 2 column sets!!!!! fuck off lbloom
-#2003 has tab deliminted data, name, title, salary; also astricks first letter first name
-#2005 has mulit-tab deliminted data, name, title, salary
-#2007 has fwf data, but 6 columns: name, title,  ET-PU, MP, %FT, Salary
 
-#2011 almost works--needs to fix employee extra spaces; fwf data, name, title, salary  but et-pu, mp,%ft are added as NA to rbind with others
-##after running code for 2011 and making data frame, try:
-#table(final_df_2011[grep(' {2,}',final_df_2011$Employee,value=F),1])
+#2003-2005 works like 2011
 
-
-
-#2009 works; columsn resorted to "institution, employee, title, salary, et-pu, mp,%ft"
-
+#2007-2009 works; columns resorted to "institution, employee, title, salary, et-pu, mp,%ft"
+#2011  works; dummy columns added to line up with 2009 columns##after running code for 2011 and making data frame, try: #table(final_df_2011[grep(' {2,}',final_df_2011$Employee,value=F),1])   ###note: a few institutions 3-4 have several thousand rows of salary less than 10$; several hundred < 1$
 ############
 ########
-###For 2009:
+###
+
+## For 2003,2005
+
+for (i in 1:length(mylist)){
+  mylist[[i]][1]<-recursive_replace(mylist[[i]][1])
+  mylist[[i]][1]<-gsub('\t *\r','\r',mylist[[i]][1])
+}
+
+# 2003-2005  has 5 columns (like 2011), and should be read with read.delim like 2011
+
+# This works for: 2007, 2009:
 
 recursive_replace<-function(text=text){
   text<-gsub('([[:alpha:]]) {2}([[:alpha:]])','\1 \2',text)
@@ -187,7 +191,7 @@ for(i in 1:length(mylist)){
 
 }
 
-sapply(df_list,length)####for some reason some of the colleges have 5 columns instead of 4
+sapply(df_list,length)####checks that colleges have 4 columns instead of 5
 
 final_df_2011<-do.call("rbind",df_list)  # this converts df_list into a dataframe.
 colnames(final_df_2011)<-c('Institution','Employee','Job_title','Salary')
@@ -206,9 +210,13 @@ df<-rbind(final_df_2009,final_df_2011)
 str(df)
 table(is.na(df$Salary))
 median(df$Salary)
-plot(table(total$Salary[total$Salary>1000]))
-abline(v=median(total$Salary),col='red')
-(total[total$Salary>0&total$Salary<1,])
+plot(table(df$Salary[df$Salary>1000]))
+abline(v=median(df$Salary),col='red')
+abline(v=mean(df$Salary),col='blue')
+(df[df$Salary>0&df$Salary<1,])
+
+
+
 
 if(length(df_list[[i]])>4){
   ifelse(sum(is.na(df_list[[i]][,5]))!=nrow(df_list[[i]]),

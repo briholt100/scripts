@@ -172,3 +172,76 @@ while i < repeat:
     
     
     
+    
+    
+    
+import urllib
+from BeautifulSoup import *
+import re
+
+position = int(raw_input('Enter which link '))-1
+repeat = int(raw_input('Enter repeat number '))-1
+url = raw_input('Enter - ')
+url = "http://python-data.dr-chuck.net/known_by_Fikret.html"
+url = "http://python-data.dr-chuck.net/known_by_Kamron.html"
+html = urllib.urlopen(url).read()
+soup = BeautifulSoup(html)
+
+# Retrieve all of the anchor tags
+tags = soup('a')
+print tags[position]    
+i=0
+while i < repeat:
+    #strip out url from a tag, use above code to redo
+    url = tags[position].get('href', None)
+    html = urllib.urlopen(url).read()
+    soup = BeautifulSoup(html)
+    tags = soup('a')
+    print tags[position]
+    i+=1
+    
+        
+    
+    
+    
+    
+    
+import urllib
+import xml.etree.ElementTree as ET
+
+
+url = 'http://python-data.dr-chuck.net/comments_255852.xml'
+print 'Retrieving', url
+uh = urllib.urlopen(url)
+data = uh.read()
+print 'Retrieved',len(data),'characters'
+#print data
+tree = ET.fromstring(data)
+
+
+results = tree.findall('.//count')
+total=0
+for count in results:
+    print  int(count.text)
+    total+= int(count.text)
+
+print total
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    

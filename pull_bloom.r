@@ -223,3 +223,30 @@ if(length(df_list[[i]])>4){
          print("error in read.delim; data in extra column"),
          df_list[[i]]<-df_list[[i]][,-5])
 }
+
+
+
+
+
+
+
+####
+# What follows are some specs and instructions about this data
+
+"""
+ET is Employee Type: 6 is faculty, 7 is non-faculty, 1 is classified by state merit rules, 2 is exempt from state merit rules
+PU is Pay Unit: M is monthly, H is hourly, C is contracted, D is daily,
+MP is months paid
+%FT is percent of full-time
+"""
+
+"""
+Notes per year
+2011
+
+2009
+
+2005
+
+2003
+"""

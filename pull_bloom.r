@@ -54,7 +54,7 @@ make_list<-function(links,year){
   return(mylist)
 }
 
-mylist<-make_list(links,'2001')
+mylist<-make_list(links,'2011')
 mylist_bak<-mylist
 #mylist<-mylist_bak
 str(mylist)
@@ -207,7 +207,10 @@ head(final_df_2011)
 
 
 df<-rbind(final_df_2009,final_df_2011)
-str(df)
+
+gsub('[[:digit:]]{4} (.*) \\(.*\\)','\\1',df$Institution)
+strsplit(as.character(df$Institution),split='[[:digit:]] ')
+summary(df)
 table(is.na(df$Salary))
 median(df$Salary)
 plot(table(df$Salary[df$Salary>1000]))

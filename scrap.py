@@ -230,12 +230,60 @@ print total
     
     
     
+import json
+import urllib
+
+#url = 'http://python-data.dr-chuck.net/comments_42.json'
+url = 'http://python-data.dr-chuck.net/comments_255856.json'
+print 'Retrieving', url
+uh = urllib.urlopen(url)
+data = uh.read()
+print 'Retrieved',len(data),'characters'
+
+input = data
+
+info = json.loads(input)
+print 'User count:', len(info)
+total=0
+for item in info['comments']:
+    print item['count']
+    total+=int(item['count'])
+
     
     
     
     
     
-    
+import urllib
+import json
+
+# serviceurl = 'http://maps.googleapis.com/maps/api/geocode/json?'
+serviceurl = 'http://python-data.dr-chuck.net/geojson?'
+
+while True:
+    address = raw_input('Enter location: ')
+    if len(address) < 1 : break
+
+    url = serviceurl + urllib.urlencode({'sensor':'false', 'address': address})
+    print 'Retrieving', url
+    uh = urllib.urlopen(url)
+    data = uh.read()
+    print 'Retrieved',len(data),'characters'
+
+    try: js = json.loads(str(data))
+    except: js = None
+    if 'status' not in js or js['status'] != 'OK':
+        print '==== Failure To Retrieve ===='
+        print data
+        continue
+
+    print json.dumps(js, indent=4)
+
+    lat = js["results"][0]["geometry"]["location"]["lat"]
+    lng = js["results"][0]["geometry"]["location"]["lng"]
+    print 'lat',lat,'lng',lng
+    location = js['results'][0]['formatted_address']
+    print location    
     
     
     

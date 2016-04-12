@@ -12,7 +12,7 @@ library(stringr)
 #  colleges, opens each, creates 1 big dataframe for that year.
 
 
-d<-"http://lbloom.net/index"   # for "code book" see http://lbloom.net/dshsz.html
+get_links<-function(){d<-"http://lbloom.net/index"   # for "code book" see http://lbloom.net/dshsz.html
 d_yr<-c('01','03','05','07','09','11')
 d_pg<-".html"
 
@@ -36,11 +36,19 @@ for (i in 1:length(page_list)){
              getHTMLLinks(page_list[[i]],xpQuery=gsub(']',']/@href',searchTerms)))
 }
 links<-do.call('rbind',links)
-str(links)
+str(links)}
 
 # The following loops through 'links', using the URL to read the html
 # and pull the text out of the <pre> tag
 # then adds it to 'mylist', a nested list
+
+select_year<-function(){
+  year<-readline(prompt= 'enter a following year:  2011, 2009, 2005, or 2003....\n')
+  if(year=='2011'){print ("Thank you, pulling salary from 2011")
+    ifelse(year=='2009'){print ("Thank you, pulling salary from 2009")}}
+  return(year)
+}
+
 make_list<-function(links,year){
   link<-links[grep(year,links),]
   mylist<-vector("list", length=nrow(link))

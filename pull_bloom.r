@@ -12,7 +12,9 @@ library(stringr)
 #  colleges, opens each, creates 1 big dataframe for that year.
 
 
-get_links<-function(){d<-"http://lbloom.net/index"   # for "code book" see http://lbloom.net/dshsz.html
+get_links<-function(){
+  print("searching for and pulling links from lbloom.net")
+  d<-"http://lbloom.net/index"   # for "code book" see http://lbloom.net/dshsz.html
 d_yr<-c('01','03','05','07','09','11')
 d_pg<-".html"
 

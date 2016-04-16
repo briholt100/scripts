@@ -44,14 +44,12 @@ get_links<-function(){
   links<-do.call('rbind',links)
 }
 
-year<-""
-choices<-c('2011', '2009', '2007', "2005", "2003")
-
 # This simply gives a user input to which year of interest.
 
 select_year<-function(){
-  year<-readline(prompt= 'enter a following year: 2011, 2009, 2005,
-                 or 2003....\n')
+  year<-""
+  choices<-c('2011', '2009', '2007', "2005", "2003")
+ year<-readline(prompt= 'enter a following year: 2011, 2009, 2005, or 2003....\n')
   if (year %in% choices)
   {print(paste0('Thank you, pulling the data from year ',year));
     return(year)} else{
@@ -60,7 +58,8 @@ select_year<-function(){
 }
 
 # This makes the actual list of data, by year, that will make the final dataframe
-make_list<-function(links.=links){
+make_list<-function(links=NULL,year=NULL){
+  links<-get_links()  #though quick, would be nice to check to see if it's been read before
   year<-select_year()
   link<-links[grep(year,links),]
   mylist<-vector("list", length=nrow(link))
@@ -106,6 +105,38 @@ for (i in 1:length(mylist)){
   mylist[[i]][1]<-recursive_replace(mylist[[i]][1])
   mylist[[i]][1]<-gsub('\t *\r','\r',mylist[[i]][1])
 }
+
+
+df_list<-list()
+for (i in 1:length(mylist)){
+  text<-as.character(mylist[[i]][1])
+  text<-gsub('ET-PU  MP  %FT','ET-PU     MP     %FT',text)
+  text<-recursive_replace(text)
+  df_list[[i]]<-cbind(mylist[[i]][2],read.delim(textConnection(text),
+                                                header=F,
+                                                strip.white=T,
+                                                skip=2,
+                                                stringsAsFactors=F)
+  )
+
+  if(length(df_list[[i]])>7){
+    ifelse(sum(is.na(df_list[[i]][,8]))!=nrow(df_list[[i]]),
+           print("error in read.delim; data in extra column"),
+           df_list[[i]]<-df_list[[i]][,-8])
+  }
+}
+
+
+final_df_2005<-do.call("rbind",df_list)  # this converts df_list into a dataframe.
+colnames(final_df_2005)<-c('Institution','Employee','Job_title','Salary')
+final_df_2005$Salary<-as.numeric(final_df_2005$Salary)
+final_df_2005<-final_df_2005[(is.na(final_df_2005$Salary))==F,]
+#final_df_2005$Employee<-gsub('Z,',',',final_df_2005$Employee)
+final_df_2005$et<-NA
+final_df_2005$mp<-NA
+final_df_2005$percent_ft<-NA
+head(final_df_2005)
+
 
 # 2003-2005  has 5 columns (like 2011), and should be read with read.delim like 2011
 

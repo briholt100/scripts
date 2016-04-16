@@ -1,57 +1,67 @@
+#  Brian C. Holt
+#  Winter, Spring 2016
+#  purpose is to read lbloom.net webpage and scrape out college level salary data
+
 ##
 # After links are made, the creation of 'mylist' is used,
 # then followed by tailored read.table commands
 ##
 
+######  Needed Libraries
+
 library(rvest)
 library(XML)
 library(stringr)
 
-###
-# The following reads the first URL and scrapes the links for the
-#  colleges, opens each, creates 1 big dataframe for that year.
+### Needed  functions and local variables 'year' and 'links' ##########
 
-
+# This function opens up the index page for lbloom.net and pulls the colleges and university webpage links
 get_links<-function(){
   print("searching for and pulling links from lbloom.net")
   d<-"http://lbloom.net/index"   # for "code book" see http://lbloom.net/dshsz.html
-d_yr<-c('01','03','05','07','09','11')
-d_pg<-".html"
+  d_yr<-c('01','03','05','07','09','11')
+  d_pg<-".html"
 
-page_list<-vector("list",length(d_yr))
-for (i in 1:length(d_yr)){
+  page_list<-vector("list",length(d_yr))
+  for (i in 1:length(d_yr)){
      url<-paste0(d,d_yr[i],d_pg) # Gets all links in code using XML::getHTMLLink
      bloom<-htmlTreeParse(url,useInternalNodes=T) # for xpath to work below, 'T'
      page_list[[i]]<-bloom
-}
+  }
 
-searchTerms<- "//a[contains(text(),' Col ')] |
-//a[contains(text(),'WSU')] |
-//a[contains(text(),'Olympic Co')] |
-//a[contains(text(),'Univ ')] "
+  searchTerms<- "//a[contains(text(),' Col ')] |
+  //a[contains(text(),'WSU')] |
+  //a[contains(text(),'Olympic Co')] |
+  //a[contains(text(),'Univ ')] "
 
-links<-vector("list",length(page_list))
-for (i in 1:length(page_list)){
+  links<-vector("list",length(page_list))
+  for (i in 1:length(page_list)){
        # This pulls the <a> names of link
   links[[i]]<-cbind(xpathSApply(page_list[[i]],searchTerms,xmlValue),
                 # This pulls the links themselves.
              getHTMLLinks(page_list[[i]],xpQuery=gsub(']',']/@href',searchTerms)))
+  }
+  links<-do.call('rbind',links)
 }
-links<-do.call('rbind',links)
-str(links)}
 
-# The following loops through 'links', using the URL to read the html
-# and pull the text out of the <pre> tag
-# then adds it to 'mylist', a nested list
+year<-""
+choices<-c('2011', '2009', '2007', "2005", "2003")
+
+# This simply gives a user input to which year of interest.
 
 select_year<-function(){
-  year<-readline(prompt= 'enter a following year:  2011, 2009, 2005, or 2003....\n')
-  if(year=='2011'){print ("Thank you, pulling salary from 2011")
-    ifelse(year=='2009'){print ("Thank you, pulling salary from 2009")}}
-  return(year)
+  year<-readline(prompt= 'enter a following year: 2011, 2009, 2005,
+                 or 2003....\n')
+  if (year %in% choices)
+  {print(paste0('Thank you, pulling the data from year ',year));
+    return(year)} else{
+      print('Please try again.Select only from 2011, 2009, 2005, or 2003');
+      select_year()}
 }
 
-make_list<-function(links,year){
+# This makes the actual list of data, by year, that will make the final dataframe
+make_list<-function(links.=links){
+  year<-select_year()
   link<-links[grep(year,links),]
   mylist<-vector("list", length=nrow(link))
   for(i in 1:nrow(link)){
@@ -64,37 +74,9 @@ make_list<-function(links,year){
   return(mylist)
 }
 
-mylist<-make_list(links,'2011')
-mylist_bak<-mylist
-#mylist<-mylist_bak
-str(mylist)
 
-
-#######PROBLEM.  2001-2009 HAS ODD 'FWF', or other odd column formats.  Yuck
-# Several pages have different lines to 'skip'.  fuck off
-
-# go here https://www.youtube.com/watch?feature=player_detailpage&v=q8SzNKib5-4#t=945
-
-#2001 has tab deliminted data, name, title, salary, but many have 2 column sets!!!!! fuck off lbloom
-
-#2003-2005 works like 2011
-
-#2007-2009 works; columns resorted to "institution, employee, title, salary, et-pu, mp,%ft"
-#2011  works; dummy columns added to line up with 2009 columns##after running code for 2011 and making data frame, try: #table(final_df_2011[grep(' {2,}',final_df_2011$Employee,value=F),1])   ###note: a few institutions 3-4 have several thousand rows of salary less than 10$; several hundred < 1$
-############
-########
-###
-
-## For 2003,2005
-
-for (i in 1:length(mylist)){
-  mylist[[i]][1]<-recursive_replace(mylist[[i]][1])
-  mylist[[i]][1]<-gsub('\t *\r','\r',mylist[[i]][1])
-}
-
-# 2003-2005  has 5 columns (like 2011), and should be read with read.delim like 2011
-
-# This works for: 2007, 2009:
+## This function is used for some years.  It removes dobule spaces and replaces
+# with eventual single tabs, making read.delim functional
 
 recursive_replace<-function(text=text){
   text<-gsub('([[:alpha:]]) {2}([[:alpha:]])','\1 \2',text)
@@ -107,6 +89,28 @@ recursive_replace<-function(text=text){
   }
   return(text)
 }
+
+
+
+
+mylist<-make_list()
+mylist_bak<-mylist
+#mylist<-mylist_bak
+str(mylist)
+
+
+
+## For 2003,2005
+
+for (i in 1:length(mylist)){
+  mylist[[i]][1]<-recursive_replace(mylist[[i]][1])
+  mylist[[i]][1]<-gsub('\t *\r','\r',mylist[[i]][1])
+}
+
+# 2003-2005  has 5 columns (like 2011), and should be read with read.delim like 2011
+
+# This works for: 2007, 2009:
+
 
 
 
@@ -244,7 +248,7 @@ if(length(df_list[[i]])>4){
 
 
 ####
-# What follows are some specs and instructions about this data
+# Document dictionary
 
 """
 ET is Employee Type: 6 is faculty, 7 is non-faculty, 1 is classified by state merit rules, 2 is exempt from state merit rules
@@ -254,12 +258,17 @@ MP is months paid
 """
 
 """
-Notes per year
-2011
 
-2009
 
-2005
+#######PROBLEMS.  2001-2009 HAS ODD 'FWF', or other odd column formats.  Yuck
+# Several pages have different lines to 'skip'.
 
-2003
-"""
+#2001 has tab deliminted data, name, title, salary, but many have 2 column sets!!!!!
+
+#2003-2005 works like 2011
+
+#2007-2009 works; columns resorted to 'institution, employee, title, salary, et-pu, mp,%ft'
+#2011  works; dummy columns added to line up with 2009 columns##after running code for 2011 and making data frame, try: #table(final_df_2011[grep(' {2,}',final_df_2011$Employee,value=F),1])   ###note: a few institutions 3-4 have several thousand rows of salary less than 10$; several hundred < 1$
+############
+########
+###

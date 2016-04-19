@@ -142,8 +142,17 @@ head(final_df_2005)
 
 # This works for: 2007, 2009:
 
+#obtaining year for gregexpr and name of school
+mylist[[6]][2]
+r=list()
+for (i in 1:length(mylist)){r[[i]]<-regexec("^[[:digit:]]{4} (.*) \\(|[[:digit:]]{1}",mylist[[i]][2])} #'?' makes it less greedy  and I'm not sure why it's not picking up eastern here.
+
+for (i in 1:length(mylist)){r[[i]]<-regexec('^[[:digit:]]{4} (.*?) [0-9]|\\(',mylist[[i]][2])} #'?'
 
 
+for (i in 1:length(mylist)){
+  print(regmatches(mylist[[i]][2],r[[i]])[[1]][2])  #this works for all but Eastern, which has no '()'
+}
 
 df_list<-list()
 for (i in 1:length(mylist)){

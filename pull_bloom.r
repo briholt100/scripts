@@ -89,9 +89,6 @@ recursive_replace<-function(text=text){
   return(text)
 }
 
-
-
-
 mylist<-make_list()
 mylist_bak<-mylist
 #mylist<-mylist_bak
@@ -142,18 +139,6 @@ head(final_df_2005)
 
 # This works for: 2007, 2009:
 
-#obtaining year for gregexpr and name of school
-mylist[[6]][2]
-r=list()
-for (i in 1:length(mylist)){r[[i]]<-regexec("^[[:digit:]]{4} (.*) \\(|[[:digit:]]{1}",mylist[[i]][2])} #'?' makes it less greedy  and I'm not sure why it's not picking up eastern here.
-
-for (i in 1:length(mylist)){r[[i]]<-regexec('^[[:digit:]]{4} (.*?) [0-9]|\\(',mylist[[i]][2])} #'?'
-
-
-for (i in 1:length(mylist)){
-  print(regmatches(mylist[[i]][2],r[[i]])[[1]][2])  #this works for all but Eastern, which has no '()'
-}
-
 df_list<-list()
 for (i in 1:length(mylist)){
   text<-as.character(mylist[[i]][1])
@@ -166,17 +151,13 @@ for (i in 1:length(mylist)){
                                                 stringsAsFactors=F)
   )
 
-  if(length(df_list[[i]])>7){
-    ifelse(sum(is.na(df_list[[i]][,8]))!=nrow(df_list[[i]]),
-           print("error in read.delim; data in extra column"),
-           df_list[[i]]<-df_list[[i]][,-8])
-  }
 }
 
 final_df_2009<-do.call("rbind",df_list)  # this converts df_list into a dataframe.
 colnames(final_df_2009)<-c('Institution','Employee','Job_title','et','mp','percent_ft','Salary')
 final_df_2009<-final_df_2009[(is.na(final_df_2009$Salary))==F,]
 final_df_2009<-final_df_2009[,c(1:3,7,4:6)]
+head(final_df_2009)
 ##########
 ##########
 ##########
@@ -222,6 +203,19 @@ rhs<-'\\1\t'
 ###
 ###  The problem with this code is that it's inserting a tab before the first name, of the first record, after the column titles, thus pushing the first line to the right 1 too many collumns.  So, I need to have it igore the first carriage return ^(\r\n)...this is tricky because the caret here can mean either the front of the line or a negation.  I sorta want both.
 ####
+#obtaining year for gregexpr and name of school
+r=list()
+yr=list()
+for (i in 1:length(mylist)){
+  if (grepl("Eastern",mylist[[i]][2])){ #I want to first try with parantheses, and if that fails, then use the idiosyncratic search for Eastern
+    r[[i]]<-regexec("^[[:digit:]]{4} (.*) [[:digit:]]{1}",mylist[[i]][2]);print("Eastern")
+  } else {
+    r[[i]]<-regexec("^[[:digit:]]{4} (.*) \\(",mylist[[i]][2])
+  }
+  yr[[i]]<-regexec("^[[:digit:]]{4}",mylist[[i]][2])
+} #'?' makes it less greedy  and I'm not sure why it's not picking up eastern here.
+
+
 for (i in 1:length(mylist)){
   lhs1<-paste0('(\n.{', n[i],'})')
   lhs2<-paste0('(\n.{', t[i],'})')
@@ -236,7 +230,10 @@ for (i in 1:length(mylist)){
 df_list<-vector("list",length(mylist))
 for(i in 1:length(mylist)){
   text<-as.character(mylist[[i]][1])
-  df_list[[i]]<-cbind(mylist[[i]][2],read.delim(textConnection(text),
+  df_list[[i]]<-cbind(#mylist[[i]][2],
+                      regmatches(mylist[[i]][2],r[[i]])[[1]][2],
+                      regmatches(mylist[[i]][2],yr[[i]]),
+                      read.delim(textConnection(text),
                                                 header=F,
                                                 strip.white=T,
                                                 skip=2,
@@ -248,7 +245,7 @@ for(i in 1:length(mylist)){
 sapply(df_list,length)####checks that colleges have 4 columns instead of 5
 
 final_df_2011<-do.call("rbind",df_list)  # this converts df_list into a dataframe.
-colnames(final_df_2011)<-c('Institution','Employee','Job_title','Salary')
+colnames(final_df_2011)<-c('header','Institution','Year','Employee','Job_title','Salary')
 final_df_2011$Salary<-as.numeric(final_df_2011$Salary)
 final_df_2011<-final_df_2011[(is.na(final_df_2011$Salary))==F,]
 final_df_2011$Employee<-gsub('Z,',',',final_df_2011$Employee)

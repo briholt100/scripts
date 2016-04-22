@@ -27,7 +27,7 @@ get_links<-function(){
      url<-paste0(d,d_yr[i],d_pg) # Gets all links in code using XML::getHTMLLink
      bloom<-htmlTreeParse(url,useInternalNodes=T) # for xpath to work below, 'T'
      page_list[[i]]<-bloom
-  }
+}
 
   searchTerms<- "//a[contains(text(),' Col ')] |
   //a[contains(text(),'WSU')] |
@@ -42,6 +42,11 @@ get_links<-function(){
              getHTMLLinks(page_list[[i]],xpQuery=gsub(']',']/@href',searchTerms)))
   }
   links<-do.call('rbind',links)
+  writeLines("Here are the first few items of links:\n\n")
+  print(head(links,3))
+  writeLines("\n\nHhere are the last few items of links:\n\n")
+  print(tail(links,3))
+  return(links)
 }
 
 # This simply gives a user input to which year of interest.
@@ -49,11 +54,11 @@ get_links<-function(){
 select_year<-function(){
   year<-""
   choices<-c('2011', '2009', '2007', "2005", "2003")
- year<-readline(prompt= 'enter a following year: 2011, 2009, 2005, or 2003....\n')
+ year<-readline(prompt= '\n\nPlease enter a following year: 2011, 2009, 2005, or 2003....\n')
   if (year %in% choices)
-  {print(paste0('Thank you, pulling the data from year ',year));
+  {writeLines(paste0('\n\nThank you, pulling the data from year ',year,'\n\n'));
     return(year)} else{
-      print('Please try again.Select only from 2011, 2009, 2005, or 2003');
+      writeLines('Please try again.Select only from 2011, 2009, 2005, or 2003\n\n');
       select_year()}
 }
 
@@ -70,6 +75,7 @@ make_list<-function(links=NULL,year=NULL){
     mylist[[i]]<-text  # This puts the text into each element
     mylist[[i]][2]<-link[i,1] # Puts agency info into the 2nd element of the list
   }
+  writeLines(paste('\nok, the list has been pulled from ',year,". Enjoy.\n\n"))
   return(mylist)
 }
 

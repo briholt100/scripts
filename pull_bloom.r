@@ -64,7 +64,8 @@ select_year<-function(){
 
 # This makes the actual list of data, by year, that will make the final dataframe
 make_list<-function(links=NULL,year=NULL){
-  links<-get_links()  #though quick, would be nice to check to see if it's been read before
+  #check if links variable exists and use it.
+  if(nrow(links)==0){links<-get_links()}else{print(paste("There are ",nrow(links),"url's in 'links'"))}
   year<-select_year()
   link<-links[grep(year,links),]
   mylist<-vector("list", length=nrow(link))
@@ -94,8 +95,8 @@ recursive_replace<-function(text=text){
   }
   return(text)
 }
-
-mylist<-make_list()
+links<-get_links()
+mylist<-make_list(links=links)
 mylist_bak<-mylist
 #mylist<-mylist_bak
 str(mylist)

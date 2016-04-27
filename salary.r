@@ -78,9 +78,7 @@ Agency_code<-unique(colleges[c("Code","Agency")])
 
 
 colleges_longForm<-gather(colleges,year,Salary,X2011:X2014)
-colleges_longForm$et<-NA
-colleges_longForm$mp<-NA
-colleges_longForm$percent_ft<-NA
+
 
 
 

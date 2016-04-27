@@ -271,8 +271,37 @@ final_df_2011<- (final_df_2011[,c(10,11,3:4,9,2,5:8)])
 head(final_df_2011)
 str(final_df_2011)
 #df<-rbind(final_df_2011,colleges_longForm)   ##########this rbinds salary and finaldf2011
-#df$year<-as.Date(paste(df$year,"-06","-30",sep=""))
-#ggplot(data=df,y=Job.Title,aes(x=as.factor(year)))+geom_bar()
+df$year<-as.Date(paste(df$year,"-06","-30",sep=""))
+tbl<-as.data.frame(table(df$Salary,df$year))
+head(tbl)
+colnames(tbl)<-c('Salary','year','Freq')
+tapply(tbl$Freq,tbl$year,sum)
+plot(tapply(tbl$Freq,tbl$year,sum))
+
+tbl1<-table(df$job.cat[!is.na(df$Salary)],df$year[!is.na(df$Salary)])
+tbl1<-as.data.frame(tbl1)
+colnames(tbl1)<-c('category','year','Freq')
+
+
+
+forPlot<-as.data.frame(tapply(tbl1$Freq,list(tbl1$category,tbl1$year),sum))
+
+
+colnames(forPlot)<-c('x2010','x2011','x2012','x2013','x2014')
+
+for (i in 1:nrow(forPlot)){  print(paste(rownames(forPlot[i,]),forPlot[i,5]-forPlot[i,1]))}
+
+gather(forPlot,Category,year,x2010:x2014)
+
+
+
+
+
+
+
+
+
+
 df<-rbind(final_df_2009,final_df_2011)
 
 gsub('[[:digit:]]{4} (.*) \\(.*\\)','\\1',df$Institution)
@@ -325,3 +354,131 @@ MP is months paid
 ############
 ########
 ###
+
+
+
+
+
+"""
+
+
+adminOther.list<-grep("admin", df$Job.Title, ignore.case=T, value=F)
+chancellor.list<-grep("CHANCELLOR", df$Job.Title, ignore.case=T, value=F)
+childhood.list<-grep("childho", df$Job.Title, ignore.case=T, value=F)
+communication.list<-grep("commun", df$Job.Title, ignore.case=T, value=F)
+coordination.list<-grep("coord,", df$Job.Title, ignore.case=T, value=F)
+counselor.list<-grep("counselo", df$Job.Title, ignore.case=T, value=F)
+dean.list<-grep("dean|assistant d|ASSOC. DEAN", df$Job.Title, ignore.case=T)
+director.list<-grep("dir", df$Job.Title, ignore.case=T) #, value=T)
+exec.list<-c(grep("exec. d", df$Job.Title, ignore.case=T))
+facilities.list<-grep("facilit|custo|electr|grounds|locks|maintan|mechanic", df$Job.Title, ignore.case=T, value=F)
+faculty.list<-grep("faculty", df$Job.Title, ignore.case=T)
+finance.list<-grep("financ|budget|capita|fiscal", df$Job.Title, ignore.case=T, value=F)
+hour.list<-grep("hour", df$Job.Title, ignore.case=T, value=F)
+HR.list<-grep("HR|benefits|human|payrol", df$Job.Title, ignore.case=T, value=F)
+library.list<-grep("librar", df$Job.Title, ignore.case=T, value=F)
+mail.list<-grep("mail", df$Job.Title, ignore.case=T, value=F)
+manager.list<-c(grep("mgr", df$Job.Title, ignore.case=T), grep("manag", df$Job.Title, ignore.case=T))
+media.list<-grep("media", df$Job.Title, ignore.case=T, value=F)
+officeAssist.list<-grep("office assistant|PROGRAM ASSISTANT|ADMINISTRATIVE ASSIST", df$Job.Title, ignore.case=T)
+president.list<-grep("presi|v.c.,|chief", df$Job.Title, ignore.case=T, value=F)
+programCoord.list<-grep("program coord", df$Job.Title, ignore.case=T, value=F)
+retail.list<-grep("retail", df$Job.Title, ignore.case=T, value=F)
+secretary.list<-grep("secr|exec. a", df$Job.Title, ignore.case=T) #, value=T)
+security.list<-grep("security", df$Job.Title, ignore.case=T, value=F)
+specialist.list<-grep("spec", df$Job.Title, ignore.case=T, value=F)
+supervisory.list<-grep("superv|spv", df$Job.Title, ignore.case=T, value=F)
+support.list<-grep("supt", df$Job.Title, ignore.case=T, value=F)
+vice.list<-grep("vice p|vp", df$Job.Title, ignore.case=T, value=F)
+
+vChanc.list<-grep("VICE CHANCELLOR|V\\.C.", df$Job.Title, ignore.case=T, value=F)
+
+df$job.cat<-factor(df$job.cat,
+sort(c(
+"admin (Other)",
+"assistant",
+"chancellor",
+"childhood",
+"communication",
+"coordination",
+"counselor",
+"dean",
+"director",
+"executive",
+"facilities",
+"faculty",
+"finance",
+"hourly",
+"HR",
+"library",
+"mail",
+"manager",
+"media",
+"other",
+"pres",
+"program coordinator",
+"retail",
+"secretary",
+"security",
+"specialist",
+"supervisory",
+"support",
+"vicepres",
+"viceChanc"
+)
+))
+
+##WARNING; BEWARE OF CHANGING ORDER BELOW, ELSE CATEGORIES WILL CHANGE
+
+df$job.cat[adminOther.list]<-"admin (Other)"
+df$job.cat[HR.list]<-"HR"
+df$job.cat[security.list]<-"security"
+df$job.cat[finance.list]<-"finance"
+df$job.cat[facilities.list]<-"facilities"
+df$job.cat[mail.list]<-"mail"
+df$job.cat[media.list]<-"media"
+df$job.cat[communication.list]<-"communication"
+df$job.cat[coordination.list]<-"coordination"
+df$job.cat[support.list]<-"support"
+df$job.cat[library.list]<-"library"
+df$job.cat[supervisory.list]<-"supervisory"
+df$job.cat[counselor.list]<-"counselor"
+df$job.cat[retail.list]<-"retail"
+
+df$job.cat[programCoord.list]<-"program coordinator"
+df$job.cat[director.list]<-"director"
+df$job.cat[hour.list]<-"hourly"
+df$job.cat[faculty.list]<-"faculty"
+df$job.cat[dean.list]<-"dean"
+df$job.cat[childhood.list]<-"childhood"
+df$job.cat[manager.list]<-"manager"
+df$job.cat[exec.list]<-"executive"
+df$job.cat[secretary.list]<-"secretary"
+df$job.cat[officeAssist.list]<-"assistant"
+df$job.cat[chancellor.list]<-"chancellor"
+df$job.cat[specialist.list]<-"specialist"
+df$job.cat[president.list]<-"pres"
+df$job.cat[vice.list]<-"vicepres"
+df$job.cat[vChanc.list]<-"viceChanc"
+
+director.salary<-df[director.list,]
+dean.salary<-df[dean.list,]
+sec.salary<-df[secretary.list,]
+director.salary<-df[director.list,]
+
+
+
+table(df$job.cat)
+
+
+
+
+
+
+
+
+
+
+
+
+

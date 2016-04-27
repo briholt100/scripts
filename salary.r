@@ -72,17 +72,22 @@ salary<-cbind(salary, job.cat)
 colleges<-salary[grep('college|university',salary$Agency,ignore.case=T),]
 colleges<-droplevels(colleges)
 collegeCodes<-sort(unique(colleges$Code))
-str(colleges)
+head(colleges)
 
 Agency_code<-unique(colleges[c("Code","Agency")])
 
 
 colleges_longForm<-gather(colleges,year,Salary,X2011:X2014)
 
+
 levels(colleges_longForm$year)[levels(colleges_longForm$year)=="X2011"] <- "2011"
 levels(colleges_longForm$year)[levels(colleges_longForm$year)=="X2012"] <- "2012"
 levels(colleges_longForm$year)[levels(colleges_longForm$year)=="X2013"] <- "2013"
 levels(colleges_longForm$year)[levels(colleges_longForm$year)=="X2014"] <- "2014"
+colleges_longForm$et<-NA
+colleges_longForm$mp<-NA
+colleges_longForm$percent_ft<-NA
+head(colleges_longForm)
 
 write.table(colleges_longForm,'./Data/salaryByYear.txt',sep='\t')
 

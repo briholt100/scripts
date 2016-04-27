@@ -252,14 +252,21 @@ for(i in 1:length(mylist)){
 sapply(df_list,length)####checks that colleges have 4 columns instead of 5
 
 final_df_2011<-do.call("rbind",df_list)  # this converts df_list into a dataframe.
-colnames(final_df_2011)<-c('header','Institution','Year','Employee','Job_title','Salary')
+colnames(final_df_2011)<-c('Institution','Year','Employee','Job_title','Salary')
 final_df_2011$Salary<-as.numeric(final_df_2011$Salary)
 final_df_2011<-final_df_2011[(is.na(final_df_2011$Salary))==F,]
 final_df_2011$Employee<-gsub('Z,',',',final_df_2011$Employee)
 final_df_2011$et<-NA
 final_df_2011$mp<-NA
 final_df_2011$percent_ft<-NA
+final_df_2011$Year<-2010 #done because bloom has 2010, but calls it 2011
 head(final_df_2011)
+
+
+###The below merges the data frame with a small table for later merging with post 2010 data
+ac<-read.csv(file="agency_code.csv")
+final_df_2011 <- merge(final_df_2011,ac, by.x="Institution", by.y="Institute", all.x=TRUE)
+final_df_2011<- head(final_df_2011[,c(1,10,9,2:8)])
 
 
 

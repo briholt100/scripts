@@ -1,3 +1,6 @@
+#######
+#  Need to pull the sbctc data
+
 library('lme4')
 library('nlme')
 library('stringr')
@@ -48,7 +51,7 @@ ifelse (!file.exists('../Data/WaStEmployeeHistSalary.txt')
 
 
 #home
-salary<-read.csv("../Data/WaStEmployeeHistSalary.txt1",
+salary<-read.csv("../Data/WaStEmployeeHistSalary.txt",
                  sep='\t' ,stringsAsFactors=T,strip.white=T,na.strings=c('0',''))
 
 ##convert variables to factors or numeric
@@ -70,6 +73,9 @@ colleges<-salary[grep('college|university',salary$Agency,ignore.case=T),]
 colleges<-droplevels(colleges)
 collegeCodes<-sort(unique(colleges$Code))
 str(colleges)
+
+Agency_code<-unique(colleges[c("Code","Agency")])
+
 
 colleges_longForm<-gather(colleges,year,Salary,X2011:X2014)
 

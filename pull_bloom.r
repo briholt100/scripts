@@ -263,6 +263,7 @@ final_df_2011$year<-2010 #done because bloom has 2010, but calls it 2011
 
 ###The below merges the data frame with a small table for later merging with post 2010 data
 ac<-read.csv(file="./agency_code.csv")
+#ac<-read.csv(file="I://My Data Sources//Scripts//agency_code.csv")  #for campus
 final_df_2011$job.cat<-"other"
 final_df_2011 <- merge(final_df_2011,ac, by.x="Institution", by.y="Institute", all.x=TRUE)
 final_df_2011<- (final_df_2011[,c(10,11,3:4,9,2,5:8)])
@@ -270,7 +271,7 @@ final_df_2011<- (final_df_2011[,c(10,11,3:4,9,2,5:8)])
 head(final_df_2011)
 str(final_df_2011)
 #df<-rbind(final_df_2011,colleges_longForm)   ##########this rbinds salary and finaldf2011
-#df$year<-as.Date(paste(df$year,"-01","-01",sep=""))
+#df$year<-as.Date(paste(df$year,"-06","-30",sep=""))
 #ggplot(data=df,y=Job.Title,aes(x=as.factor(year)))+geom_bar()
 df<-rbind(final_df_2009,final_df_2011)
 

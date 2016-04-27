@@ -51,7 +51,7 @@ ifelse (!file.exists('../Data/WaStEmployeeHistSalary.txt')
 
 
 #home
-salary<-read.csv("../Data/WaStEmployeeHistSalary.txt",
+salary<-read.csv("../Data/WaStEmployeeHistSalary.txt1",
                  sep='\t' ,stringsAsFactors=T,strip.white=T,na.strings=c('0',''))
 
 ##convert variables to factors or numeric
@@ -65,8 +65,8 @@ salary[56855,5]<-8732
 #write.table(salary,"/home/brian/Projects/Data/WaStEmployeeHistSalary.txt",sep='\t')
 str(salary)
 
-job.cat<-"other"
-salary<-cbind(salary, job.cat)
+salary$job.cat<-"other"
+
 
 
 colleges<-salary[grep('college|university',salary$Agency,ignore.case=T),]
@@ -78,6 +78,10 @@ Agency_code<-unique(colleges[c("Code","Agency")])
 
 
 colleges_longForm<-gather(colleges,year,Salary,X2011:X2014)
+colleges_longForm$et<-NA
+colleges_longForm$mp<-NA
+colleges_longForm$percent_ft<-NA
+
 
 
 levels(colleges_longForm$year)[levels(colleges_longForm$year)=="X2011"] <- "2011"

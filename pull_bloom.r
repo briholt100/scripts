@@ -164,6 +164,7 @@ final_df_2009<-do.call("rbind",df_list)  # this converts df_list into a datafram
 colnames(final_df_2009)<-c('Institution','Employee','Job_title','et','mp','percent_ft','Salary')
 final_df_2009<-final_df_2009[(is.na(final_df_2009$Salary))==F,]
 final_df_2009<-final_df_2009[,c(1:3,7,4:6)]
+final_df_2009$job.cat<-"other"
 head(final_df_2009)
 ##########
 ##########
@@ -265,11 +266,14 @@ final_df_2011$year<-2010 #done because bloom has 2010, but calls it 2011
 ac<-read.csv(file="./agency_code.csv")
 #ac<-read.csv(file="I://My Data Sources//Scripts//agency_code.csv")  #for campus
 final_df_2011$job.cat<-"other"
-final_df_2011 <- merge(final_df_2011,ac, by.x="Institution", by.y="Institute", all.x=TRUE)
-final_df_2011<- (final_df_2011[,c(10,11,3:4,9,2,5:8)])
-
 head(final_df_2011)
 str(final_df_2011)
+
+###### these should happen after all of 2003-2011 are merged but before merging with colleges_longForm
+#final_df_2011 <- merge(final_df_2011,ac, by.x="Institution", by.y="Institute", all.x=TRUE)  #this gets the correct names of agencies
+#final_df_2011<- (final_df_2011[,c(10,11,3:4,9,2,5:8)])
+
+
 #df<-rbind(final_df_2011,colleges_longForm)   ##########this rbinds salary and finaldf2011
 df$year<-as.Date(paste(df$year,"-06","-30",sep=""))
 tbl<-as.data.frame(table(df$Salary,df$year))

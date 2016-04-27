@@ -271,7 +271,7 @@ head(final_df_2011)
 str(final_df_2011)
 #df<-rbind(final_df_2011,colleges_longForm)   ##########this rbinds salary and finaldf2011
 #df$year<-as.Date(paste(df$year,"-01","-01",sep=""))
-
+#ggplot(data=df,y=Job.Title,aes(x=as.factor(year)))+geom_bar()
 df<-rbind(final_df_2009,final_df_2011)
 
 gsub('[[:digit:]]{4} (.*) \\(.*\\)','\\1',df$Institution)

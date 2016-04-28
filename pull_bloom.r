@@ -86,6 +86,11 @@ make_list<-function(links=NULL,year=NULL){
 
 recursive_replace<-function(text=text){
   text<-gsub('([[:alpha:]]) {2}([[:alpha:]])','\1 \2',text)
+  while (grepl('\\. #HRLY ',text)){
+    text<-gsub('\\. #HRLY','\\. HRLY',text)
+    print (grepl('\\. #HRLY ',text))
+  }
+
   while (grepl(' {2}',text)){
     text<-gsub(' {2}','\t',text)
   }
@@ -189,7 +194,17 @@ head(final_df_2005)
                                     ####check for > final_df[grep('ASSISTANT TO THE DIRECTOR',final_df$et),]
                                       #FACILITIES OPERATIONS MAINTENANCE SPEC
                                       # - HOURLY
-#> table(final_df$et)
+table(final_df_2007$et)
+r=list()
+yr=list()
+for (i in 1:length(mylist)){
+  if (grepl("Eastern",mylist[[i]][2])){ #I want to first try with parantheses, and if that fails, then use the idiosyncratic search for Eastern
+    r[[i]]<-regexec("^[[:digit:]]{4} (.*) [[:digit:]]{1}",mylist[[i]][2]);print("Eastern")
+  } else {
+    r[[i]]<-regexec("^[[:digit:]]{4} (.*) \\(",mylist[[i]][2])
+  }
+  yr[[i]]<-regexec("^[[:digit:]]{4}",mylist[[i]][2])
+} #'?' makes it less greedy  and I'm not sure why it's not picking up eastern here.
 
 df_list<-list()
 for (i in 1:length(mylist)){
@@ -208,12 +223,12 @@ for (i in 1:length(mylist)){
 
 }
 
-final_df_2009<-do.call("rbind",df_list)  # this converts df_list into a dataframe.
-colnames(final_df_2009)<-c('Institution','year','Employee','Job.Title','et','mp','percent_ft','Salary')
-final_df_2009<-final_df_2009[(is.na(final_df_2009$Salary))==F,]
-final_df_2009<-final_df_2009[,c(1:4,8,5:7)]  # Institution year Employee Job_title  Salary et mp percent_ft
-final_df_2009$job.cat<-"other"
-head(final_df_2009)
+final_df_2007<-do.call("rbind",df_list)  # this converts df_list into a dataframe.
+colnames(final_df_2007)<-c('Institution','year','Employee','Job.Title','et','mp','percent_ft','Salary')
+final_df_2007<-final_df_2007[(is.na(final_df_2007$Salary))==F,]
+final_df_2007<-final_df_2007[,c(1:4,8,5:7)]  # Institution year Employee Job_title  Salary et mp percent_ft
+final_df_2007$job.cat<-"other"
+head(final_df_2007)
 ##########
 ##########
 ##########

@@ -127,6 +127,7 @@ str(mylist)
 
 ## For 2003,
 for (i in 1:length(mylist)){
+  mylist[[i]][1]<-gsub(', +\\*',', \\*',mylist[[i]][1])
   mylist[[i]][1]<-recursive_replace(mylist[[i]][1])
   mylist[[i]][1]<-gsub('\t *\r','\r',mylist[[i]][1])
   mylist[[i]][1]<-gsub('\t \\*',' \\*',mylist[[i]][1])
@@ -160,9 +161,8 @@ final_df_2003$mp<-NA
 final_df_2003$percent_ft<-NA
 #Institution year Employee Job_title  Salary et mp percent_ft
 final_df_2003$job.cat<-"other"
-
 head(final_df_2003)
-
+write.csv(final_df_2003,file="I:\\My Data Sources\\Data\\final_df_2003.csv")  #on campus
 
 ##2005
 
@@ -202,23 +202,72 @@ final_df_2005$percent_ft<-NA
 #Institution year Employee Job_title  Salary et mp percent_ft
 final_df_2005$job.cat<-"other"
 head(final_df_2005)
-
+write.csv(final_df_2005,file="I:\\My Data Sources\\Data\\final_df_2005.csv")  #on campus
 
 # 2003-2005  has 5 columns (like 2011), and should be read with read.delim like 2011
 
-# This works for: 2007, 2009:
+#################
+#################
+#################
 
-table(final_df_2009$et)
+# This works for: 2007, 
+table(final_df_2007$et) table(final_df_2007$Institution)
 r=list()
 yr=list()
 for (i in 1:length(mylist)){
-  if (grepl("Eastern",mylist[[i]][2])){ #I want to first try with parantheses, and if that fails, then use the idiosyncratic search for Eastern
-    r[[i]]<-regexec("^[[:digit:]]{4} (.*) [[:digit:]]{1}",mylist[[i]][2]);print("Eastern")
-  } else {
+  if (grepl("Eastern Wa Univ \\(",mylist[[i]][2])){ #I want to first try with parantheses, and if that fails, then use the idiosyncratic search for Eastern
+    r[[i]]<-regexec("^[[:digit:]]{4} (.*) \\(",mylist[[i]][2])
+    } else {
+      if (grepl("Eastern Wa Univ [[:digit:]]{1}",mylist[[i]][2])){
+      r[[i]]<-regexec("^[[:digit:]]{4} (.*) [[:digit:]]{1}",mylist[[i]][2]);print("Eastern")
+  }else{
     r[[i]]<-regexec("^[[:digit:]]{4} (.*) \\(",mylist[[i]][2])
   }
+  } #'?' makes it less greedy  and I'm not sure why it's not picking up eastern here.
   yr[[i]]<-regexec("^[[:digit:]]{4}",mylist[[i]][2])
-} #'?' makes it less greedy  and I'm not sure why it's not picking up eastern here.
+}
+
+
+df_list<-list()
+for (i in 1:length(mylist)){
+  text<-as.character(mylist[[i]][1])
+  text<-gsub('ET-PU  MP  %FT','ET-PU     MP     %FT',text)
+  text<-recursive_replace(text)
+  df_list[[i]]<-cbind(#mylist[[i]][2],
+    regmatches(mylist[[i]][2],r[[i]])[[1]][2],
+    regmatches(mylist[[i]][2],yr[[i]]),
+    read.delim(textConnection(text),
+               header=F,
+               strip.white=T,
+               skip=2,
+               stringsAsFactors=F)
+  )
+  
+}
+
+final_df_2007<-do.call("rbind",df_list)  # this converts df_list into a dataframe.
+colnames(final_df_2007)<-c('Institution','year','Employee','Job.Title','et','mp','percent_ft','Salary')
+final_df_2007<-final_df_2007[(is.na(final_df_2007$Salary))==F,]
+final_df_2007<-final_df_2007[,c(1:4,8,5:7)]  # Institution year Employee Job_title  Salary et mp percent_ft
+final_df_2007$job.cat<-"other"
+head(final_df_2007)
+write.csv(final_df_2007,file="I:\\My Data Sources\\Data\\final_df_2007.csv")  #on campus
+
+########
+#2009:
+
+for (i in 1:length(mylist)){
+  if (grepl("Eastern Wa Univ \\(",mylist[[i]][2])){ #I want to first try with parantheses, and if that fails, then use the idiosyncratic search for Eastern
+    r[[i]]<-regexec("^[[:digit:]]{4} (.*) \\(",mylist[[i]][2])
+  } else {
+    if (grepl("Eastern Wa Univ [[:digit:]]{1}",mylist[[i]][2])){
+      r[[i]]<-regexec("^[[:digit:]]{4} (.*) [[:digit:]]{1}",mylist[[i]][2]);print("Eastern")
+    }else{
+      r[[i]]<-regexec("^[[:digit:]]{4} (.*) \\(",mylist[[i]][2])
+    }
+  } #'?' makes it less greedy  and I'm not sure why it's not picking up eastern here.
+  yr[[i]]<-regexec("^[[:digit:]]{4}",mylist[[i]][2])
+}
 
 df_list<-list()
 for (i in 1:length(mylist)){
@@ -243,19 +292,18 @@ final_df_2009<-final_df_2009[(is.na(final_df_2009$Salary))==F,]
 final_df_2009<-final_df_2009[,c(1:4,8,5:7)]  # Institution year Employee Job_title  Salary et mp percent_ft
 final_df_2009$job.cat<-"other"
 head(final_df_2009)
-final_df_2009[is.na(final_df_2009$Institution),1]<-"Eastern Wa Univ"
+write.csv(final_df_2009,file="I:\\My Data Sources\\Data\\final_df_2009.csv")  #on campus
+
+
 ##########
 ##########
 ##########
 ##For 2011:  Note that Z is added to all last names
-mylist<-mylist_bak
-
 
 for(i in 1:length(mylist)){ #ideally this should be an apply funciton
   mylist[[i]][1]<-gsub('^\n|(\r\n){2,}','\r\n',mylist[[i]][1])
 }
 
-test<-vector("list",length(mylist))  # this simply works for finding the name.  Now salary and title need distinguishing
 wid<-vector("list",length(mylist))  # this simply works for finding the name.  Now salary and title need distinguishing
   for(i in 1:length(mylist)){
     text<-as.character(mylist[[i]][1])
@@ -342,14 +390,11 @@ final_df_2011$year<-2010 #done because bloom has 2010, but calls it 2011
 final_df_2011$job.cat<-"other"
 head(final_df_2011)
 str(final_df_2011)
-
-
-
-
-
-write.csv(final_df_2007, append=F,file = "./final_df_2007.csv")
+#write.csv(final_df_2011,file="I:\\My Data Sources\\Data\\final_df_2011.csv")  #on campus
+write.csv(final_df_2011, append=F,file = "./final_df_2011.csv")
 
 df<-rbind(final_df_2011,final_df_2009,final_df_2007,final_df_2005,final_df_2003)
+#write.csv(df, append=F,file = "I:\\My Data Sources\\Data\\df.csv") #on campus
 write.csv(df, append=F,file = "./df.csv")
 ###The below merges the data frame with a small table for later merging with post 2010 data
 ac<-read.csv(file="./scripts/agency_code.csv")
@@ -358,11 +403,11 @@ ac<-read.csv(file="./scripts/agency_code.csv")
 ###### these should happen after all of 2003-2011 are merged but before merging with colleges_longForm
 final_df <- merge(df,ac, by.x="Institution", by.y="Institute", all.x=TRUE)  #this gets the correct names of agencies
 final_df<- (final_df[,c(10,11,3:4,9,2,5:8)])
-
+head(final_df)
 
 final_df<-rbind(final_df,colleges_longForm)   ##########this rbinds salary and finaldf2011
 write.csv(final_df, file = "./final_df.csv")
-
+#write.csv(final_df, append=F,file = "I:\\My Data Sources\\Data\\final_df.csv") #on campus
 df$year<-as.Date(paste(df$year,"-06","-30",sep=""))
 tbl<-as.data.frame(table(df$Salary,df$year))
 head(tbl)

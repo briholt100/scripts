@@ -54,7 +54,7 @@ get_links<-function(){
 select_year<-function(){
   year<-""
   choices<-c('2011', '2009', '2007', "2005", "2003")
- year<-readline(prompt= '\n\nPlease enter a following year: 2011, 2009, 2005, or 2003....\n')
+ year<-readline(prompt= '\n\nPlease enter a following year: 2011, 2009, 2007, 2005, or 2003....\n')
   if (year %in% choices)
   {writeLines(paste0('\n\nThank you, pulling the data from year ',year,'\n\n'));
     return(year)} else{
@@ -86,10 +86,27 @@ make_list<-function(links=NULL,year=NULL){
 
 recursive_replace<-function(text=text){
   text<-gsub('([[:alpha:]]) {2}([[:alpha:]])','\1 \2',text)
-  while (grepl('\\. #HRLY ',text)){
-    text<-gsub('\\. #HRLY','\\. HRLY',text)
-    print (grepl('\\. #HRLY ',text))
+  text<-gsub('ADAM   K.','ADAM K.',text)
+  text<-gsub('CHRISTOPHER   R.','CHRISTOPHER R.',text)
+  text<-gsub('CHRISTOPHER  T','CHRISTOPHER T.',text)
+  text<-gsub('KA   I W ','KA I.W.',text)
+  text<-gsub('I-YEU +\\(STEVE\\)','I-YEU, STEVE',text)
+  text<-gsub('E. +E. +WALSH','E.E. WALSH',text)
+  text<-gsub('ADMIN  SERVICES MANAGER A','ADMIN SERVICES MANAGER A',text)
+
+  while (grepl('\\. +HRLY ',text)){
+    text<-gsub('\\. +HRLY',' HRLY',text)
+    print (grepl('\\. +HRLY ',text))
   }
+  while (grepl("'S +\\)",text)){
+    text<-gsub("'S +\\)","'S\\)",text)
+    print (grepl("'S +\\)",text))
+  }
+  while (grepl(" {2,}- HOURLY",text)){
+    text<-gsub(" {2,}- HOURLY"," - HOURLY",text)
+    print (grepl(" {2,}- HOURLY",text))
+  }
+
 
   while (grepl(' {2}',text)){
     text<-gsub(' {2}','\t',text)
@@ -190,11 +207,8 @@ head(final_df_2005)
 # 2003-2005  has 5 columns (like 2011), and should be read with read.delim like 2011
 
 # This works for: 2007, 2009:
-                                               ####check for lump sum errant paranthesis
-                                    ####check for > final_df[grep('ASSISTANT TO THE DIRECTOR',final_df$et),]
-                                      #FACILITIES OPERATIONS MAINTENANCE SPEC
-                                      # - HOURLY
-table(final_df_2007$et)
+
+table(final_df_2009$et)
 r=list()
 yr=list()
 for (i in 1:length(mylist)){
@@ -223,12 +237,13 @@ for (i in 1:length(mylist)){
 
 }
 
-final_df_2007<-do.call("rbind",df_list)  # this converts df_list into a dataframe.
-colnames(final_df_2007)<-c('Institution','year','Employee','Job.Title','et','mp','percent_ft','Salary')
-final_df_2007<-final_df_2007[(is.na(final_df_2007$Salary))==F,]
-final_df_2007<-final_df_2007[,c(1:4,8,5:7)]  # Institution year Employee Job_title  Salary et mp percent_ft
-final_df_2007$job.cat<-"other"
-head(final_df_2007)
+final_df_2009<-do.call("rbind",df_list)  # this converts df_list into a dataframe.
+colnames(final_df_2009)<-c('Institution','year','Employee','Job.Title','et','mp','percent_ft','Salary')
+final_df_2009<-final_df_2009[(is.na(final_df_2009$Salary))==F,]
+final_df_2009<-final_df_2009[,c(1:4,8,5:7)]  # Institution year Employee Job_title  Salary et mp percent_ft
+final_df_2009$job.cat<-"other"
+head(final_df_2009)
+final_df_2009[is.na(final_df_2009$Institution),1]<-"Eastern Wa Univ"
 ##########
 ##########
 ##########

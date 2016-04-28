@@ -58,7 +58,7 @@ select_year<-function(){
   if (year %in% choices)
   {writeLines(paste0('\n\nThank you, pulling the data from year ',year,'\n\n'));
     return(year)} else{
-      writeLines('Please try again.Select only from 2011, 2009, 2005, or 2003\n\n');
+      writeLines('Please try again.Select only from 2011, 2009, 2007, 2005, or 2003\n\n');
       select_year()}
 }
 
@@ -103,7 +103,46 @@ str(mylist)
 
 
 
-## For 2003,2005
+## For 2003,
+for (i in 1:length(mylist)){
+  mylist[[i]][1]<-recursive_replace(mylist[[i]][1])
+  mylist[[i]][1]<-gsub('\t *\r','\r',mylist[[i]][1])
+  mylist[[i]][1]<-gsub('\t \\*',' \\*',mylist[[i]][1])
+}
+
+df_list<-list()
+for (i in 1:length(mylist)){
+  text<-as.character(mylist[[i]][1])
+  text<-recursive_replace(text)
+  df_list[[i]]<-cbind(#mylist[[i]][2],
+    regmatches(mylist[[i]][2],r[[i]])[[1]][2],
+    regmatches(mylist[[i]][2],yr[[i]]),
+    read.delim(textConnection(text),
+               header=F,
+               strip.white=T,
+               skip=2,
+               stringsAsFactors=F)
+  )
+
+
+}
+sapply(df_list,length)
+
+final_df_2003<-do.call("rbind",df_list)  # this converts df_list into a dataframe.
+colnames(final_df_2003)<-c('Institution','year','Employee','Job.Title','Salary')
+final_df_2003$Salary<-as.numeric(final_df_2003$Salary)
+final_df_2003<-final_df_2003[(is.na(final_df_2003$Salary))==F,]
+final_df_2003$Employee<-gsub('Z,',',',final_df_2003$Employee)
+final_df_2003$et<-NA
+final_df_2003$mp<-NA
+final_df_2003$percent_ft<-NA
+#Institution year Employee Job_title  Salary et mp percent_ft
+final_df_2003$job.cat<-"other"
+
+head(final_df_2003)
+
+
+##2005
 
 for (i in 1:length(mylist)){
   mylist[[i]][1]<-recursive_replace(mylist[[i]][1])
@@ -116,42 +155,51 @@ for (i in 1:length(mylist)){
   text<-as.character(mylist[[i]][1])
   text<-gsub('ET-PU  MP  %FT','ET-PU     MP     %FT',text)
   text<-recursive_replace(text)
-  df_list[[i]]<-cbind(mylist[[i]][2],read.delim(textConnection(text),
+  df_list[[i]]<-cbind(#mylist[[i]][2],
+      regmatches(mylist[[i]][2],r[[i]])[[1]][2],
+      regmatches(mylist[[i]][2],yr[[i]]),
+      read.delim(textConnection(text),
                                                 header=F,
                                                 strip.white=T,
                                                 skip=2,
                                                 stringsAsFactors=F)
   )
 
-  if(length(df_list[[i]])>7){
-    ifelse(sum(is.na(df_list[[i]][,8]))!=nrow(df_list[[i]]),
-           print("error in read.delim; data in extra column"),
-           df_list[[i]]<-df_list[[i]][,-8])
-  }
+
 }
 
 
 final_df_2005<-do.call("rbind",df_list)  # this converts df_list into a dataframe.
-colnames(final_df_2005)<-c('Institution','Employee','Job_title','Salary')
+colnames(final_df_2005)<-c('Institution','year','Employee','Job.Title','Salary')
 final_df_2005$Salary<-as.numeric(final_df_2005$Salary)
 final_df_2005<-final_df_2005[(is.na(final_df_2005$Salary))==F,]
-#final_df_2005$Employee<-gsub('Z,',',',final_df_2005$Employee)
+final_df_2005$Employee<-gsub('Z,',',',final_df_2005$Employee)
 final_df_2005$et<-NA
 final_df_2005$mp<-NA
 final_df_2005$percent_ft<-NA
+#Institution year Employee Job_title  Salary et mp percent_ft
+final_df_2005$job.cat<-"other"
 head(final_df_2005)
 
 
 # 2003-2005  has 5 columns (like 2011), and should be read with read.delim like 2011
 
 # This works for: 2007, 2009:
+                                               ####check for lump sum errant paranthesis
+                                    ####check for > final_df[grep('ASSISTANT TO THE DIRECTOR',final_df$et),]
+                                      #FACILITIES OPERATIONS MAINTENANCE SPEC
+                                      # - HOURLY
+#> table(final_df$et)
 
 df_list<-list()
 for (i in 1:length(mylist)){
   text<-as.character(mylist[[i]][1])
   text<-gsub('ET-PU  MP  %FT','ET-PU     MP     %FT',text)
   text<-recursive_replace(text)
-  df_list[[i]]<-cbind(mylist[[i]][2],read.delim(textConnection(text),
+  df_list[[i]]<-cbind(#mylist[[i]][2],
+                      regmatches(mylist[[i]][2],r[[i]])[[1]][2],
+                      regmatches(mylist[[i]][2],yr[[i]]),
+                      read.delim(textConnection(text),
                                                 header=F,
                                                 strip.white=T,
                                                 skip=2,
@@ -161,9 +209,9 @@ for (i in 1:length(mylist)){
 }
 
 final_df_2009<-do.call("rbind",df_list)  # this converts df_list into a dataframe.
-colnames(final_df_2009)<-c('Institution','Employee','Job_title','et','mp','percent_ft','Salary')
+colnames(final_df_2009)<-c('Institution','year','Employee','Job.Title','et','mp','percent_ft','Salary')
 final_df_2009<-final_df_2009[(is.na(final_df_2009$Salary))==F,]
-final_df_2009<-final_df_2009[,c(1:3,7,4:6)]
+final_df_2009<-final_df_2009[,c(1:4,8,5:7)]  # Institution year Employee Job_title  Salary et mp percent_ft
 final_df_2009$job.cat<-"other"
 head(final_df_2009)
 ##########
@@ -261,20 +309,30 @@ final_df_2011$et<-NA
 final_df_2011$mp<-NA
 final_df_2011$percent_ft<-NA
 final_df_2011$year<-2010 #done because bloom has 2010, but calls it 2011
-
-###The below merges the data frame with a small table for later merging with post 2010 data
-ac<-read.csv(file="./agency_code.csv")
-#ac<-read.csv(file="I://My Data Sources//Scripts//agency_code.csv")  #for campus
 final_df_2011$job.cat<-"other"
 head(final_df_2011)
 str(final_df_2011)
 
+
+
+
+
+write.csv(final_df_2007, append=F,file = "./final_df_2007.csv")
+
+df<-rbind(final_df_2011,final_df_2009,final_df_2007,final_df_2005,final_df_2003)
+write.csv(df, append=F,file = "./df.csv")
+###The below merges the data frame with a small table for later merging with post 2010 data
+ac<-read.csv(file="./scripts/agency_code.csv")
+#ac<-read.csv(file="I://My Data Sources//Scripts//agency_code.csv")  #for campus
+
 ###### these should happen after all of 2003-2011 are merged but before merging with colleges_longForm
-#final_df_2011 <- merge(final_df_2011,ac, by.x="Institution", by.y="Institute", all.x=TRUE)  #this gets the correct names of agencies
-#final_df_2011<- (final_df_2011[,c(10,11,3:4,9,2,5:8)])
+final_df <- merge(df,ac, by.x="Institution", by.y="Institute", all.x=TRUE)  #this gets the correct names of agencies
+final_df<- (final_df[,c(10,11,3:4,9,2,5:8)])
 
 
-#df<-rbind(final_df_2011,colleges_longForm)   ##########this rbinds salary and finaldf2011
+final_df<-rbind(final_df,colleges_longForm)   ##########this rbinds salary and finaldf2011
+write.csv(final_df, file = "./final_df.csv")
+
 df$year<-as.Date(paste(df$year,"-06","-30",sep=""))
 tbl<-as.data.frame(table(df$Salary,df$year))
 head(tbl)
@@ -306,7 +364,7 @@ gather(forPlot,Category,year,x2010:x2014)
 
 
 
-df<-rbind(final_df_2009,final_df_2011)
+
 
 gsub('[[:digit:]]{4} (.*) \\(.*\\)','\\1',df$Institution)
 strsplit(as.character(df$Institution),split='[[:digit:]] ')

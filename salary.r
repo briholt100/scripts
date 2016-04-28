@@ -51,7 +51,7 @@ ifelse (!file.exists('../Data/WaStEmployeeHistSalary.txt')
 
 
 #home
-salary<-read.csv("../Data/WaStEmployeeHistSalary.txt1",
+salary<-read.csv("../Data/WaStEmployeeHistSalary.txt", #use .txt1 for campus
                  sep='\t' ,stringsAsFactors=T,strip.white=T,na.strings=c('0',''))
 
 ##convert variables to factors or numeric
@@ -69,7 +69,7 @@ salary$job.cat<-"other"
 
 
 
-colleges<-salary[grep('college|university',salary$Agency,ignore.case=T),]
+colleges<-salary[grep('college|university|State Board for Comm and Tech Coll',salary$Agency,ignore.case=T),]
 colleges<-droplevels(colleges)
 collegeCodes<-sort(unique(colleges$Code))
 head(colleges)
@@ -78,9 +78,6 @@ Agency_code<-unique(colleges[c("Code","Agency")])
 
 
 colleges_longForm<-gather(colleges,year,Salary,X2011:X2014)
-
-
-
 
 levels(colleges_longForm$year)[levels(colleges_longForm$year)=="X2011"] <- "2011"
 levels(colleges_longForm$year)[levels(colleges_longForm$year)=="X2012"] <- "2012"

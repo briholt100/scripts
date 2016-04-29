@@ -409,13 +409,14 @@ final_df<-rbind(final_df,colleges_longForm)   ##########this rbinds salary and f
 write.csv(final_df, file = "./final_df.csv")
 #write.csv(final_df, append=F,file = "I:\\My Data Sources\\Data\\final_df.csv") #on campus
 df$year<-as.Date(paste(df$year,"-06","-30",sep=""))
-tbl<-as.data.frame(table(df$Salary,df$year))
+
+tbl<-as.data.frame(table(final_df$Salary,final_df$year))
 head(tbl)
 colnames(tbl)<-c('Salary','year','Freq')
 tapply(tbl$Freq,tbl$year,sum)
-plot(tapply(tbl$Freq,tbl$year,sum))
+plot(tapply(tbl$Freq,tbl$year,sum),)
 
-tbl1<-table(df$job.cat[!is.na(df$Salary)],df$year[!is.na(df$Salary)])
+tbl1<-table(final_df$job.cat[!is.na(final_df$Salary)],final_df$year[!is.na(final_df$Salary)])
 tbl1<-as.data.frame(tbl1)
 colnames(tbl1)<-c('category','year','Freq')
 

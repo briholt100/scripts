@@ -1,5 +1,7 @@
 ######
-
+#campus
+#setwd(".\\My Data Sources\\")
+#final_df<-read.csv( file = "./Data/final_df.csv")
 final_df<-read.csv( file = "./scripts/final_df.csv")
 #After running pull_bloom.r and salary.r, here is where analysis begins on final_df.  Consider dropping salary == 'na'
 
@@ -7,20 +9,22 @@ adminOther.list<-grep("admin", final_df$Job.Title, ignore.case=T, value=F)
 chancellor.list<-grep("CHANCELLOR", final_df$Job.Title, ignore.case=T, value=F)
 childhood.list<-grep("childho", final_df$Job.Title, ignore.case=T, value=F)
 communication.list<-grep("commun", final_df$Job.Title, ignore.case=T, value=F)
-coordination.list<-grep("coord,", final_df$Job.Title, ignore.case=T, value=F)
+coordination.list<-grep("coord,|EXT COORD", final_df$Job.Title, ignore.case=T, value=F)
 counselor.list<-grep("counselo", final_df$Job.Title, ignore.case=T, value=F)
 dean.list<-grep("dean|assistant d|ASSOC. DEAN", final_df$Job.Title, ignore.case=T)
 director.list<-grep("dir", final_df$Job.Title, ignore.case=T) #, value=T)
 exec.list<-c(grep("exec. d", final_df$Job.Title, ignore.case=T))
-facilities.list<-grep("facilit|custo|electr|grounds|locks|maintan|mechanic", final_df$Job.Title, ignore.case=T, value=F)
-faculty.list<-grep("faculty|professor", final_df$Job.Title, ignore.case=T)
+facilities.list<-grep("facilit|custod|electr|grounds|locks|maintan|mechanic", final_df$Job.Title, ignore.case=T, value=F)
+faculty.list<-grep("faculty|professor|moonlight|ftf |ptf |prof|LECTURER|instructor", final_df$Job.Title, ignore.case=T)
 finance.list<-grep("financ|budget|capita|fiscal", final_df$Job.Title, ignore.case=T, value=F)
+food.list<-grep("food", final_df$Job.Title, ignore.case=T, value=F)
 hour.list<-grep("hour", final_df$Job.Title, ignore.case=T, value=F)
 HR.list<-grep("HR|benefits|human|payrol", final_df$Job.Title, ignore.case=T, value=F)
 library.list<-grep("librar", final_df$Job.Title, ignore.case=T, value=F)
 mail.list<-grep("mail", final_df$Job.Title, ignore.case=T, value=F)
 manager.list<-c(grep("mgr", final_df$Job.Title, ignore.case=T), grep("manag", final_df$Job.Title, ignore.case=T))
 media.list<-grep("media", final_df$Job.Title, ignore.case=T, value=F)
+nurse.list<-grep("NURSE", final_df$Job.Title, ignore.case=T, value=F)
 officeAssist.list<-grep("office assistant|PROGRAM ASSISTANT|ADMINISTRATIVE ASSIST", final_df$Job.Title, ignore.case=T)
 president.list<-grep("presi|v.c.,|chief", final_df$Job.Title, ignore.case=T, value=F)
 programCoord.list<-grep("program coord", final_df$Job.Title, ignore.case=T, value=F)
@@ -49,12 +53,14 @@ final_df$job.cat<-factor(final_df$job.cat,
                      "facilities",
                      "faculty",
                      "finance",
+                     "food",
                      "hourly",
                      "HR",
                      "library",
                      "mail",
                      "manager",
                      "media",
+                     "nurse",
                      "other",
                      "pres",
                      "program coordinator",
@@ -74,6 +80,7 @@ final_df$job.cat<-factor(final_df$job.cat,
 final_df$job.cat[adminOther.list]<-"admin (Other)"
 final_df$job.cat[HR.list]<-"HR"
 final_df$job.cat[security.list]<-"security"
+final_df$job.cat[nurse.list]<-"nurse"
 final_df$job.cat[finance.list]<-"finance"
 final_df$job.cat[facilities.list]<-"facilities"
 final_df$job.cat[mail.list]<-"mail"
@@ -85,7 +92,7 @@ final_df$job.cat[library.list]<-"library"
 final_df$job.cat[supervisory.list]<-"supervisory"
 final_df$job.cat[counselor.list]<-"counselor"
 final_df$job.cat[retail.list]<-"retail"
-
+final_df$job.cat[food.list]<-"food"
 final_df$job.cat[programCoord.list]<-"program coordinator"
 final_df$job.cat[director.list]<-"director"
 final_df$job.cat[hour.list]<-"hourly"
@@ -110,7 +117,7 @@ director.salary<-final_df[director.list,]
 
 
 table(final_df$job.cat)
-
+tail(sort(table(final_df$Job.Title[final_df$job.cat=='other'])),20)
 
 
 

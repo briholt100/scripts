@@ -1,6 +1,6 @@
 ######
 
-
+final_df<-read.csv( file = "./scripts/final_df.csv")
 #After running pull_bloom.r and salary.r, here is where analysis begins on final_df.  Consider dropping salary == 'na'
 
 adminOther.list<-grep("admin", final_df$Job.Title, ignore.case=T, value=F)
@@ -120,8 +120,12 @@ df$year<-as.Date(paste(df$year,"-06","-30",sep=""))
 
 tbl<-as.data.frame(table(final_df$Salary,final_df$year))
 head(tbl)
-colnames(tbl)<-c('Salary','year','Freq')
-tapply(tbl$Freq,tbl$year,sum)
+colnames(tbl)<-c('Salary','year','Agency','Freq')
+tapply(tbl$Freq,list(tbl$Agency,tbl$year),sum)
+#This previous one works.  Needs to now break down by job category
+
+
+
 plot(tapply(tbl$Freq,tbl$year,sum),)
 
 tbl1<-table(final_df$job.cat[!is.na(final_df$Salary)],final_df$year[!is.na(final_df$Salary)])

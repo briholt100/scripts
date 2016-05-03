@@ -6,6 +6,7 @@ final_df<-read.csv( file = "./scripts/final_df.csv")
 
 
 adminOther.list<-grep("admin", final_df$Job.Title, ignore.case=T, value=F)
+academic.list<-grep("ACADEMIC EMPLOYEE|ACADEMIC EMP|ACAD EMP", final_df$Job.Title, ignore.case=T, value=F)
 chancellor.list<-grep("CHANCELLOR", final_df$Job.Title, ignore.case=T, value=F)
 childhood.list<-grep("childho", final_df$Job.Title, ignore.case=T, value=F)
 communication.list<-grep("commun", final_df$Job.Title, ignore.case=T, value=F)
@@ -42,6 +43,7 @@ vChanc.list<-grep("VICE CHANCELLOR|V\\.C.", final_df$Job.Title, ignore.case=T, v
 final_df$job.cat<-factor(final_df$job.cat,
                    sort(c(
                      "admin (Other)",
+                     "academic (Other)",
                      "assistant",
                      "chancellor",
                      "childhood",
@@ -80,6 +82,7 @@ final_df$job.cat<-factor(final_df$job.cat,
 ##WARNING; BEWARE OF CHANGING ORDER BELOW, ELSE CATEGORIES WILL CHANGE
 
 final_df$job.cat[adminOther.list]<-"admin (Other)"
+final_df$job.cat[academic.list]<-"academic (Other)"
 final_df$job.cat[HR.list]<-"HR"
 final_df$job.cat[security.list]<-"security"
 final_df$job.cat[nurse.list]<-"nurse"
@@ -130,8 +133,8 @@ write.table(final_df, file = "I:\\www\\quickshare\\final_df.csv",sep='\t')
 write.table(final_df[,1:8], file = "I:\\www\\quickshare\\final_df.csv",sep='\t')
 
 
-table(final_df$job.cat)
-tail(sort(table(final_df$Job.Title[final_df$job.cat=='other'])),40)
+table(colleges_df$job.cat)
+tail(sort(table(colleges_df$Job.Title[colleges_df$job.cat=='other'])),40)
 
 
 

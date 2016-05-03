@@ -123,7 +123,7 @@ unique(final_df[c("Code","Agency")])
 uniList<-list("375|370|376|360|365|380")
 
 colleges_df<-final_df[grepl(uniList,final_df$Code)==F,1:8]
-write.table(colleges_df, file = "I:\\www\\quickshare\\colleges_df.csv", sep="\t" ,qmethod = "double")
+write.table(colleges_df, file = "I:\\www\\quickshare\\colleges_df.csv", sep="\t" ,qmethod = "double", col.names = TRUE,)
 
 
 write.table(final_df, file = "I:\\www\\quickshare\\final_df.csv",sep='\t')

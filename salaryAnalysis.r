@@ -142,7 +142,7 @@ tail(sort(table(colleges_df$Job.Title[colleges_df$job.cat=='other'])),40)
 final_df$year<-as.factor(final_df$year)
 df$year<-as.Date(paste(df$year,"-06","-30",sep=""))
 
-tbl<-as.data.frame(table(final_df$Salary,final_df$year))
+tbl<-as.data.frame(table(colleges_df$Salary,colleges_df$year,colleges_df$Agency))
 head(tbl)
 colnames(tbl)<-c('Salary','year','Agency','Freq')
 tapply(tbl$Freq,list(tbl$Agency,tbl$year),sum)

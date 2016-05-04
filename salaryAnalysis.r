@@ -1,46 +1,50 @@
 ######
+library(tidyr)
+
+
 #campus
 #setwd(".\\My Data Sources\\")
 #final_df<-read.csv( file = "./Data/final_df.csv")
 final_df<-read.csv( file = "./scripts/final_df.csv")
 
+colleges_df$job.cat<-"other"
+adminOther.list<-grep("admin", colleges_df$Job.Title, ignore.case=T, value=F)
+academic.list<-grep("ACADEMIC EMPLOYEE|ACADEMIC EMP|ACAD EMP", colleges_df$Job.Title, ignore.case=T, value=F)
+chancellor.list<-grep("CHANCELLOR", colleges_df$Job.Title, ignore.case=T, value=F)
+childhood.list<-grep("childho", colleges_df$Job.Title, ignore.case=T, value=F)
+communication.list<-grep("commun", colleges_df$Job.Title, ignore.case=T, value=F)
+coordination.list<-grep("coord,|EXT COORD", colleges_df$Job.Title, ignore.case=T, value=F)
+counselor.list<-grep("counselo", colleges_df$Job.Title, ignore.case=T, value=F)
+dean.list<-grep("dean|assistant d|ASSOC. DEAN", colleges_df$Job.Title, ignore.case=T)
+director.list<-grep("dir", colleges_df$Job.Title, ignore.case=T) #, value=T)
+exec.list<-c(grep("exec. d", colleges_df$Job.Title, ignore.case=T))
+facilities.list<-grep("facilit|custod|electr|grounds|locks|maintan|mechanic", colleges_df$Job.Title, ignore.case=T, value=F)
+faculty.list<-grep("faculty|professor|moonlight|ftf |ptf |LECTURER|instructor", colleges_df$Job.Title, ignore.case=T)
+finance.list<-grep("financ|budget|capita|fiscal", colleges_df$Job.Title, ignore.case=T, value=F)
+food.list<-grep("food", colleges_df$Job.Title, ignore.case=T, value=F)
+hour.list<-grep("hour", colleges_df$Job.Title, ignore.case=T, value=F)
+HR.list<-grep("HR|benefits|human|payrol", colleges_df$Job.Title, ignore.case=T, value=F)
+library.list<-grep("librar", colleges_df$Job.Title, ignore.case=T, value=F)
+mail.list<-grep("mail", colleges_df$Job.Title, ignore.case=T, value=F)
+manager.list<-c(grep("mgr", colleges_df$Job.Title, ignore.case=T), grep("manag", colleges_df$Job.Title, ignore.case=T))
+media.list<-grep("media", colleges_df$Job.Title, ignore.case=T, value=F)
+nurse.list<-grep("NURSE", colleges_df$Job.Title, ignore.case=T, value=F)
+officeAssist.list<-grep("office assistant|PROGRAM ASSISTANT|ADMINISTRATIVE ASSIST", colleges_df$Job.Title, ignore.case=T)
+profTech.list<-grep("professional tech", colleges_df$Job.Title, ignore.case=T)
+president.list<-grep("presi|v.c.,|chief", colleges_df$Job.Title, ignore.case=T, value=F)
+programCoord.list<-grep("program coord|PRGM COORD", colleges_df$Job.Title, ignore.case=T, value=F)
+retail.list<-grep("retail", colleges_df$Job.Title, ignore.case=T, value=F)
+secretary.list<-grep("secr|exec. a", colleges_df$Job.Title, ignore.case=T) #, value=T)
+security.list<-grep("security", colleges_df$Job.Title, ignore.case=T, value=F)
+specialist.list<-grep("spec", colleges_df$Job.Title, ignore.case=T, value=F)
+gradstudent.list<-grep("STIPEND GRAD", colleges_df$Job.Title, ignore.case=T, value=F)
+supervisory.list<-grep("superv|spv", colleges_df$Job.Title, ignore.case=T, value=F)
+support.list<-grep("supt", colleges_df$Job.Title, ignore.case=T, value=F)
+vice.list<-grep("vice p|vp", colleges_df$Job.Title, ignore.case=T, value=F)
 
-adminOther.list<-grep("admin", final_df$Job.Title, ignore.case=T, value=F)
-academic.list<-grep("ACADEMIC EMPLOYEE|ACADEMIC EMP|ACAD EMP", final_df$Job.Title, ignore.case=T, value=F)
-chancellor.list<-grep("CHANCELLOR", final_df$Job.Title, ignore.case=T, value=F)
-childhood.list<-grep("childho", final_df$Job.Title, ignore.case=T, value=F)
-communication.list<-grep("commun", final_df$Job.Title, ignore.case=T, value=F)
-coordination.list<-grep("coord,|EXT COORD", final_df$Job.Title, ignore.case=T, value=F)
-counselor.list<-grep("counselo", final_df$Job.Title, ignore.case=T, value=F)
-dean.list<-grep("dean|assistant d|ASSOC. DEAN", final_df$Job.Title, ignore.case=T)
-director.list<-grep("dir", final_df$Job.Title, ignore.case=T) #, value=T)
-exec.list<-c(grep("exec. d", final_df$Job.Title, ignore.case=T))
-facilities.list<-grep("facilit|custod|electr|grounds|locks|maintan|mechanic", final_df$Job.Title, ignore.case=T, value=F)
-faculty.list<-grep("faculty|professor|moonlight|ftf |ptf |prof|LECTURER|instructor", final_df$Job.Title, ignore.case=T)
-finance.list<-grep("financ|budget|capita|fiscal", final_df$Job.Title, ignore.case=T, value=F)
-food.list<-grep("food", final_df$Job.Title, ignore.case=T, value=F)
-hour.list<-grep("hour", final_df$Job.Title, ignore.case=T, value=F)
-HR.list<-grep("HR|benefits|human|payrol", final_df$Job.Title, ignore.case=T, value=F)
-library.list<-grep("librar", final_df$Job.Title, ignore.case=T, value=F)
-mail.list<-grep("mail", final_df$Job.Title, ignore.case=T, value=F)
-manager.list<-c(grep("mgr", final_df$Job.Title, ignore.case=T), grep("manag", final_df$Job.Title, ignore.case=T))
-media.list<-grep("media", final_df$Job.Title, ignore.case=T, value=F)
-nurse.list<-grep("NURSE", final_df$Job.Title, ignore.case=T, value=F)
-officeAssist.list<-grep("office assistant|PROGRAM ASSISTANT|ADMINISTRATIVE ASSIST", final_df$Job.Title, ignore.case=T)
-president.list<-grep("presi|v.c.,|chief", final_df$Job.Title, ignore.case=T, value=F)
-programCoord.list<-grep("program coord|PRGM COORD", final_df$Job.Title, ignore.case=T, value=F)
-retail.list<-grep("retail", final_df$Job.Title, ignore.case=T, value=F)
-secretary.list<-grep("secr|exec. a", final_df$Job.Title, ignore.case=T) #, value=T)
-security.list<-grep("security", final_df$Job.Title, ignore.case=T, value=F)
-specialist.list<-grep("spec", final_df$Job.Title, ignore.case=T, value=F)
-gradstudent.list<-grep("STIPEND GRAD", final_df$Job.Title, ignore.case=T, value=F)
-supervisory.list<-grep("superv|spv", final_df$Job.Title, ignore.case=T, value=F)
-support.list<-grep("supt", final_df$Job.Title, ignore.case=T, value=F)
-vice.list<-grep("vice p|vp", final_df$Job.Title, ignore.case=T, value=F)
+vChanc.list<-grep("VICE CHANCELLOR|V\\.C.", colleges_df$Job.Title, ignore.case=T, value=F)
 
-vChanc.list<-grep("VICE CHANCELLOR|V\\.C.", final_df$Job.Title, ignore.case=T, value=F)
-
-final_df$job.cat<-factor(final_df$job.cat,
+colleges_df$job.cat<-factor(colleges_df$job.cat,
                    sort(c(
                      "admin (Other)",
                      "academic (Other)",
@@ -68,6 +72,7 @@ final_df$job.cat<-factor(final_df$job.cat,
                      "other",
                      "pres",
                      "program coordinator",
+                     "professional technical",
                      "retail",
                      "secretary",
                      "security",
@@ -81,44 +86,45 @@ final_df$job.cat<-factor(final_df$job.cat,
 
 ##WARNING; BEWARE OF CHANGING ORDER BELOW, ELSE CATEGORIES WILL CHANGE
 
-final_df$job.cat[adminOther.list]<-"admin (Other)"
-final_df$job.cat[academic.list]<-"academic (Other)"
-final_df$job.cat[HR.list]<-"HR"
-final_df$job.cat[security.list]<-"security"
-final_df$job.cat[nurse.list]<-"nurse"
-final_df$job.cat[finance.list]<-"finance"
-final_df$job.cat[facilities.list]<-"facilities"
-final_df$job.cat[mail.list]<-"mail"
-final_df$job.cat[media.list]<-"media"
-final_df$job.cat[communication.list]<-"communication"
-final_df$job.cat[coordination.list]<-"coordination"
-final_df$job.cat[support.list]<-"support"
-final_df$job.cat[library.list]<-"library"
-final_df$job.cat[supervisory.list]<-"supervisory"
-final_df$job.cat[counselor.list]<-"counselor"
-final_df$job.cat[retail.list]<-"retail"
-final_df$job.cat[food.list]<-"food"
-final_df$job.cat[gradstudent.list]<-"gradStudent"
-final_df$job.cat[programCoord.list]<-"program coordinator"
-final_df$job.cat[director.list]<-"director"
-final_df$job.cat[hour.list]<-"hourly"
-final_df$job.cat[faculty.list]<-"faculty"
-final_df$job.cat[dean.list]<-"dean"
-final_df$job.cat[childhood.list]<-"childhood"
-final_df$job.cat[manager.list]<-"manager"
-final_df$job.cat[exec.list]<-"executive"
-final_df$job.cat[secretary.list]<-"secretary"
-final_df$job.cat[officeAssist.list]<-"assistant"
-final_df$job.cat[chancellor.list]<-"chancellor"
-final_df$job.cat[specialist.list]<-"specialist"
-final_df$job.cat[president.list]<-"pres"
-final_df$job.cat[vice.list]<-"vicepres"
-final_df$job.cat[vChanc.list]<-"viceChanc"
+colleges_df$job.cat[adminOther.list]<-"admin (Other)"
+colleges_df$job.cat[academic.list]<-"academic (Other)"
+colleges_df$job.cat[HR.list]<-"HR"
+colleges_df$job.cat[security.list]<-"security"
+colleges_df$job.cat[nurse.list]<-"nurse"
+colleges_df$job.cat[finance.list]<-"finance"
+colleges_df$job.cat[facilities.list]<-"facilities"
+colleges_df$job.cat[mail.list]<-"mail"
+colleges_df$job.cat[media.list]<-"media"
+colleges_df$job.cat[communication.list]<-"communication"
+colleges_df$job.cat[coordination.list]<-"coordination"
+colleges_df$job.cat[support.list]<-"support"
+colleges_df$job.cat[library.list]<-"library"
+colleges_df$job.cat[supervisory.list]<-"supervisory"
+colleges_df$job.cat[counselor.list]<-"counselor"
+colleges_df$job.cat[retail.list]<-"retail"
+colleges_df$job.cat[food.list]<-"food"
+colleges_df$job.cat[gradstudent.list]<-"gradStudent"
+colleges_df$job.cat[programCoord.list]<-"program coordinator"
+colleges_df$job.cat[profTech.list]<-"professional technical"
+colleges_df$job.cat[director.list]<-"director"
+colleges_df$job.cat[hour.list]<-"hourly"
+colleges_df$job.cat[faculty.list]<-"faculty"
+colleges_df$job.cat[dean.list]<-"dean"
+colleges_df$job.cat[childhood.list]<-"childhood"
+colleges_df$job.cat[manager.list]<-"manager"
+colleges_df$job.cat[exec.list]<-"executive"
+colleges_df$job.cat[secretary.list]<-"secretary"
+colleges_df$job.cat[officeAssist.list]<-"assistant"
+colleges_df$job.cat[chancellor.list]<-"chancellor"
+colleges_df$job.cat[specialist.list]<-"specialist"
+colleges_df$job.cat[president.list]<-"pres"
+colleges_df$job.cat[vice.list]<-"vicepres"
+colleges_df$job.cat[vChanc.list]<-"viceChanc"
 
-director.salary<-final_df[director.list,]
-dean.salary<-final_df[dean.list,]
-sec.salary<-final_df[secretary.list,]
-director.salary<-final_df[director.list,]
+director.salary<-colleges_df[director.list,]
+dean.salary<-colleges_df[dean.list,]
+sec.salary<-colleges_df[secretary.list,]
+director.salary<-colleges_df[director.list,]
 final_df$Code<-as.factor(final_df$Code)
 
 unique(final_df[c("Code","Agency")])
@@ -126,28 +132,32 @@ unique(final_df[c("Code","Agency")])
 uniList<-list("375|370|376|360|365|380")
 
 colleges_df<-final_df[grepl(uniList,final_df$Code)==F,1:8]
-write.table(colleges_df, file = "I:\\www\\quickshare\\colleges_df.csv")
 
+##campus
+write.csv(final_df,file = "./Data/final_df.csv")  #official backup
+write.csv(colleges_df,file = "./Data/colleges_df.csv")  #official backup
+write.table(final_df[,1:8], file = "I:\\www\\quickshare\\final_df.csv",sep="\t",row.names=F,qmethod = "double")
+write.table(colleges_df[1:10,], file = "I:\\www\\quickshare\\first_10_records_colleges_df.csv",sep="\t",row.names=F,qmethod = "double")
+write.table(colleges_df, file = "I:\\www\\quickshare\\colleges_df.csv",sep="\t",row.names=F,qmethod = "double")
+colleges_df<-read.delim(file = "I:\\www\\quickshare\\colleges_df.csv")
 
-write.table(final_df, file = "I:\\www\\quickshare\\final_df.csv",sep='\t')
-write.table(final_df[,1:8], file = "I:\\www\\quickshare\\final_df.csv",sep='\t')
-
-
+str(colleges_df)
 table(colleges_df$job.cat)
 tail(sort(table(colleges_df$Job.Title[colleges_df$job.cat=='other'])),40)
 
 
-
-
-final_df$year<-as.factor(final_df$year)
 df$year<-as.Date(paste(df$year,"-06","-30",sep=""))
+
+tapply(colleges_df$Salary[colleges_df$Code==670],colleges_df$year[colleges_df$Code==670],mean,na.rm=T)
+tapply(colleges_df$Salary[colleges_df$Code==670],colleges_df$year[colleges_df$Code==670],median,na.rm=T)
+
+
 
 tbl<-as.data.frame(table(colleges_df$Salary,colleges_df$year,colleges_df$Agency))
 head(tbl)
 colnames(tbl)<-c('Salary','year','Agency','Freq')
-tapply(tbl$Freq,list(tbl$Agency,tbl$year),sum)
+job_count<-as.data.frame(tapply(tbl$Freq,list(tbl$Agency,tbl$year),sum))  #this counts number of salaries earned.  It's a pseudo job count
 #This previous one works.  Needs to now break down by job category
-
 
 
 plot(tapply(tbl$Freq,tbl$year,sum),)

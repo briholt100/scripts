@@ -140,7 +140,7 @@ write.table(final_df[,1:8], file = "I:\\www\\quickshare\\final_df.csv",sep="\t",
 write.table(colleges_df[1:10,], file = "I:\\www\\quickshare\\first_10_records_colleges_df.csv",sep="\t",row.names=F,qmethod = "double")
 write.table(colleges_df, file = "I:\\www\\quickshare\\colleges_df.csv",sep="\t",row.names=F,qmethod = "double")
 colleges_df<-read.delim(file = "I:\\www\\quickshare\\colleges_df.csv")
-
+colleges_df<-colleges_df[,2:8]
 str(colleges_df)
 table(colleges_df$job.cat)
 tail(sort(table(colleges_df$Job.Title[colleges_df$job.cat=='other'])),40)

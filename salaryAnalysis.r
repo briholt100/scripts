@@ -7,7 +7,7 @@ library(ggplot2)
 #setwd(".\\My Data Sources\\")
 #colleges_df<-read.csv( file = "./Data/colleges_df.csv")
 colleges_df<-colleges_df[is.na(colleges_df$Salary)==F,3:9]
-colleges_df<-colleges_df[colleges_df$year>2009,]
+colleges_df<-colleges_df[colleges_df$year>2010,]
 colleges_df$Code<-as.factor(colleges_df$Code)
 colleges_df$year<-as.factor(colleges_df$year)
 str(colleges_df)
@@ -42,6 +42,10 @@ p+geom_point(aes(color=Agency))+
   theme(axis.text.x = element_text(angle = 90, hjust = 1))+
   facet_wrap(~year,ncol=4)+
   ggtitle("Count of employees in State, \n2011-2014")
+
+seattle<-colleges_df[grep("seattle",ignore.case=T,colleges_df$Agency),]
+bellevue<-colleges_df[grep("bellevue",ignore.case=T,colleges_df$Agency),]
+
 
 
 ###For seattle

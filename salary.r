@@ -47,7 +47,7 @@ ifelse (!file.exists('../Data/WaStEmployeeHistSalary.txt')
 #fread("grep 'Holt' /home/brian/Projects/data/addresses.csv")
 
 #campus
-#salary<-read.csv('../Data/WaStEmployeeHistSalary.txt',                 sep='\t' ,stringsAsFactors=T,strip.white=T,na.strings=c('0',''))
+#salary<-read.csv('../Data/WaStEmployeeHistSalary.txt1',                 sep='\t' ,stringsAsFactors=T,strip.white=T,na.strings=c('0',''))
 
 
 #home

@@ -407,7 +407,7 @@ head(final_df)
 
 final_df<-rbind(final_df,colleges_longForm)   ##########this rbinds salary and finaldf2011
 write.csv(final_df, file = "./final_df.csv")
-#write.csv(final_df, append=F,file = "I:\\My Data Sources\\Data\\final_df.csv") #on campus
+#write.csv(final_df, append=F,file = "I:\\My Data Sources\\Data\\short_final_df.csv") #on campus
 
 
 

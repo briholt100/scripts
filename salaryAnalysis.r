@@ -6,7 +6,7 @@ library(ggplot2)
 #campus
 #setwd(".\\My Data Sources\\")
 #colleges_df<-read.csv( file = "./Data/colleges_df.csv")
-colleges_df<-colleges_df[is.na(colleges_df$Salary)==F,3:9]
+colleges_df<-colleges_df[is.na(colleges_df$Salary)==F,2:8]
 colleges_df<-colleges_df[colleges_df$year>2010,]
 colleges_df$Code<-as.factor(colleges_df$Code)
 colleges_df$year<-as.factor(colleges_df$year)
@@ -17,13 +17,13 @@ colleges_df$Agency<-gsub("college|community|technical|for comm and tech coll",""
 colleges_df$Agency<-gsub("  |   "," ",colleges_df$Agency,ignore.case=T)
 colleges_df$Agency<-as.factor(colleges_df$Agency)
 
-model1<-lm(Salary~.-Job.Title-Employee-Agency,data=colleges_df)
+model1<-lm(Salary~Agency+year,data=colleges_df[colleges_df$Code != '352',])
 summary(model1)
 df<-unique(colleges_df[c("Code","Agency")],row.names=NULL)
 
 forPlot<-colleges_df %>% 
-#  filter(colleges_df$year != "2010" & colleges_df$Code != '352') %>%
-  filter(colleges_df$year != "2010" & colleges_df$Code =='670') %>%
+  filter(colleges_df$year != "2010" & colleges_df$Code != '352') %>%
+#  filter(colleges_df$year != "2010" & colleges_df$Code =='670') %>%
   group_by(Agency,year) %>% 
   summarise(N=n(),Mean=mean(Salary,na.rm=T),SalaryTotal=sum(Salary,na.rm=T)) %>%
   arrange(desc(N))
@@ -485,3 +485,33 @@ colleges_df<-colleges_df[,2:8]
 str(colleges_df)
 table(colleges_df$job.cat)
 tail(sort(table(colleges_df$Job.Title[colleges_df$job.cat=='other'])),40)
+
+
+
+
+
+#
+colleges_df$job.cat<-"other"
+faculty.list<-grep("faculty|professor|moonlight|ftf |ptf |LECTURER|instructor", colleges_df$Job.Title, ignore.case=T)
+progCoord.list<-grep("PROGRAM COORDINATOR", colleges_df$Job.Title, ignore.case=T)
+colleges_df$job.cat<-factor(colleges_df$job.cat,
+                            sort(c(
+                              
+                              "faculty",
+                              "PROGRAM COORDINATOR",
+                              "other"
+                              
+                            )
+                            ))
+
+##WARNING; BEWARE OF CHANGING ORDER BELOW, ELSE CATEGORIES WILL CHANGE
+
+colleges_df$job.cat[faculty.list]<-"faculty"
+colleges_df$job.cat[progCoord.list.list]<-"PROGRAM COORDINATOR"
+
+
+
+
+
+
+

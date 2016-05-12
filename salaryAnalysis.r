@@ -5,7 +5,8 @@ library(ggplot2)
 
 #campus
 #setwd(".\\My Data Sources\\")
-#colleges_df<-read.csv( file = "./Data/colleges_df.csv")
+#colleges_df<-read.csv( file = "./Data/colleges_df.csv",row.names=F)
+#check for correct # of variables
 colleges_df<-colleges_df[is.na(colleges_df$Salary)==F,2:8]
 colleges_df<-colleges_df[colleges_df$year>2010,]
 colleges_df$Code<-as.factor(colleges_df$Code)
@@ -45,6 +46,8 @@ p+geom_point(aes(color=Agency))+
 
 seattle<-colleges_df[grep("seattle",ignore.case=T,colleges_df$Agency),]
 bellevue<-colleges_df[grep("bellevue",ignore.case=T,colleges_df$Agency),]
+SeaMod<-lm(Salary~year+Job.Title,data=seattle)
+summary(SeaMod)
 
 
 
@@ -492,13 +495,35 @@ tail(sort(table(colleges_df$Job.Title[colleges_df$job.cat=='other'])),40)
 
 #
 colleges_df$job.cat<-"other"
+specialist.list<-grep("specialist|spec", colleges_df$Job.Title, ignore.case=T)
+assist.list<-grep("assistant", colleges_df$Job.Title, ignore.case=T)
+facilities.list<-grep("custodian|mechanic|utility worker|FACILITIES|grounds|", colleges_df$Job.Title, ignore.case=T)
 faculty.list<-grep("faculty|professor|moonlight|ftf |ptf |LECTURER|instructor", colleges_df$Job.Title, ignore.case=T)
 progCoord.list<-grep("PROGRAM COORDINATOR", colleges_df$Job.Title, ignore.case=T)
+AdminTempAssign.list<-grep("ADMIN-TEMP. ASSIGNNMENT", colleges_df$Job.Title, ignore.case=T)
+progAssist.list<-grep("PROGRAM ASSISTANT", colleges_df$Job.Title, ignore.case=T)
+security.list<-grep("security", colleges_df$Job.Title, ignore.case=T)
+secretary.list<-grep("secretary", colleges_df$Job.Title, ignore.case=T)
+manager.list<-grep("manager", colleges_df$Job.Title, ignore.case=T)
+director.list<-grep("director|dir", colleges_df$Job.Title, ignore.case=T)
+IT.list<-grep("INFORMATION TECH SPEC|info tech", colleges_df$Job.Title, ignore.case=T)
+childhood.list<-grep("childhood|child", colleges_df$Job.Title, ignore.case=T)
+
 colleges_df$job.cat<-factor(colleges_df$job.cat,
                             sort(c(
-                              
+                              "assistant",
                               "faculty",
-                              "PROGRAM COORDINATOR",
+                              "PROGRAM_COORD",
+                              "AdminTempAssign",
+                              "Program_Assist",
+                              "facilities",
+                              "security",
+                              "secretary",
+                              "manager",
+                              'director',
+                              'it_depart',
+                              'specialist',
+                              'early_child',
                               "other"
                               
                             )
@@ -506,12 +531,17 @@ colleges_df$job.cat<-factor(colleges_df$job.cat,
 
 ##WARNING; BEWARE OF CHANGING ORDER BELOW, ELSE CATEGORIES WILL CHANGE
 
+colleges_df$job.cat[specialist.list]<-"specialist"
+colleges_df$job.cat[assist.list]<-"assistant"
 colleges_df$job.cat[faculty.list]<-"faculty"
-colleges_df$job.cat[progCoord.list.list]<-"PROGRAM COORDINATOR"
-
-
-
-
-
-
+colleges_df$job.cat[progCoord.list]<-"PROGRAM_COORD"
+colleges_df$job.cat[AdminTempAssign.list]<-"AdminTempAssign"
+colleges_df$job.cat[progAssist.list]<-"Program_Assist"
+colleges_df$job.cat[facilities.list]<-"facilities"
+colleges_df$job.cat[security.list]<-"security"
+colleges_df$job.cat[secretary.list]<-"secretary"
+colleges_df$job.cat[manager.list]<-"manager"
+colleges_df$job.cat[director.list]<-"director"
+colleges_df$job.cat[IT.list]<-"it_depart"
+colleges_df$job.cat[childhood.list]<-"early_child"
 

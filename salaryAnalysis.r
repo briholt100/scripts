@@ -2,10 +2,12 @@
 library(tidyr)
 library(dplyr)
 library(ggplot2)
+library(rpart)
+library(rpart.plot)
 
 #campus
 #setwd(".\\My Data Sources\\")
-#colleges_df<-read.csv( file = "./Data/colleges_df.csv",row.names=F)
+#colleges_df<-read.csv( file = "./Data/colleges_df.csv")
 #check for correct # of variables
 colleges_df<-colleges_df[is.na(colleges_df$Salary)==F,2:8]
 colleges_df<-colleges_df[colleges_df$year>2010,]
@@ -382,7 +384,7 @@ profTech.list<-grep("professional tech", colleges_df$Job.Title, ignore.case=T)
 president.list<-grep("presi|v.c.,|chief", colleges_df$Job.Title, ignore.case=T, value=F)
 programCoord.list<-grep("program coord|PRGM COORD", colleges_df$Job.Title, ignore.case=T, value=F)
 retail.list<-grep("retail", colleges_df$Job.Title, ignore.case=T, value=F)
-secretary.list<-grep("secr|exec. a", colleges_df$Job.Title, ignore.case=T) #, value=T)
+secretary.list<-grep("secr|exec. a|EXEC ASST", colleges_df$Job.Title, ignore.case=T) #, value=T)
 security.list<-grep("security", colleges_df$Job.Title, ignore.case=T, value=F)
 specialist.list<-grep("spec", colleges_df$Job.Title, ignore.case=T, value=F)
 gradstudent.list<-grep("STIPEND GRAD", colleges_df$Job.Title, ignore.case=T, value=F)
@@ -495,23 +497,50 @@ tail(sort(table(colleges_df$Job.Title[colleges_df$job.cat=='other'])),40)
 
 #
 colleges_df$job.cat<-"other"
-specialist.list<-grep("specialist|spec", colleges_df$Job.Title, ignore.case=T)
-assist.list<-grep("assistant", colleges_df$Job.Title, ignore.case=T)
-facilities.list<-grep("custodian|mechanic|utility worker|FACILITIES|grounds|", colleges_df$Job.Title, ignore.case=T)
+vicePres.list<-grep("vp|vice pres|v\\.p\\.|CHIEF INFORMATION OFFICER", colleges_df$Job.Title, ignore.case=T)
+Chanc.list<-grep("v\\.c\\.|vice chan|vc|chancellor", colleges_df$Job.Title, ignore.case=T)
+
+BOT.list<-grep("BOARD OF TRUST", colleges_df$Job.Title, ignore.case=T)
+HR.list<-grep("hr|human resource", colleges_df$Job.Title, ignore.case=T)
+mail.list<-grep("mail", colleges_df$Job.Title, ignore.case=T)
+counselor.list<-grep("counselor", colleges_df$Job.Title, ignore.case=T)
+advisor.list<-grep("registr|advisor|CREDENTIALS|EDUCATIONAL PLANNER", colleges_df$Job.Title, ignore.case=T)
+library.list<-grep("libr", colleges_df$Job.Title, ignore.case=T)
+retail.list<-grep("retail|book|cashier", colleges_df$Job.Title, ignore.case=T)
+food.list<-grep("snack|cook|food|CATERING", colleges_df$Job.Title, ignore.case=T)
+pres.list<-grep("president", colleges_df$Job.Title, ignore.case=T)
+profTech.list<-grep("PROFESSIONAL TECHNICAL", colleges_df$Job.Title, ignore.case=T)
+exempt.list<-grep("exempt|EXMT", colleges_df$Job.Title, ignore.case=T)
+dean.list<-grep("dean|PROGRAM ADMINISTRATOR    .", colleges_df$Job.Title, ignore.case=T)
+super.list<-grep("SUPERVISR|SUPERVISOR|SUPRV", colleges_df$Job.Title, ignore.case=T)
+execAssist.list<-grep("SPEC\\. ASSISTANT|SPECIAL ASST TO|CONF ASST|CONFIDL SEC|ASSISTANT TO|EXECUTIVE ASSISTANT|EXECUTIVE ASST|EXEC\\. ASSISTANT|SPEC, ASST", colleges_df$Job.Title, ignore.case=T)
+specialist.list<-grep("specialist|spec|CONSULT", colleges_df$Job.Title, ignore.case=T)
+assist.list<-grep("COPY CENTER|OFFICE ASST|ADMINISTRATIVE ASST|assistant|ADMIN ASST", colleges_df$Job.Title, ignore.case=T)
+facilities.list<-grep("LNDSCP|PAINTER|HEAVY EQUIPMENT|WAREHOUSE|custodian|mechanic|ELECTRICIAN|HEATING|utility worker|FACILITIES|grounds", colleges_df$Job.Title, ignore.case=T)
 faculty.list<-grep("faculty|professor|moonlight|ftf |ptf |LECTURER|instructor", colleges_df$Job.Title, ignore.case=T)
-progCoord.list<-grep("PROGRAM COORDINATOR", colleges_df$Job.Title, ignore.case=T)
+progCoord.list<-grep("PROGRAM COORDINATOR|PROGRAM SUPPORT SUPV|COORD|COORDINATOR", colleges_df$Job.Title, ignore.case=T)
 AdminTempAssign.list<-grep("ADMIN-TEMP. ASSIGNNMENT", colleges_df$Job.Title, ignore.case=T)
 progAssist.list<-grep("PROGRAM ASSISTANT", colleges_df$Job.Title, ignore.case=T)
-security.list<-grep("security", colleges_df$Job.Title, ignore.case=T)
+security.list<-grep("PUBLIC SFTY|security", colleges_df$Job.Title, ignore.case=T)
 secretary.list<-grep("secretary", colleges_df$Job.Title, ignore.case=T)
-manager.list<-grep("manager", colleges_df$Job.Title, ignore.case=T)
+manager.list<-grep("manager|MGR", colleges_df$Job.Title, ignore.case=T)
 director.list<-grep("director|dir", colleges_df$Job.Title, ignore.case=T)
-IT.list<-grep("INFORMATION TECH SPEC|info tech", colleges_df$Job.Title, ignore.case=T)
+IT.list<-grep("SYSTEMS ADMINISTRATOR|IT TECHNICIAN|INFORMATION TECH SPEC|NETWORK|info tech|INFOR TECH TECHNICIAN", colleges_df$Job.Title, ignore.case=T)
 childhood.list<-grep("childhood|child", colleges_df$Job.Title, ignore.case=T)
+instrSupport.list<-grep("MEDIA TECHNICIAN|INSTR&CLASS SUP TECH|INSTRUCTIONAL PRGM ASST|INSTRUCTIONAL TECH|INSTR&CLASSROOM SUPT|INSTRUCTION & CLASSROOM SUPPORT|INSTR & CLASS SUPP|INSTRUCTIONAL TECHNICIAN", colleges_df$Job.Title, ignore.case=T)
+fiscal.list<-grep("budget|fiscal|FINANCIAL|ACCOUNTANT|ANALYST", colleges_df$Job.Title, ignore.case=T)
 
 colleges_df$job.cat<-factor(colleges_df$job.cat,
                             sort(c(
                               "assistant",
+                              'Chancellor',
+                              'boardTrust',
+                              'library',
+                              "vicePres",
+                              'food',
+                              "exempt",
+                              "execAssist",
+                              'dean',
                               "faculty",
                               "PROGRAM_COORD",
                               "AdminTempAssign",
@@ -520,19 +549,41 @@ colleges_df$job.cat<-factor(colleges_df$job.cat,
                               "security",
                               "secretary",
                               "manager",
+                              'supervisor',
                               'director',
                               'it_depart',
                               'specialist',
                               'early_child',
+                              'instruct_suppt',
+                              'fiscal',
+                              'profTech',
+                              'president',
+                              'retail',
+                              'HR',
+                              'mail',
+                              'counselor',
+                              'advisor',
                               "other"
                               
                             )
                             ))
 
 ##WARNING; BEWARE OF CHANGING ORDER BELOW, ELSE CATEGORIES WILL CHANGE
-
+colleges_df$job.cat[pres.list]<-"president"
+colleges_df$job.cat[vicePres.list]<-"vicePres"
+colleges_df$job.cat[Chanc.list]<-"Chancellor"
+colleges_df$job.cat[BOT.list]<-'boardTrust'
+colleges_df$job.cat[HR.list]<-'HR'
+colleges_df$job.cat[mail.list]<-"mail"
+colleges_df$job.cat[counselor.list]<-"counselor"
+colleges_df$job.cat[advisor.list]<-"advisor"
+colleges_df$job.cat[advisor.list]<-"advisor"
+colleges_df$job.cat[retail.list]<-"retail"
+colleges_df$job.cat[library.list]<-"library"
+colleges_df$job.cat[profTech.list]<-"profTech"
+colleges_df$job.cat[food.list]<-"food"
+colleges_df$job.cat[exempt.list]<-"exempt"
 colleges_df$job.cat[specialist.list]<-"specialist"
-colleges_df$job.cat[assist.list]<-"assistant"
 colleges_df$job.cat[faculty.list]<-"faculty"
 colleges_df$job.cat[progCoord.list]<-"PROGRAM_COORD"
 colleges_df$job.cat[AdminTempAssign.list]<-"AdminTempAssign"
@@ -544,4 +595,12 @@ colleges_df$job.cat[manager.list]<-"manager"
 colleges_df$job.cat[director.list]<-"director"
 colleges_df$job.cat[IT.list]<-"it_depart"
 colleges_df$job.cat[childhood.list]<-"early_child"
+colleges_df$job.cat[instrSupport.list]<-"instruct_suppt"
+colleges_df$job.cat[fiscal.list]<-"fiscal"
+colleges_df$job.cat[super.list]<-"supervisor"
+colleges_df$job.cat[assist.list]<-"assistant"
+colleges_df$job.cat[execAssist.list]<-"execAssist"
+colleges_df$job.cat[dean.list]<-"dean"
 
+
+tail(sort(table(colleges_df$Job.Title[colleges_df$job.cat=='other'])),50)

@@ -27,14 +27,18 @@ df<-unique(colleges_df[c("Code","Agency")],row.names=NULL)
 forPlot<-colleges_df %>% 
   filter(colleges_df$year != "2010" & colleges_df$Code != '352') %>%
 #  filter(colleges_df$year != "2010" & colleges_df$Code =='670') %>%
-  group_by(Agency,year) %>% 
-  summarise(N=n(),Mean=mean(Salary,na.rm=T),SalaryTotal=sum(Salary,na.rm=T)) %>%
+  group_by(Agency,job.cat,year) %>% 
+  summarise(N=n(),Mean=mean(Salary,na.rm=T),Median=median(Salary,na.rm=T),SalaryTotal=sum(Salary,na.rm=T)) %>%
   arrange(desc(N))
 
 plot(forPlot,cex=.8,pch=20,col=forPlot$Agency)
 pairs(forPlot)
 par(mar=c(1,1,1,1))
-boxplot(forPlot$Mean~forPlot$Agency, las=2,main="Ave Salary 2010-2104")
+par(mfrow=c(1,2))
+boxplot(forPlot$N~forPlot$job.cat, las=2,main="Number of Employees by Job category,\n across state 2010-2104")
+boxplot(forPlot$Median~forPlot$job.cat, las=2,main="Median Salary by Job category,\n across state 2010-2104")
+boxplot(forPlot$Mean~forPlot$job.cat, las=2,main="Mean Salary by Job category,\n across state 2010-2104")
+boxplot(forPlot$SalaryTotal~forPlot$job.cat, las=2,main="Sum of all Salaries by Job category,\n across state 2010-2104")
 
 p<-ggplot(forPlot, aes(y=Mean,x=Agency))
 p+geom_boxplot()+theme(axis.text.x = element_text(angle = 90, hjust = 1))+
@@ -497,33 +501,32 @@ tail(sort(table(colleges_df$Job.Title[colleges_df$job.cat=='other'])),40)
 
 #
 colleges_df$job.cat<-"other"
-vicePres.list<-grep("VICE-PRES|vp|vice pres|v\\.p\\.|CHIEF INFORMATION OFFICER", colleges_df$Job.Title, ignore.case=T)
-Chanc.list<-grep("v\\.c\\.|vice chan|vc|chancellor|CHIEF", colleges_df$Job.Title, ignore.case=T)
+vicePres.list<-grep("VICE-PRES|vp|vice pres|v\\.p\\.", colleges_df$Job.Title, ignore.case=T)
+Chanc.list<-grep("v\\.c\\.|vice chan|vc |chancellor|CHIEF|VICE PROV", colleges_df$Job.Title, ignore.case=T)
 
 BOT.list<-grep("BOARD OF TRUST", colleges_df$Job.Title, ignore.case=T)
 HR.list<-grep("HUMAN RESRCS|hr|human resource", colleges_df$Job.Title, ignore.case=T)
 mail.list<-grep("mail", colleges_df$Job.Title, ignore.case=T)
 counselor.list<-grep("counselor", colleges_df$Job.Title, ignore.case=T)
-advisor.list<-grep("career|ACAD ADVSR|INTERNATIONAL STUDNT ADVSR|ADMISSIONS ADV/RECRUITER|registr|advisor|CREDENTIALS|EDUCATIONAL PLANNER", colleges_df$Job.Title, ignore.case=T)
+advisor.list<-grep("ENROLL SVC REG|career|ACAD ADVSR|INTERNATIONAL STUDNT ADVSR|ADMISSIONS ADV/RECRUITER|registr|advisor|CREDENTIALS|EDUCATIONAL PLANNER", colleges_df$Job.Title, ignore.case=T)
 library.list<-grep("INTERIM CYBRARIAN|TECHNOLOGY TECHNICIAN LBRY|libr", colleges_df$Job.Title, ignore.case=T)
 retail.list<-grep("retail|book|cashier", colleges_df$Job.Title, ignore.case=T)
 food.list<-grep("baker helper|DISHWASHER|snack|cook|food|CATERING", colleges_df$Job.Title, ignore.case=T)
 pres.list<-grep("president", colleges_df$Job.Title, ignore.case=T)
 profTech.list<-grep("PROFESSIONAL TECHNICAL", colleges_df$Job.Title, ignore.case=T)
 exempt.list<-grep("ATH MKTG|POLICY ASSOCIATE|GRANT WRITER|INSTITUTIONAL RESEARCHER|PAYROLL OFFICER|PAYROLL TECHNICIAN|POLICY RESEARCH|exempt|EXMT|controller", colleges_df$Job.Title, ignore.case=T)
-dean.list<-grep("DATABASE/APP ADMINISTRATOR|DN |DIVISION CHAIRPERSON|dean|PROGRAM ADMINISTRATOR    .", colleges_df$Job.Title, ignore.case=T)
+dean.list<-grep("DATABASE/APP ADMINISTRATOR|DN |DIVISION CHAIRPERSON|dean|PROGRAM ADMIN", colleges_df$Job.Title, ignore.case=T)
 super.list<-grep("OPR SUPV|SUPERVISR|SUPERVISOR|SUPRV", colleges_df$Job.Title, ignore.case=T)
-execAssist.list<-grep("EXEC ASST|EXEC ASST|EXECUTIVE ASSIST|SPEC\\. ASSISTANT|SPECIAL ASST TO|CONF ASST|CONFIDL SEC|ASSISTANT TO|EXECUTIVE ASSISTANT|EXECUTIVE ASST|EXEC\\. ASSISTANT|SPEC, ASST", colleges_df$Job.Title, ignore.case=T)
-specialist.list<-grep("specialist|spec|CONSULT", colleges_df$Job.Title, ignore.case=T)
-assist.list<-grep("AEROSPACE GRANTS PROG ASST|RECEPTIONIST|OFFSET PRINTER OPERATOR|EXTRA HELP CLASSIFIED|SUPPORT STAFF|COPY CENTER|OFFICE ASST|ADMINISTRATIVE ASST|assistant|ADMIN ASST", colleges_df$Job.Title, ignore.case=T)
+execAssist.list<-grep("EXEC ASSIST TO |ADMIN ASST-VICE|EXEC\\.+ ASST|EX AST|EXE ASST|ADM.ASST. VP|EXEC ASST|EXECUTIVE ASSIST|ADM. ASST|EXEC ADM ASSIST|SPEC\\. ASSISTANT|SPECIAL ASST TO|CONF ASST|CONFIDL SEC|ASSISTANT TO|EXECUTIVE ASSISTANT|EXECUTIVE ASST|EXEC\\. ASSISTANT|SPEC, ASST", colleges_df$Job.Title, ignore.case=T)
+specialist.list<-grep("SPC|specialist|spec|CONSULT", colleges_df$Job.Title, ignore.case=T)
+assist.list<-grep("STU SVC OFC ASST/TEST PCTR|AEROSPACE GRANTS PROG ASST|RECEPTIONIST|OFFSET PRINTER OPERATOR|EXTRA HELP CLASSIFIED|SUPPORT STAFF|COPY CENTER|OFFICE ASST|ADMINISTRATIVE ASST|assistant|ADMIN ASST", colleges_df$Job.Title, ignore.case=T)
 facilities.list<-grep("BUILDING ENGINEER|GENERAL LABORER|CARPENTER|MAINTENANCE ENGINEER|LNDSCP|PAINTER|HEAVY EQUIPMENT|WAREHOUSE|custodian|mechanic|ELECTRICIAN|HEATING|utility worker|FACILITIES|grounds", colleges_df$Job.Title, ignore.case=T)
 faculty.list<-grep("FTF-TENURE|faculty|professor|moonlight|ftf |ptf |LECTURER|instructor", colleges_df$Job.Title, ignore.case=T)
 progCoord.list<-grep("COOR,WORKER RETRAINING|PROGRAM COORDINATOR|PROGRAM SUPPORT SUPV|COORD|DOL GRANT PROJECT CORD|COORDINATOR", colleges_df$Job.Title, ignore.case=T)
 AdminTempAssign.list<-grep("ADMIN-TEMP. ASSIGNNMENT", colleges_df$Job.Title, ignore.case=T)
-progAssist.list<-grep("PROGRAM ASSISTANT", colleges_df$Job.Title, ignore.case=T)
 security.list<-grep("SAFETY OFFICER|parking|PUBLIC SFTY|security", colleges_df$Job.Title, ignore.case=T)
 secretary.list<-grep("ADMINISTRATIVE ASSIST|secretary", colleges_df$Job.Title, ignore.case=T)
-manager.list<-grep("MNGR|ADMIN SERVICE ADMINISTRATR|PROGRAM DEVELOPER|PROGRAM ADMIN|manager|MGR", colleges_df$Job.Title, ignore.case=T)
+manager.list<-grep("MNGR|ADMIN SERVICE ADMINISTRATR|PROGRAM DEVELOPER|manager|MGR", colleges_df$Job.Title, ignore.case=T)
 director.list<-grep("PUBLIC INFORMATION OFFICER|director|dir", colleges_df$Job.Title, ignore.case=T)
 IT.list<-grep("INFORMATIONAL TECH|INFOR TECH COMP OPERATOR|APPLICATION DEVELOP|IT - COMPUTER OPERATOR|HELP DESK TECHNICIAN|SOFTWARE ENGINEER|COMPUTER&NETWRK SUPRT TECH|DEVELOPER - SOFTWARE|COMPUTER MAIN TECH|IT DATA PROCESSOR|COMPUTER SYSTEM TECHNICIAN|IT - COMPUTER OPER LEAD|DATA COMPILER|webmaster|COMPUTER PROGRAMMER|IT TECH|EQUIPMENT TECHNICIAN|CMPUTR/NETWRK MAINT TECH|SYSTEMS ADMINISTRATOR|IT TECHNICIAN|INFORMATION TECH SPEC|NETWORK|info tech|INFOR TECH TECHNICIAN", colleges_df$Job.Title, ignore.case=T)
 childhood.list<-grep(" IT COMPUTER OPERATOR|EDUCATION PL/RETENTION |PARENT MENTOR|childhood|child", colleges_df$Job.Title, ignore.case=T)
@@ -574,10 +577,12 @@ colleges_df$job.cat<-factor(colleges_df$job.cat,
 
 ##WARNING; BEWARE OF CHANGING ORDER BELOW, ELSE CATEGORIES WILL CHANGE
 colleges_df$job.cat[pres.list]<-"president"
-colleges_df$job.cat[vicePres.list]<-"vicePres"
+
 colleges_df$job.cat[Chanc.list]<-"Chancellor"
 colleges_df$job.cat[BOT.list]<-'boardTrust'
 colleges_df$job.cat[HR.list]<-'HR'
+colleges_df$job.cat[vicePres.list]<-"vicePres"
+
 colleges_df$job.cat[media.list]<-'media'
 colleges_df$job.cat[mail.list]<-"mail"
 colleges_df$job.cat[counselor.list]<-"counselor"

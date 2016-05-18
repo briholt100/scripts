@@ -55,16 +55,16 @@ bellevue<-colleges_df[grep("bellevue",ignore.case=T,colleges_df$Agency),]
 SeaMod<-lm(Salary~year+Job.Title,data=seattle)
 summary(SeaMod)
 
-
+par(mfrow=c(1,2))
 
 ###For seattle
-p<-ggplot(seattle[seattle$job.cat!="faculty",], aes(year))
+p<-ggplot(seattle[seattle$job.cat=="faculty",], aes(year))
 p+geom_bar()+
 #  theme(axis.text.x = element_text(angle = 90, hjust = 1))+
   facet_wrap(~job.cat)+
-  ggtitle("Count of NON-FACULTY employees \nin Seattle, by job category, \n2011-2014")
+  ggtitle("Count of faculty \nin Seattle, \n2011-2014")
 
-
+tmp<-seattle[which(seattle$job.cat=='manager'|seattle$job.cat=='dean'|seattle$job.cat=='specialist'|seattle$job.cat=='director'|seattle$job.cat=='PROGRAM_COORD'),]
 
 
 
@@ -597,7 +597,7 @@ colleges_df$job.cat[specialist.list]<-"specialist"
 colleges_df$job.cat[faculty.list]<-"faculty"
 colleges_df$job.cat[progCoord.list]<-"PROGRAM_COORD"
 colleges_df$job.cat[AdminTempAssign.list]<-"AdminTempAssign"
-colleges_df$job.cat[progAssist.list]<-"Program_Assist"
+#colleges_df$job.cat[progAssist.list]<-"Program_Assist"
 colleges_df$job.cat[coach.list]<-"coach"
 colleges_df$job.cat[facilities.list]<-"facilities"
 colleges_df$job.cat[security.list]<-"security"

@@ -64,9 +64,13 @@ p+geom_bar()+
   facet_wrap(~job.cat)+
   ggtitle("Count of facutly \nin Seattle, \n2011-2014")
 
-tmp<-seattle[which(seattle$job.cat=='manager'|seattle$job.cat=='dean'|seattle$job.cat=='specialist'|seattle$job.cat=='director'|seattle$job.cat=='Coordinator'),]
+tmp<-colleges_df[which(colleges_df$Agency != 'Seattle '),]
+tmp<-tmp[which( tmp$job.cat=='manager'|tmp$job.cat=='dean'|tmp$job.cat=='specialist'|tmp$job.cat=='director'|tmp$job.cat=='Coordinator'),]
 
-tapply(tmp$Salary,tmp$job.cat,median)
+tmp$Job.Title<-droplevels(tmp$Job.Title)
+tmp$job.cat<-droplevels(tmp$job.cat)
+tapply(tmp$Salary,tmp$job.cat,length)
+table(tmp$job.cat,tmp$year)
 
 unique(final_df[c("Code","Agency")])
 
@@ -113,7 +117,7 @@ tapply(final_df$Salary,list(final_df$Agency,final_df$year),mean,na.rm=T)
 
 
 
-
+barplot(table(tmp$job.cat,tmp$year),main='managers, sepcialists, deans, directors',legend = rownames(table(tmp$job.cat,tmp$year)))
 
 
 dt<-seattle%>%gather(year,Salary,-job.cat,-Job.Title,-Employee,-Agency,-Code,na.rm=T)

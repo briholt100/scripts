@@ -55,7 +55,7 @@ bellevue<-colleges_df[grep("bellevue",ignore.case=T,colleges_df$Agency),]
 SeaMod<-lm(Salary~year+Job.Title,data=seattle)
 summary(SeaMod)
 
-par(mfrow=c(1,2))
+tapply(colleges_df$Salary,list(colleges_df$Agency,colleges_df$year),sum)
 
 ###For seattle
 p<-ggplot(seattle[seattle$job.cat=="faculty",], aes(year))

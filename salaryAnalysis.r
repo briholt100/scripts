@@ -10,7 +10,7 @@ library(rpart.plot)
 #colleges_df<-read.csv( file = "./Data/colleges_df.csv")
 #check for correct # of variables
 colleges_df<-colleges_df[is.na(colleges_df$Salary)==F,2:8]
-colleges_df<-colleges_df[colleges_df$year>2010,]
+#colleges_df<-colleges_df[colleges_df$year>2010,]
 colleges_df$Code<-as.factor(colleges_df$Code)
 colleges_df$year<-as.factor(colleges_df$year)
 str(colleges_df)
@@ -26,7 +26,7 @@ df<-unique(colleges_df[c("Code","Agency")],row.names=NULL)
 
 forPlot<-colleges_df %>%
   filter(colleges_df$year != "2010" & colleges_df$Code != '352') %>%
-#  filter(colleges_df$year != "2010" & colleges_df$Code =='670') %>%
+#  filter(colleges_df$job.cat != 'faculty' & colleges_df$Code =='670') %>%
   group_by(Agency,job.cat,year) %>%
   summarise(N=n(),Mean=mean(Salary,na.rm=T),Median=median(Salary,na.rm=T),SalaryTotal=sum(Salary,na.rm=T)) %>%
   arrange(desc(N))

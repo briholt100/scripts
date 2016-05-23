@@ -528,7 +528,7 @@ facilities.list<-grep("CONSTR& MAINT PROJ LEAD|TOOL ROOM ATTENDANT|ELECTRONICS T
 faculty.list<-grep("ENOLOGY INSTR/WINEMAKER|FTF-TENURE|faculty|professor|moonlight|ftf |ptf |LECTURER|instructor", colleges_df$Job.Title, ignore.case=T)
 Coord.list<-grep("COOR,WORKER RETRAINING|PROGRAM SUPPORT SUPV|COOR|DOL GRANT PROJECT CORD|COORDINATOR", colleges_df$Job.Title, ignore.case=T)
 progCoord.list<-grep("PROGRAM COORDINATOR", colleges_df$Job.Title, ignore.case=T)
-AdminTempAssign.list<-grep("ADMIN-TEMP. ASSIGNNMENT", colleges_df$Job.Title, ignore.case=T)
+AdminTempAssign.list<-grep("ADMINISTRATIVE MOONLIGHT|ADMIN-TEMP. ASSIGNNMENT", colleges_df$Job.Title, ignore.case=T)
 security.list<-grep("SAFETY OFFICER|parking|PUBLIC SFTY|security", colleges_df$Job.Title, ignore.case=T)
 secretary.list<-grep("ADMINISTRATIVE ASSIST|secretary", colleges_df$Job.Title, ignore.case=T)
 manager.list<-grep("MAGR|MNGR|ADMIN SERVICE ADMINISTRATR|PROGRAM DEVELOPER|manager|MGR", colleges_df$Job.Title, ignore.case=T)
@@ -538,7 +538,7 @@ childhood.list<-grep(" IT COMPUTER OPERATOR|EDUCATION PL/RETENTION |PARENT MENTO
 instrSupport.list<-grep("INST&CLASSRM SUPPT TECH|INSTR%CLASSROON SUPT TCH4|INSTRUCT TECH|INSTR & CLASSRM SUPP|INSTRUCTIONAL SUPPORT|INSTRUCTIONAL ASST|INST & CLASS SUP|INST & CLASS SUP|INSTR&CLASS SUPP TECH1|INSTR & CLASSRM SUPP TECH2|LAB TECH|INSTR/CLASS SUPP TECH|LABORATORY TECHNICIAN|INSTR&CLASS SUP TECH|INSTRUCTIONAL PRGM ASST|INSTRUCTIONAL TECH|INSTR&CLASSROOM SUPT|INSTRUCTION & CLASSROOM SUPPORT|INSTR & CLASS SUPP|INSTRUCTIONAL TECHNICIAN", colleges_df$Job.Title, ignore.case=T)
 fiscal.list<-grep("FMS/PPMS|ACCOUNTING|INTERNAL AUDITOR|ACCOUNTS PAYABLE|budget|fiscal|FINANCIAL|ACCOUNTANT|ANALYST", colleges_df$Job.Title, ignore.case=T)
 media.list<-grep("DIGITAL PRINTING|PRINTER-LITHOGRAPHER|media|graphic", colleges_df$Job.Title, ignore.case=T)
-coach.list<-grep("ATHLETIC|coach", colleges_df$Job.Title, ignore.case=T)
+coach.list<-grep("ATHLETIC|ATHL|coach", colleges_df$Job.Title, ignore.case=T)
 
 colleges_df$job.cat<-factor(colleges_df$job.cat,
                             sort(c(

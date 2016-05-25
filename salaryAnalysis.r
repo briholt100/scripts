@@ -621,5 +621,85 @@ colleges_df$job.cat[assist.list]<-"assistant"
 colleges_df$job.cat[execAssist.list]<-"execAssist"
 colleges_df$job.cat[dean.list]<-"dean"
 
-
 tail(sort(table(colleges_df$Job.Title[colleges_df$job.cat=='other'])),100)
+
+
+#clearn up the lists
+
+rm(list=ls(pattern= '.list'))
+
+#bag of words
+
+library(tm)
+library(SnowballC)
+library(flexclust)
+#library(ggplot2)
+library(maps)
+library(ggmap)
+library(igraph)
+library(wordcloud)
+library(RColorBrewer)
+
+
+
+corpusJobTitle = Corpus(VectorSource(colleges_df$Job.Title))
+
+corpusJobTitle[[10]]$content
+
+
+# Pre-process data
+corpusJobTitle <- tm_map(corpusJobTitle, tolower)
+corpusJobTitle = tm_map(corpusJobTitle, PlainTextDocument)
+corpusJobTitle <- tm_map(corpusJobTitle, removePunctuation)
+
+#corpusJobTitle <- tm_map(corpusJobTitle, removeWords, stopwords("english"))
+
+corpusJobTitle <- tm_map(corpusJobTitle, stemDocument)
+as.character(corpusJobTitle[[1]])
+
+dtmJobTitle<-DocumentTermMatrix(corpusJobTitle)
+(dtmJobTitle$Terms)
+
+
+sparseJobTitle<-removeSparseTerms(dtmJobTitle, 0.999)
+
+wordsJobTitle<-as.data.frame(as.matrix(sparseJobTitle))
+
+
+temp<-colleges_df[,c('Agency','year','Employee','Salary')]
+
+collegeWords<-cbind(wordsJobTitle,temp)
+colnames(collegeWords) = c(colnames(wordsJobTitle),colnames(temp))
+str(collegeWords)
+
+
+collegeWords$Sal.cut<-cut(collegeWords$Salary,breaks=quantile(collegeWords$Salary))
+table(collegeWords$Sal.cut)
+
+
+train = subset(collegeWords, colleges_df$year!='2014')
+test = subset(collegeWords, colleges_df$year=='2014')
+
+mod1<-glm(Sal.cut~Agency,data=train,family='binomial')
+summary(mod1)
+
+PredMod1<-predict(mod1,newdata=test,type='response')
+
+
+SSE=sum((test$Salary - PredMod1)^2)
+SST =sum((test$Salary - mean(test$Salary))^2)  #the mean comes from the baseline model
+
+1-SSE/SST  # this is R^2
+
+collegeWordCART<-rpart(Sal.cut~.,data=train,method='class')
+prp(collegeWordCART)
+
+prediction<-predict(collegeWordCART,newdata=test)
+
+table(test$Salary,prediction)
+
+(618+12)/nrow(test)
+
+
+
+

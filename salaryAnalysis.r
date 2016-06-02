@@ -4,10 +4,11 @@ library(dplyr)
 library(ggplot2)
 library(rpart)
 library(rpart.plot)
+library(readr)
 
 #campus
 #setwd(".\\My Data Sources\\")
-#colleges_df<-read.csv( file = "./Data/colleges_df.csv")
+#colleges_df<-read_csv( file = "./Data/colleges_df.csv")
 #check for correct # of variables
 colleges_df<-colleges_df[is.na(colleges_df$Salary)==F,2:8]
 #colleges_df<-colleges_df[colleges_df$year>2010,]
@@ -19,6 +20,29 @@ colleges_df$Code<-relevel(colleges_df$Code,"670")
 colleges_df$Agency<-gsub("college|community|technical|for comm and tech coll","",colleges_df$Agency,ignore.case=T)
 colleges_df$Agency<-gsub("  |   "," ",colleges_df$Agency,ignore.case=T)
 colleges_df$Agency<-as.factor(colleges_df$Agency)
+#run job.cat below
+seattle<-colleges_df[grep("seattle",ignore.case=T,colleges_df$Agency),]
+bellevue<-colleges_df[grep("bellevue",ignore.case=T,colleges_df$Agency),]
+
+tapply(seattle$Employee,seattle$year,length)  #shows number of employees
+
+fac<-seattle[seattle$job.cat == 'faculty',]
+
+factitleList<-tapply(fac$Job.Title,fac$year,unique,simplify=T)
+for (i in 1:length(factitleList)){print(length(factitleList[[i]]))}
+
+
+nonfac<-seattle[seattle$job.cat != 'faculty',]
+
+titleList<-tapply(nonfac$Job.Title,nonfac$year,unique,simplify=T)
+for (i in 1:length(titleList)){print(length(titleList[[i]]))}
+
+
+
+
+
+
+
 
 model1<-lm(Salary~Agency+year,data=colleges_df[colleges_df$Code != '352',])
 summary(model1)
@@ -50,10 +74,6 @@ p+geom_point(aes(color=Agency))+
   facet_wrap(~year,ncol=4)+
   ggtitle("Count of employees in State, \n2011-2014")
 
-seattle<-colleges_df[grep("seattle",ignore.case=T,colleges_df$Agency),]
-bellevue<-colleges_df[grep("bellevue",ignore.case=T,colleges_df$Agency),]
-SeaMod<-lm(Salary~year+Job.Title,data=seattle)
-summary(SeaMod)
 
 tapply(colleges_df$Salary,list(colleges_df$Agency,colleges_df$year),sum)
 

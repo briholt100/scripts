@@ -10,7 +10,7 @@ library(readr)
 #setwd(".\\My Data Sources\\")
 #colleges_df<-read_csv( file = "./Data/colleges_df.csv")
 #check for correct # of variables
-colleges_df<-colleges_df[is.na(colleges_df$Salary)==F,2:8]
+colleges_df<-colleges_df[is.na(colleges_df$Salary)==F,2:9]
 #colleges_df<-colleges_df[colleges_df$year>2010,]
 colleges_df$Code<-as.factor(colleges_df$Code)
 colleges_df$year<-as.factor(colleges_df$year)
@@ -39,7 +39,10 @@ for (i in 1:length(titleList)){print(length(titleList[[i]]))}
 
 
 
-
+#would like  to see which employees contribute to the most rate of change for total salary paid
+# does this mean total salary (salary summed across years?  between years?)
+# baseline salary is first year of data?  Or is baseline total salary across years?
+#I'm thinking total salary paid out in a year will be subtracted from each employee's salary for said year.
 
 
 

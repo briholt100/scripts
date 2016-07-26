@@ -54,7 +54,7 @@ get_links<-function(){
 select_year<-function(){
   year<-""
   choices<-c('2011', '2009', '2007', "2005", "2003")
- year<-readline(prompt= '\n\nPlease enter a following year: 2011, 2009, 2005, or 2003....\n')
+ year<-readline(prompt= '\n\nPlease enter a following year: 2011, 2009, 2007, 2005, or 2003....\n')
   if (year %in% choices)
   {writeLines(paste0('\n\nThank you, pulling the data from year ',year,'\n\n'));
     return(year)} else{
@@ -86,10 +86,27 @@ make_list<-function(links=NULL,year=NULL){
 
 recursive_replace<-function(text=text){
   text<-gsub('([[:alpha:]]) {2}([[:alpha:]])','\1 \2',text)
-  while (grepl('\\. #HRLY ',text)){
-    text<-gsub('\\. #HRLY','\\. HRLY',text)
-    print (grepl('\\. #HRLY ',text))
+  text<-gsub('ADAM   K.','ADAM K.',text)
+  text<-gsub('CHRISTOPHER   R.','CHRISTOPHER R.',text)
+  text<-gsub('CHRISTOPHER  T','CHRISTOPHER T.',text)
+  text<-gsub('KA   I W ','KA I.W.',text)
+  text<-gsub('I-YEU +\\(STEVE\\)','I-YEU, STEVE',text)
+  text<-gsub('E. +E. +WALSH','E.E. WALSH',text)
+  text<-gsub('ADMIN  SERVICES MANAGER A','ADMIN SERVICES MANAGER A',text)
+
+  while (grepl('\\. +HRLY ',text)){
+    text<-gsub('\\. +HRLY',' HRLY',text)
+    print (grepl('\\. +HRLY ',text))
   }
+  while (grepl("'S +\\)",text)){
+    text<-gsub("'S +\\)","'S\\)",text)
+    print (grepl("'S +\\)",text))
+  }
+  while (grepl(" {2,}- HOURLY",text)){
+    text<-gsub(" {2,}- HOURLY"," - HOURLY",text)
+    print (grepl(" {2,}- HOURLY",text))
+  }
+
 
   while (grepl(' {2}',text)){
     text<-gsub(' {2}','\t',text)
@@ -110,6 +127,7 @@ str(mylist)
 
 ## For 2003,
 for (i in 1:length(mylist)){
+  mylist[[i]][1]<-gsub(', +\\*',', \\*',mylist[[i]][1])
   mylist[[i]][1]<-recursive_replace(mylist[[i]][1])
   mylist[[i]][1]<-gsub('\t *\r','\r',mylist[[i]][1])
   mylist[[i]][1]<-gsub('\t \\*',' \\*',mylist[[i]][1])
@@ -143,10 +161,9 @@ final_df_2003$mp<-NA
 final_df_2003$percent_ft<-NA
 #Institution year Employee Job_title  Salary et mp percent_ft
 final_df_2003$job.cat<-"other"
-
 head(final_df_2003)
-
-
+#write.csv(final_df_2003,file="I:\\My Data Sources\\Data\\final_df_2003.csv")  #on campus
+write.csv(final_df_2003, file = "./final_df_2003.csv")
 ##2005
 
 for (i in 1:length(mylist)){
@@ -185,26 +202,72 @@ final_df_2005$percent_ft<-NA
 #Institution year Employee Job_title  Salary et mp percent_ft
 final_df_2005$job.cat<-"other"
 head(final_df_2005)
-
-
+#write.csv(final_df_2005,file="I:\\My Data Sources\\Data\\final_df_2005.csv")  #on campus
+write.csv(final_df_2005, file = "./final_df_2005.csv")
 # 2003-2005  has 5 columns (like 2011), and should be read with read.delim like 2011
 
-# This works for: 2007, 2009:
-                                               ####check for lump sum errant paranthesis
-                                    ####check for > final_df[grep('ASSISTANT TO THE DIRECTOR',final_df$et),]
-                                      #FACILITIES OPERATIONS MAINTENANCE SPEC
-                                      # - HOURLY
-table(final_df_2007$et)
+#################
+#################
+#################
+
+# This works for: 2007,
+table(final_df_2007$et) table(final_df_2007$Institution)
 r=list()
 yr=list()
 for (i in 1:length(mylist)){
-  if (grepl("Eastern",mylist[[i]][2])){ #I want to first try with parantheses, and if that fails, then use the idiosyncratic search for Eastern
-    r[[i]]<-regexec("^[[:digit:]]{4} (.*) [[:digit:]]{1}",mylist[[i]][2]);print("Eastern")
-  } else {
+  if (grepl("Eastern Wa Univ \\(",mylist[[i]][2])){ #I want to first try with parantheses, and if that fails, then use the idiosyncratic search for Eastern
+    r[[i]]<-regexec("^[[:digit:]]{4} (.*) \\(",mylist[[i]][2])
+    } else {
+      if (grepl("Eastern Wa Univ [[:digit:]]{1}",mylist[[i]][2])){
+      r[[i]]<-regexec("^[[:digit:]]{4} (.*) [[:digit:]]{1}",mylist[[i]][2]);print("Eastern")
+  }else{
     r[[i]]<-regexec("^[[:digit:]]{4} (.*) \\(",mylist[[i]][2])
   }
+  } #'?' makes it less greedy  and I'm not sure why it's not picking up eastern here.
   yr[[i]]<-regexec("^[[:digit:]]{4}",mylist[[i]][2])
-} #'?' makes it less greedy  and I'm not sure why it's not picking up eastern here.
+}
+
+
+df_list<-list()
+for (i in 1:length(mylist)){
+  text<-as.character(mylist[[i]][1])
+  text<-gsub('ET-PU  MP  %FT','ET-PU     MP     %FT',text)
+  text<-recursive_replace(text)
+  df_list[[i]]<-cbind(#mylist[[i]][2],
+    regmatches(mylist[[i]][2],r[[i]])[[1]][2],
+    regmatches(mylist[[i]][2],yr[[i]]),
+    read.delim(textConnection(text),
+               header=F,
+               strip.white=T,
+               skip=2,
+               stringsAsFactors=F)
+  )
+
+}
+
+final_df_2007<-do.call("rbind",df_list)  # this converts df_list into a dataframe.
+colnames(final_df_2007)<-c('Institution','year','Employee','Job.Title','et','mp','percent_ft','Salary')
+final_df_2007<-final_df_2007[(is.na(final_df_2007$Salary))==F,]
+final_df_2007<-final_df_2007[,c(1:4,8,5:7)]  # Institution year Employee Job_title  Salary et mp percent_ft
+final_df_2007$job.cat<-"other"
+head(final_df_2007)
+#write.csv(final_df_2007,file="I:\\My Data Sources\\Data\\final_df_2007.csv")  #on campus
+write.csv(final_df_2007, file = "./final_df_2007.csv")
+########
+#2009:
+
+for (i in 1:length(mylist)){
+  if (grepl("Eastern Wa Univ \\(",mylist[[i]][2])){ #I want to first try with parantheses, and if that fails, then use the idiosyncratic search for Eastern
+    r[[i]]<-regexec("^[[:digit:]]{4} (.*) \\(",mylist[[i]][2])
+  } else {
+    if (grepl("Eastern Wa Univ [[:digit:]]{1}",mylist[[i]][2])){
+      r[[i]]<-regexec("^[[:digit:]]{4} (.*) [[:digit:]]{1}",mylist[[i]][2]);print("Eastern")
+    }else{
+      r[[i]]<-regexec("^[[:digit:]]{4} (.*) \\(",mylist[[i]][2])
+    }
+  } #'?' makes it less greedy  and I'm not sure why it's not picking up eastern here.
+  yr[[i]]<-regexec("^[[:digit:]]{4}",mylist[[i]][2])
+}
 
 df_list<-list()
 for (i in 1:length(mylist)){
@@ -223,24 +286,24 @@ for (i in 1:length(mylist)){
 
 }
 
-final_df_2007<-do.call("rbind",df_list)  # this converts df_list into a dataframe.
-colnames(final_df_2007)<-c('Institution','year','Employee','Job.Title','et','mp','percent_ft','Salary')
-final_df_2007<-final_df_2007[(is.na(final_df_2007$Salary))==F,]
-final_df_2007<-final_df_2007[,c(1:4,8,5:7)]  # Institution year Employee Job_title  Salary et mp percent_ft
-final_df_2007$job.cat<-"other"
-head(final_df_2007)
+final_df_2009<-do.call("rbind",df_list)  # this converts df_list into a dataframe.
+colnames(final_df_2009)<-c('Institution','year','Employee','Job.Title','et','mp','percent_ft','Salary')
+final_df_2009<-final_df_2009[(is.na(final_df_2009$Salary))==F,]
+final_df_2009<-final_df_2009[,c(1:4,8,5:7)]  # Institution year Employee Job_title  Salary et mp percent_ft
+final_df_2009$job.cat<-"other"
+head(final_df_2009)
+#write.csv(final_df_2009,file="I:\\My Data Sources\\Data\\final_df_2009.csv")  #on campus
+write.csv(final_df_2009, file = "./final_df_2009.csv")
+
 ##########
 ##########
 ##########
 ##For 2011:  Note that Z is added to all last names
-mylist<-mylist_bak
-
 
 for(i in 1:length(mylist)){ #ideally this should be an apply funciton
   mylist[[i]][1]<-gsub('^\n|(\r\n){2,}','\r\n',mylist[[i]][1])
 }
 
-test<-vector("list",length(mylist))  # this simply works for finding the name.  Now salary and title need distinguishing
 wid<-vector("list",length(mylist))  # this simply works for finding the name.  Now salary and title need distinguishing
   for(i in 1:length(mylist)){
     text<-as.character(mylist[[i]][1])
@@ -327,80 +390,24 @@ final_df_2011$year<-2010 #done because bloom has 2010, but calls it 2011
 final_df_2011$job.cat<-"other"
 head(final_df_2011)
 str(final_df_2011)
-
-
-
-
-
-write.csv(final_df_2007, append=F,file = "./final_df_2007.csv")
+#write.csv(final_df_2011,file="I:\\My Data Sources\\Data\\final_df_2011.csv")  #on campus
+write.csv(final_df_2011, file = "./final_df_2011.csv")
 
 df<-rbind(final_df_2011,final_df_2009,final_df_2007,final_df_2005,final_df_2003)
-write.csv(df, append=F,file = "./df.csv")
+#write.csv(df, append=F,file = "I:\\My Data Sources\\Data\\df.csv") #on campus
+write.csv(df, file = "./df.csv")
 ###The below merges the data frame with a small table for later merging with post 2010 data
-ac<-read.csv(file="./scripts/agency_code.csv")
+ac<-read.csv(file="./agency_code.csv")
 #ac<-read.csv(file="I://My Data Sources//Scripts//agency_code.csv")  #for campus
 
 ###### these should happen after all of 2003-2011 are merged but before merging with colleges_longForm
 final_df <- merge(df,ac, by.x="Institution", by.y="Institute", all.x=TRUE)  #this gets the correct names of agencies
 final_df<- (final_df[,c(10,11,3:4,9,2,5:8)])
-
+head(final_df)
 
 final_df<-rbind(final_df,colleges_longForm)   ##########this rbinds salary and finaldf2011
 write.csv(final_df, file = "./final_df.csv")
-
-df$year<-as.Date(paste(df$year,"-06","-30",sep=""))
-tbl<-as.data.frame(table(df$Salary,df$year))
-head(tbl)
-colnames(tbl)<-c('Salary','year','Freq')
-tapply(tbl$Freq,tbl$year,sum)
-plot(tapply(tbl$Freq,tbl$year,sum))
-
-tbl1<-table(df$job.cat[!is.na(df$Salary)],df$year[!is.na(df$Salary)])
-tbl1<-as.data.frame(tbl1)
-colnames(tbl1)<-c('category','year','Freq')
-
-
-
-forPlot<-as.data.frame(tapply(tbl1$Freq,list(tbl1$category,tbl1$year),sum))
-
-
-colnames(forPlot)<-c('x2010','x2011','x2012','x2013','x2014')
-
-for (i in 1:nrow(forPlot)){  print(paste(rownames(forPlot[i,]),forPlot[i,5]-forPlot[i,1]))}
-
-gather(forPlot,Category,year,x2010:x2014)
-
-
-
-
-
-
-
-
-
-
-
-
-gsub('[[:digit:]]{4} (.*) \\(.*\\)','\\1',df$Institution)
-strsplit(as.character(df$Institution),split='[[:digit:]] ')
-summary(df)
-table(is.na(df$Salary))
-median(df$Salary)
-plot(table(df$Salary[df$Salary>1000]))
-abline(v=median(df$Salary),col='red')
-abline(v=mean(df$Salary),col='blue')
-(df[df$Salary>0&df$Salary<1,])
-
-
-
-
-if(length(df_list[[i]])>4){
-  ifelse(sum(is.na(df_list[[i]][,5]))!=nrow(df_list[[i]]),
-         print("error in read.delim; data in extra column"),
-         df_list[[i]]<-df_list[[i]][,-5])
-}
-
-
+#write.csv(final_df, append=F,file = "I:\\My Data Sources\\Data\\short_final_df.csv") #on campus
 
 
 
@@ -437,125 +444,3 @@ MP is months paid
 
 
 """
-
-
-adminOther.list<-grep("admin", df$Job.Title, ignore.case=T, value=F)
-chancellor.list<-grep("CHANCELLOR", df$Job.Title, ignore.case=T, value=F)
-childhood.list<-grep("childho", df$Job.Title, ignore.case=T, value=F)
-communication.list<-grep("commun", df$Job.Title, ignore.case=T, value=F)
-coordination.list<-grep("coord,", df$Job.Title, ignore.case=T, value=F)
-counselor.list<-grep("counselo", df$Job.Title, ignore.case=T, value=F)
-dean.list<-grep("dean|assistant d|ASSOC. DEAN", df$Job.Title, ignore.case=T)
-director.list<-grep("dir", df$Job.Title, ignore.case=T) #, value=T)
-exec.list<-c(grep("exec. d", df$Job.Title, ignore.case=T))
-facilities.list<-grep("facilit|custo|electr|grounds|locks|maintan|mechanic", df$Job.Title, ignore.case=T, value=F)
-faculty.list<-grep("faculty", df$Job.Title, ignore.case=T)
-finance.list<-grep("financ|budget|capita|fiscal", df$Job.Title, ignore.case=T, value=F)
-hour.list<-grep("hour", df$Job.Title, ignore.case=T, value=F)
-HR.list<-grep("HR|benefits|human|payrol", df$Job.Title, ignore.case=T, value=F)
-library.list<-grep("librar", df$Job.Title, ignore.case=T, value=F)
-mail.list<-grep("mail", df$Job.Title, ignore.case=T, value=F)
-manager.list<-c(grep("mgr", df$Job.Title, ignore.case=T), grep("manag", df$Job.Title, ignore.case=T))
-media.list<-grep("media", df$Job.Title, ignore.case=T, value=F)
-officeAssist.list<-grep("office assistant|PROGRAM ASSISTANT|ADMINISTRATIVE ASSIST", df$Job.Title, ignore.case=T)
-president.list<-grep("presi|v.c.,|chief", df$Job.Title, ignore.case=T, value=F)
-programCoord.list<-grep("program coord", df$Job.Title, ignore.case=T, value=F)
-retail.list<-grep("retail", df$Job.Title, ignore.case=T, value=F)
-secretary.list<-grep("secr|exec. a", df$Job.Title, ignore.case=T) #, value=T)
-security.list<-grep("security", df$Job.Title, ignore.case=T, value=F)
-specialist.list<-grep("spec", df$Job.Title, ignore.case=T, value=F)
-supervisory.list<-grep("superv|spv", df$Job.Title, ignore.case=T, value=F)
-support.list<-grep("supt", df$Job.Title, ignore.case=T, value=F)
-vice.list<-grep("vice p|vp", df$Job.Title, ignore.case=T, value=F)
-
-vChanc.list<-grep("VICE CHANCELLOR|V\\.C.", df$Job.Title, ignore.case=T, value=F)
-
-df$job.cat<-factor(df$job.cat,
-sort(c(
-"admin (Other)",
-"assistant",
-"chancellor",
-"childhood",
-"communication",
-"coordination",
-"counselor",
-"dean",
-"director",
-"executive",
-"facilities",
-"faculty",
-"finance",
-"hourly",
-"HR",
-"library",
-"mail",
-"manager",
-"media",
-"other",
-"pres",
-"program coordinator",
-"retail",
-"secretary",
-"security",
-"specialist",
-"supervisory",
-"support",
-"vicepres",
-"viceChanc"
-)
-))
-
-##WARNING; BEWARE OF CHANGING ORDER BELOW, ELSE CATEGORIES WILL CHANGE
-
-df$job.cat[adminOther.list]<-"admin (Other)"
-df$job.cat[HR.list]<-"HR"
-df$job.cat[security.list]<-"security"
-df$job.cat[finance.list]<-"finance"
-df$job.cat[facilities.list]<-"facilities"
-df$job.cat[mail.list]<-"mail"
-df$job.cat[media.list]<-"media"
-df$job.cat[communication.list]<-"communication"
-df$job.cat[coordination.list]<-"coordination"
-df$job.cat[support.list]<-"support"
-df$job.cat[library.list]<-"library"
-df$job.cat[supervisory.list]<-"supervisory"
-df$job.cat[counselor.list]<-"counselor"
-df$job.cat[retail.list]<-"retail"
-
-df$job.cat[programCoord.list]<-"program coordinator"
-df$job.cat[director.list]<-"director"
-df$job.cat[hour.list]<-"hourly"
-df$job.cat[faculty.list]<-"faculty"
-df$job.cat[dean.list]<-"dean"
-df$job.cat[childhood.list]<-"childhood"
-df$job.cat[manager.list]<-"manager"
-df$job.cat[exec.list]<-"executive"
-df$job.cat[secretary.list]<-"secretary"
-df$job.cat[officeAssist.list]<-"assistant"
-df$job.cat[chancellor.list]<-"chancellor"
-df$job.cat[specialist.list]<-"specialist"
-df$job.cat[president.list]<-"pres"
-df$job.cat[vice.list]<-"vicepres"
-df$job.cat[vChanc.list]<-"viceChanc"
-
-director.salary<-df[director.list,]
-dean.salary<-df[dean.list,]
-sec.salary<-df[secretary.list,]
-director.salary<-df[director.list,]
-
-
-
-table(df$job.cat)
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -20,17 +20,24 @@ bathlm<-lm(drop~X+Y,data=bathroom)
 summary(bathlm)
 library(ggplot2)
 library(scatterplot3d)
-p<-ggplot(data=bathroom,aes(x=X,y=Y))
+p<-ggplot(data=bathroom,aes(x=X,y=Y,label = spot))
 
-p+geom_point(aes(color=drop),size=9)+
+p+geom_point(aes(color=round(drop-min(drop),3)),size=5)+
 scale_colour_gradient(low='blue',high='red')+
-geom_smooth(method = "lm", se = FALSE)
+geom_text(aes(label=round(drop-min(drop),3)),nudge_x=5)+theme(legend.title=element_blank())+ggtitle("Rise in inches from lowest point")
 
 
 p3D<-scatterplot3d(bathroom$X,   # x axis
                 bathroom$Y,     # y axis
                 bathroom$drop,    # z axis
-                main="3-D Scatterplot bathroom",
-                color="blue",zlim=c(0,16))
+                main="bathroom",
+                col.axis="blue",
+                color = rgb(red=(15:1/30),blue=(30:1/30),green=0),zlim=c(0,16),
+                angle=24,
+                type='h',
+                xlab="hallway",ylab="adjacent wall",zlab="drop from ceiling to level")
 
-p3D$plane3d(bathlm)
+p3D$plane3d(bathlm,col='red')
+
+par(mfrow=c(1,3))
+for (i in 2:4){plot(density(bathroom[,i]))}

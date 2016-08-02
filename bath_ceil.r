@@ -16,15 +16,41 @@ summary(bathroom)
 str(bathroom)
 
 plot(bathroom[,2:4])
-bathlm<-lm(drop~X+Y,data=bathroom)
+plot(bathroom[,3:2])
+abline(lm(drop~X, data=bathroom),col='blue')
+abline(lm(drop~Y, data=bathroom),col='red')
+
+plot(bathroom[,3:4])
+abline(lm(X~Y, data=bathroom),col='red')
+abline(lm(X~drop, data=bathroom),col='blue')
+plot(bathroom[,c(2,4)])
+abline(lm(Y~X, data=bathroom),col='red')
+abline(lm(Y~drop, data=bathroom),col='blue')
+
+
+
+
+bathlm<-lm(drop~Y,data=bathroom)
 summary(bathlm)
 library(ggplot2)
 library(scatterplot3d)
+library(tidyr)
+library(dplyr)
+
+
+bathroom %>% gather() %>% head()
+
+bathroom[,-1] %>%  gather(-drop ,key='var',value='value')%>%
+  ggplot(aes(x=value,y=drop,color=drop))+
+  stat_smooth() + geom_point()+
+  scale_colour_gradient(low='blue',high='red')
+
+
 p<-ggplot(data=bathroom,aes(x=X,y=Y,label = spot))
 
 p+geom_point(aes(color=round(drop-min(drop),3)),size=5)+
 scale_colour_gradient(low='blue',high='red')+
-geom_text(aes(label=round(drop-min(drop),3)),nudge_x=5)+theme(legend.title=element_blank())+ggtitle("Rise in inches from lowest point")
+geom_text(aes(label=round(drop-min(drop),3)),nudge_x=5)+theme(legend.title=element_blank())+ggtitle("Rise in inches from lowest point")+geom_abline(aes(intercept=13.49,slope=.00825))
 
 
 p3D<-scatterplot3d(bathroom$X,   # x axis

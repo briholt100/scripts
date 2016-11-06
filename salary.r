@@ -36,7 +36,7 @@ if (!file.exists("../Data")) {
 #do a join of wrkdir with data/textFile.
 
 ifelse (!file.exists('../Data/WaStEmployeeHistSalary.txt')
-        , download.file(fileUrl, '../Data/WaStEmployeeHistSalary.txt', method='auto')
+        , download.file(fileUrl, '../Data/WaStEmployeeHistSalary2015.txt', method='auto')
         , "file exists")
 
 
@@ -63,6 +63,7 @@ salary[,5:8]<-sapply(salary[,5:8], FUN = function(x) as.numeric(gsub(",","",x)))
 salary[56855,5]<-8732
 #write.table(salary,'./Data/WaStEmployeeHistSalary.txt',sep='\t')
 #write.table(salary,"/home/brian/Projects/Data/WaStEmployeeHistSalary.txt",sep='\t')
+salary<-(rename(salary,Sal2014=Sal20141))
 str(salary)
 
 salary$job.cat<-"other"
@@ -83,13 +84,13 @@ Agency_code<-unique(colleges[c("Code","Agency_Title")])
 colleges$TotSal<-apply(colleges[,5:8],1,sum,na.rm=T)
 
 
-#convert job.cat from other. 
+#convert job.cat from other.
 #grep out faculty and non faculty, then split those two categories into above median and below
 
 colleges$job.cat<-ifelse(grepl("facul|FTF|fac sub|pt-fac|pro-rata",colleges$job_title,ignore.case=T),"Faculty","Non-fac")
 """
 ApplyQuintiles <- function(x) {
-  cut(x, breaks=c(quantile(colleges$TotSal, probs = seq(0, 1, by = 0.20))), 
+  cut(x, breaks=c(quantile(colleges$TotSal, probs = seq(0, 1, by = 0.20))),
       labels=c("0-20","20-40","40-60","60-80","80-100"), include.lowest=TRUE)
 }
 colleges$Quintile <- sapply(colleges$TotSal, ApplyQuintiles)
@@ -99,8 +100,8 @@ table(colleges$Quintile)"""
 
 
 colleges$Median<- ifelse(colleges$job.cat=="Faculty",
-                         cut2(colleges$TotSal,cuts= median(colleges$TotSal[colleges$job.cat=="Faculty"])),
-                         cut2(colleges$TotSal,cuts= median(colleges$TotSal[colleges$job.cat!="Faculty"])))
+                         cut2(colleges$TotSal,cuts= quantile(colleges$TotSal[colleges$job.cat=="Faculty"],na.rm=T,probs=seq(0,1,.33))),
+                         cut2(colleges$TotSal,cuts= quantile(colleges$TotSal[colleges$job.cat!="Faculty"],na.rm=T,probs=seq(0,1,.33))))
 
 
 
@@ -118,7 +119,7 @@ levels(colleges_longForm$year)[levels(colleges_longForm$year)=="X2014"] <- "2014
 """levels(sea_long$year)[levels(sea_long$year)=="Sal2015"] <- "2015"
 levels(sea_long$year)[levels(sea_long$year)=="Sal2012"] <- "2012"
 levels(sea_long$year)[levels(sea_long$year)=="Sal2013"] <- "2013"
-levels(sea_long$year)[levels(sea_long$year)=="Sal20141"] <- "2014"
+levels(sea_long$year)[levels(sea_long$year)=="Sal2014"] <- "2014"
 """
 colleges_longForm$et<-NA
 colleges_longForm$mp<-NA
@@ -146,7 +147,7 @@ levels(enrol_df$year)[levels(enrol_df$year)=="x2012"] <- "2012"
 levels(enrol_df$year)[levels(enrol_df$year)=="x2013"] <- "2013"
 levels(enrol_df$year)[levels(enrol_df$year)=="x2014"] <- "2014"
 
-
+sea_long<-sea_long[complete.cases(sea_long),]
 
 
 p<-ggplot(sea_long,aes(x=year,y=Salary))
@@ -155,9 +156,13 @@ p+geom_boxplot()+
   geom_line(data=enrol_df,aes(x=year,y=enrollments,color=1,group=1))+
   labs(title = "Seattle salary by median salary within job category")
 
+facTertial<-as.data.frame(quantile(colleges$TotSal[colleges$job.cat=="Faculty"],na.rm=T,probs=seq(0,1,.33)))
 
-p+geom_jitter(aes(color=job.cat))+
-  geom_line(data=enrol_df,aes(x=year,y=enrollments,group=1))
+#to see a line of mean salary (or median, might need to do a tapply into a dataframe, use that in the layer)
+
+p+geom_jitter(data=sea_long[sea_long$job.cat == "Faculty",],aes(color=job.cat))+
+#  geom_line(data=enrol_df,aes(x=year,y=enrollments,group=1))+
+  geom_line(data=sea_long[sea_long$job.cat == "Faculty",],aes(x=year, y = median(Salary,na.rm=T)))
 
 
 table(sea_long$job.cat,sea_long$job_title)

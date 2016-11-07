@@ -147,8 +147,12 @@ levels(enrol_df$year)[levels(enrol_df$year)=="x2012"] <- "2012"
 levels(enrol_df$year)[levels(enrol_df$year)=="x2013"] <- "2013"
 levels(enrol_df$year)[levels(enrol_df$year)=="x2014"] <- "2014"
 
+#this shows the median salarys by job cat and quantile (median)
+tapply(sea_long$Salary,list(sea_long$Median,sea_long$job.cat,sea_long$year),median,na.rm=T)
+
 sea_long<-sea_long[complete.cases(sea_long),]
 
+medianByGroup<-sea_long %>% group_by(year,job.cat,quant=Median) %>% summarise(MedSal=median(Salary,na.rm=T))
 
 p<-ggplot(sea_long,aes(x=year,y=Salary))
 p+geom_boxplot()+
@@ -156,13 +160,11 @@ p+geom_boxplot()+
   geom_line(data=enrol_df,aes(x=year,y=enrollments,color=1,group=1))+
   labs(title = "Seattle salary by median salary within job category")
 
-facTertial<-as.data.frame(quantile(colleges$TotSal[colleges$job.cat=="Faculty"],na.rm=T,probs=seq(0,1,.33)))
-
-#to see a line of mean salary (or median, might need to do a tapply into a dataframe, use that in the layer)
-
-p+geom_jitter(data=sea_long[sea_long$job.cat == "Faculty",],aes(color=job.cat))+
-#  geom_line(data=enrol_df,aes(x=year,y=enrollments,group=1))+
-  geom_line(data=sea_long[sea_long$job.cat == "Faculty",],aes(x=year, y = median(Salary,na.rm=T)))
+p+
+  geom_jitter(data=sea_long,alpha=.09,shape=20)+
+  geom_line(data=enrol_df,color='blue',aes(x=year,y=enrollments,group=1,color=enrollments))+
+  geom_line(data=medianByGroup,color='red',aes(x=year, y = MedSal,group=1))+facet_grid(job.cat~quant)+
+  geom_point(data=medianByGroup,shape=4,color='red',aes(x=year, y = MedSal,group=1))+facet_grid(job.cat~quant)
 
 
 table(sea_long$job.cat,sea_long$job_title)

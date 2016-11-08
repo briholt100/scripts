@@ -99,8 +99,8 @@ table(colleges$Quintile)"""
 
 
 colleges$Median<- ifelse(colleges$job.cat=="Faculty",
-                         cut2(colleges$TotSal,cuts= quantile(colleges$TotSal[colleges$job.cat=="Faculty"],na.rm=T,probs=seq(0,1,.33))),
-                         cut2(colleges$TotSal,cuts= quantile(colleges$TotSal[colleges$job.cat!="Faculty"],na.rm=T,probs=seq(0,1,.33))))
+                         cut2(colleges$TotSal,cuts= quantile(colleges$TotSal[colleges$job.cat=="Faculty"],na.rm=T,probs=seq(0,1,.2))),
+                         cut2(colleges$TotSal,cuts= quantile(colleges$TotSal[colleges$job.cat!="Faculty"],na.rm=T,probs=seq(0,1,.2))))
 
 
 
@@ -146,16 +146,16 @@ enrol_plot<-ggplot(df,aes(x=year,y=FTE))
 
 enrol_plot+geom_point(aes(color=campus,shape=4))+
   geom_line(aes(color=campus,group=campus))+facet_grid(FTE_Type~campus)+
-  scale_shape_identity()+ 
+  scale_shape_identity()+
   scale_y_continuous(breaks=seq(0,6000,750))+
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
 
 
+sea_long<-sea_long[complete.cases(sea_long),]
 
 #this shows the median salarys by job cat and quantile (median)
-tapply(sea_long$Salary,list(sea_long$Median,sea_long$job.cat,sea_long$year),median,na.rm=T)
-
-sea_long<-sea_long[complete.cases(sea_long),]
+tapply(sea_long$Salary,list(sea_long$year,sea_long$job.cat,sea_long$Median),median,na.rm=T)
+table(sea_long$year,sea_long$job.cat,sea_long$Median,useNA='ifany')
 
 medianByGroup<-sea_long %>% group_by(year,job.cat,quant=Median) %>% summarise(MedSal=median(Salary,na.rm=T))
 
@@ -165,8 +165,6 @@ p+geom_boxplot()+
   #geom_line(data=enrol_df,aes(x=year,y=enrollments,color=1,group=1))+
   labs(title = "Seattle salary by median salary within job category")
 
-p+
-  geom_jitter(data=sea_long,alpha=.09,shape=20)+
-  #geom_line(data=enrol_df,color='blue',aes(x=year,y=enrollments,group=1,color=enrollments))+
-  geom_line(data=medianByGroup,color='red',aes(x=year, y = MedSal,group=1))+facet_grid(job.cat~quant)+
-  geom_point(data=medianByGroup,shape=4,color='red',aes(x=year, y = MedSal,group=1))+facet_grid(job.cat~quant)
+p<-ggplot(medianByGroup,aes(x=year,y=MedSal))
+p+geom_line(aes(group=quant,color=quant),size=1,linetype=2)+facet_grid(~job.cat)+
+  geom_jitter(data=sea_long,aes(y=Salary, color = Median),alpha=.3,shape=20)+scale_shape_identity()

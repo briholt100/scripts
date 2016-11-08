@@ -1,5 +1,4 @@
 #######
-#  Need to pull the sbctc data
 
 library('lme4')
 library('nlme')
@@ -137,15 +136,21 @@ head(deans)
 apply(deans[,5:8],2,mean,na.rm=T)
 lortz<-colleges[grep('lortz',colleges$Employee,ignore.case=T),]
 
-enrollments<-c(18880,  18643,  19118,	19262) #enrollments for 2012-2015
-year<-c("x2012","x2013","x2014","x2015")
-year<-as.factor(year)
-enrol_df<-data.frame(year,enrollments)
+df<-read.table('clipboard',sep='\t',header=T)  #for reading in excel contents
+df<-df %>%
+gather(FTE_Type,FTE,State.Supported:Student.Funded)
 
-levels(enrol_df$year)[levels(enrol_df$year)=="x2015"] <- "2015"
-levels(enrol_df$year)[levels(enrol_df$year)=="x2012"] <- "2012"
-levels(enrol_df$year)[levels(enrol_df$year)=="x2013"] <- "2013"
-levels(enrol_df$year)[levels(enrol_df$year)=="x2014"] <- "2014"
+df$FTE<-as.numeric(gsub('"|,',"",df$FTE))
+
+enrol_plot<-ggplot(df,aes(x=year,y=FTE))
+
+enrol_plot+geom_point(aes(color=campus,shape=4))+
+  geom_line(aes(color=campus,group=campus))+facet_grid(FTE_Type~campus)+
+  scale_shape_identity()+ 
+  scale_y_continuous(breaks=seq(0,6000,750))+
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+
+
 
 #this shows the median salarys by job cat and quantile (median)
 tapply(sea_long$Salary,list(sea_long$Median,sea_long$job.cat,sea_long$year),median,na.rm=T)
@@ -157,14 +162,11 @@ medianByGroup<-sea_long %>% group_by(year,job.cat,quant=Median) %>% summarise(Me
 p<-ggplot(sea_long,aes(x=year,y=Salary))
 p+geom_boxplot()+
   facet_grid(job.cat~Median)+
-  geom_line(data=enrol_df,aes(x=year,y=enrollments,color=1,group=1))+
+  #geom_line(data=enrol_df,aes(x=year,y=enrollments,color=1,group=1))+
   labs(title = "Seattle salary by median salary within job category")
 
 p+
   geom_jitter(data=sea_long,alpha=.09,shape=20)+
-  geom_line(data=enrol_df,color='blue',aes(x=year,y=enrollments,group=1,color=enrollments))+
+  #geom_line(data=enrol_df,color='blue',aes(x=year,y=enrollments,group=1,color=enrollments))+
   geom_line(data=medianByGroup,color='red',aes(x=year, y = MedSal,group=1))+facet_grid(job.cat~quant)+
   geom_point(data=medianByGroup,shape=4,color='red',aes(x=year, y = MedSal,group=1))+facet_grid(job.cat~quant)
-
-
-table(sea_long$job.cat,sea_long$job_title)

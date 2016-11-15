@@ -63,10 +63,8 @@ salary[56855,5]<-8732
 #write.table(salary,'./Data/WaStEmployeeHistSalary.txt',sep='\t')
 #write.table(salary,"/home/brian/Projects/Data/WaStEmployeeHistSalary.txt",sep='\t')
 salary<-(rename(salary,Sal2014=Sal20141))
-str(salary)
-
 salary$job.cat<-"other"
-
+str(salary)
 
 
 colleges<-salary[grep('college|university|State Board for Comm and Tech Coll',salary$Agency,ignore.case=T),]
@@ -80,7 +78,7 @@ head(colleges)
 Agency_code<-unique(colleges[c("Code","Agency_Title")])
 
 #creates a total across years
-colleges$TotSal<-apply(colleges[,5:8],1,sum,na.rm=T)
+#colleges$TotSal<-apply(colleges[,5:8],1,sum,na.rm=T)
 
 
 #convert job.cat from other.
@@ -98,15 +96,18 @@ table(colleges$Quintile)"""
 """I could apply quintiles by subsetting totsal by faculty non faculty, which would mean in calling those numbers they'd have to be conditional: quintiles when faculty is true, when not true, etc'"""
 
 
-colleges$Median<- ifelse(colleges$job.cat=="Faculty",
+#colleges$Median<- ifelse(colleges$job.cat=="Faculty",
                          cut2(colleges$TotSal,cuts= quantile(colleges$TotSal[colleges$job.cat=="Faculty"],na.rm=T,probs=seq(0,1,.2))),
                          cut2(colleges$TotSal,cuts= quantile(colleges$TotSal[colleges$job.cat!="Faculty"],na.rm=T,probs=seq(0,1,.2))))
 
-
-
 seattle<-colleges[grep('seattle',colleges$Agency,ignore.case=T),  ]
-seattle<-seattle[,c(1:4,9,11,5:8,10)]
+
+
+#seattle<-seattle[,c(1:4,9,11,5:8,10)]
+
+
 sea_long<-gather(seattle,year,Salary,Sal2012:Sal2015)
+colleges$TotSal<-apply(colleges[,5:8],1,sum,na.rm=T)s
 
 colleges_longForm<-gather(colleges,year,Salary,Sal2012:Sal2015)
 
@@ -153,6 +154,16 @@ enrol_plot+geom_point(aes(color=campus,shape=4))+
 
 sea_long<-sea_long[complete.cases(sea_long),]
 
+
+
+"I want to create a total salary earned by emp-name each year?  From that total, I can calc quantiles per year"
+sea_long$Median<- ifelse(colleges$job.cat=="Faculty",
+                         cut2(colleges$TotSal,cuts= quantile(colleges$TotSal[colleges$job.cat=="Faculty"],na.rm=T,probs=seq(0,1,.2))),
+                         cut2(colleges$TotSal,cuts= quantile(colleges$TotSal[colleges$job.cat!="Faculty"],na.rm=T,probs=seq(0,1,.2))))
+
+
+
+
 #this shows the median salarys by job cat and quantile (median)
 tapply(sea_long$Salary,list(sea_long$year,sea_long$job.cat,sea_long$Median),median,na.rm=T)
 table(sea_long$year,sea_long$job.cat,sea_long$Median,useNA='ifany')
@@ -175,10 +186,13 @@ p+geom_line(aes(group=quant,color=quant),size=1,linetype=2)+facet_grid(~job.cat)
 cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 cbbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 
-ggplot(sea_long,aes(x=year))+geom_bar(aes(fill=as.factor(Median)))+facet_grid(~job.cat)+
+p<-ggplot(sea_long,aes(x=year))
+p+geom_bar(aes(fill=as.factor(Median)))+facet_grid(~job.cat)+
   guides(fill = guide_legend(reverse = TRUE))+scale_fill_discrete(name="Quantile")+labs(title='Seattle employee count within each quantile')
 +
   scale_fill_brewer(palette=cbbPalette)
 
-scale_fill_grey()+ +
-
+p+stat_count(aes(x=employee_name))+facet_grid(~job.cat)
+  
+  aes(fill=as.factor(Median)))+facet_grid(~job.cat)+
+  guides(fill = guide_legend(reverse = TRUE))+scale_fill_discrete(name="Quantile")+labs(title='Seattle employee count within each quantile')

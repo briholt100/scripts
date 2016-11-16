@@ -176,9 +176,5 @@ cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2",
 cbbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 
 ggplot(sea_long,aes(x=year))+geom_bar(aes(fill=as.factor(Median)))+facet_grid(~job.cat)+
-  guides(fill = guide_legend(reverse = TRUE))+scale_fill_discrete(name="Quantile")+labs(title='Seattle employee count within each quantile')
-+
-  scale_fill_brewer(palette=cbbPalette)
-
-scale_fill_grey()+ +
+  guides(fill = guide_legend(reverse = TRUE))+labs(title='Seattle employee count within each quantile')+scale_fill_grey(name="Quantile")+theme_bw()
 

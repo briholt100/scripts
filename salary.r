@@ -131,47 +131,25 @@ write.table(colleges_longForm,'./salaryByYear.txt',sep='\t')
 
 sea_long$job.cat<-as.factor(sea_long$job.cat)
 str(sea_long)
-deans<-seattle[grep('dean',seattle$Job,ignore.case=T,value=F),]
-head(deans)
-
-apply(deans[,5:8],2,mean,na.rm=T)
-lortz<-colleges[grep('lortz',colleges$Employee,ignore.case=T),]
-
-df<-read.table('clipboard',sep='\t',header=T)  #for reading in excel contents
-df<-df %>%
-gather(FTE_Type,FTE,State.Supported:Student.Funded)
-
-df$FTE<-as.numeric(gsub('"|,',"",df$FTE))
-
-enrol_plot<-ggplot(df,aes(x=year,y=FTE))
-
-enrol_plot+geom_point(aes(color=campus,shape=4))+
-  geom_line(aes(color=campus,group=campus))+facet_grid(FTE_Type~campus)+
-  scale_shape_identity()+
-  scale_y_continuous(breaks=seq(0,6000,750))+
-  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
-
 
 sea_long<-sea_long[complete.cases(sea_long),]
 
+totalSalary_df<-sea_long %>% select(employee_name,job.cat,Salary) %>% group_by(employee_name,job.cat) %>% summarise(totalSalary=sum(Salary))
+
+totalSalary_df$Median<- ifelse(totalSalary_df$job.cat=="Faculty",
+                               cut2(totalSalary_df$totalSalary,cuts= quantile(totalSalary_df$totalSalary[totalSalary_df$job.cat=="Faculty"],na.rm=T,probs=seq(0,1,.3334))),
+                               cut2(totalSalary_df$totalSalary,cuts= quantile(totalSalary_df$totalSalary[totalSalary_df$job.cat!="Faculty"],na.rm=T,probs=seq(0,1,.3334))))
 
 
-"I want to create a total salary earned by emp-name each year?  From that total, I can calc quantiles per year"
-sea_long$Median<- ifelse(colleges$job.cat=="Faculty",
-                         cut2(colleges$TotSal,cuts= quantile(colleges$TotSal[colleges$job.cat=="Faculty"],na.rm=T,probs=seq(0,1,.2))),
-                         cut2(colleges$TotSal,cuts= quantile(colleges$TotSal[colleges$job.cat!="Faculty"],na.rm=T,probs=seq(0,1,.2))))
+sea_long<-merge(sea_long,totalSalary_df)
+sea_long<-sea_long %>% select(Code,Agency_Title,employee_name,job_title,job.cat,year,Salary,totalSalary,Median)
 
-
-
+totalByGroup<-sea_long %>% group_by(year,job.cat,quant=Median) %>% summarise(count=n())
+medianByGroup<-sea_long %>% group_by(year,job.cat,quant=Median) %>% summarise(MedSal=median(Salary,na.rm=T))
 
 #this shows the median salarys by job cat and quantile (median)
 tapply(sea_long$Salary,list(sea_long$year,sea_long$job.cat,sea_long$Median),median,na.rm=T)
 table(sea_long$year,sea_long$job.cat,sea_long$Median,useNA='ifany')
-
-medianByGroup<-sea_long %>% group_by(year,job.cat,quant=Median) %>% summarise(MedSal=median(Salary,na.rm=T))
-
-totalByGroup<-sea_long %>% group_by(year,job.cat,quant=Median) %>% summarise(count=n())
-
 
 p<-ggplot(sea_long,aes(x=year,y=Salary))
 p+geom_boxplot()+
@@ -180,13 +158,12 @@ p+geom_boxplot()+
   labs(title = "Seattle salary by median salary within job category")
 
 p<-ggplot(medianByGroup,aes(x=year,y=MedSal))
-p+geom_line(aes(group=quant,color=quant),size=1,linetype=2)+facet_grid(~job.cat)+
+p+geom_line(aes(group=quant),size=1,linetype=2)+facet_grid(~job.cat)+
   geom_jitter(data=sea_long,aes(y=Salary, color = Median),alpha=.3,shape=20)+scale_shape_identity()
 
 cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 cbbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 
-<<<<<<< HEAD
 ggplot(sea_long,aes(x=year))+geom_bar(aes(fill=as.factor(Median)))+facet_grid(~job.cat)+
   guides(fill = guide_legend(reverse = TRUE))+labs(title='Seattle employee count within each quantile')+scale_fill_grey(name="Quantile")+theme_bw()
 
@@ -198,7 +175,26 @@ p+geom_bar(aes(fill=as.factor(Median)))+facet_grid(~job.cat)+
   scale_fill_brewer(palette=cbbPalette)
 
 p+stat_count(aes(x=employee_name))+facet_grid(~job.cat)
-  
+
   aes(fill=as.factor(Median)))+facet_grid(~job.cat)+
   guides(fill = guide_legend(reverse = TRUE))+scale_fill_discrete(name="Quantile")+labs(title='Seattle employee count within each quantile')
->>>>>>> 875f0c6dd04a25212dc41089d20ba7dcdd37ec3e
+
+deans<-seattle[grep('dean',seattle$Job,ignore.case=T,value=F),]
+head(deans)
+
+apply(deans[,5:8],2,mean,na.rm=T)
+lortz<-colleges[grep('lortz',colleges$Employee,ignore.case=T),]
+
+df<-read.table('clipboard',sep='\t',header=T)  #for reading in excel contents
+df<-df %>%
+  gather(FTE_Type,FTE,State.Supported:Student.Funded)
+
+df$FTE<-as.numeric(gsub('"|,',"",df$FTE))
+
+enrol_plot<-ggplot(df,aes(x=year,y=FTE))
+
+enrol_plot+geom_point(aes(color=campus,shape=4))+
+  geom_line(aes(color=campus,group=campus))+facet_grid(FTE_Type~campus)+
+  scale_shape_identity()+
+  scale_y_continuous(breaks=seq(0,6000,750))+
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))

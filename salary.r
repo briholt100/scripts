@@ -132,7 +132,12 @@ write.table(colleges_longForm,'./salaryByYear.txt',sep='\t')
 sea_long$job.cat<-as.factor(sea_long$job.cat)
 str(sea_long)
 
+ifelse(sea_long$job_title == 'STIPEND/COORD FAC,EXMT EMP' & is.na(sea_long$Salary),print(sea_long$employee_name), print('none'))
+
 sea_long<-sea_long[complete.cases(sea_long),]
+
+ifelse()
+
 
 totalSalary_df<-sea_long %>% select(employee_name,job.cat,Salary) %>% group_by(employee_name,job.cat) %>% summarise(totalSalary=sum(Salary))
 

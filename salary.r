@@ -132,8 +132,22 @@ write.table(colleges_longForm,'./salaryByYear.txt',sep='\t')
 sea_long$job.cat<-as.factor(sea_long$job.cat)
 str(sea_long)
 
-ifelse(sea_long$job_title == 'STIPEND/COORD FAC,EXMT EMP' & is.na(sea_long$Salary),print(sea_long$employee_name), print('none'))
 
+#####cleanign up duplicate names with different job.cat
+ifelse(sea_long$job_title == 'STIPEND/COORD FAC,EXMT EMP' & is.na(sea_long$Salary),print(sea_long$employee_name), print('none'))
+seattle[duplicated(seattle$employee_name),-c(1:2)]  %>% arrange(desc(employee_name))
+seattle %>% filter(grepl('DAHMS, JOEL',employee_name))
+temp<-seattle %>% filter(grepl('^D',employee_name))
+duplicated(temp$employee_name)
+table(duplicated(temp$employee_name))
+temp[(duplicated(temp$employee_name)),]
+temp %>%
+group_by(employee_name)
+nth(seattle$employe_name,5)
+
+
+
+####continuing
 sea_long<-sea_long[complete.cases(sea_long),]
 
 ifelse()

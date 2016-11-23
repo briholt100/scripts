@@ -141,9 +141,14 @@ temp<-seattle %>% filter(grepl('^D',employee_name))
 duplicated(temp$employee_name)
 table(duplicated(temp$employee_name))
 temp[(duplicated(temp$employee_name)),]
-temp %>%
-group_by(employee_name)
-nth(seattle$employe_name,5)
+temp %>% 
+  group_by(employee_name) %>% select(.,-c(1,2)) %>%
+  print(n=40)
+  filter(grepl('stipend',job_title,ignore.case=T))
+
+temp %>% 
+  group_by(employee_name) %>% select(.,-c(1,2)) %>% 
+  mutate(job.cat = ifelse(any(grep("FACULTY",job_title)),"Faculty", "Non-fac"))
 
 
 

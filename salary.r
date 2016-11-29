@@ -105,8 +105,6 @@ seattle<-colleges[grep('seattle',colleges$Agency,ignore.case=T),  ]
 
 #seattle<-seattle[,c(1:4,9,11,5:8,10)]
 
-
-sea_long<-gather(seattle,year,Salary,Sal2012:Sal2015)
 colleges$TotSal<-apply(colleges[,5:8],1,sum,na.rm=T)s
 
 colleges_longForm<-gather(colleges,year,Salary,Sal2012:Sal2015)
@@ -116,22 +114,12 @@ levels(colleges_longForm$year)[levels(colleges_longForm$year)=="X2012"] <- "2012
 levels(colleges_longForm$year)[levels(colleges_longForm$year)=="X2013"] <- "2013"
 levels(colleges_longForm$year)[levels(colleges_longForm$year)=="X2014"] <- "2014"
 
-"""levels(sea_long$year)[levels(sea_long$year)=="Sal2015"] <- "2015"
-levels(sea_long$year)[levels(sea_long$year)=="Sal2012"] <- "2012"
-levels(sea_long$year)[levels(sea_long$year)=="Sal2013"] <- "2013"
-levels(sea_long$year)[levels(sea_long$year)=="Sal2014"] <- "2014"
-"""
 colleges_longForm$et<-NA
 colleges_longForm$mp<-NA
 colleges_longForm$percent_ft<-NA
 head(colleges_longForm)
 
 write.table(colleges_longForm,'./salaryByYear.txt',sep='\t')
-
-
-sea_long$job.cat<-as.factor(sea_long$job.cat)
-str(sea_long)
-
 
 #####cleanign up duplicate names with different job.cat
 ifelse(sea_long$job_title == 'STIPEND/COORD FAC,EXMT EMP' & is.na(sea_long$Salary),print(sea_long$employee_name), print('none'))
@@ -146,23 +134,29 @@ temp %>%
   print(n=40)
   filter(grepl('stipend',job_title,ignore.case=T))
 
-temp %>% 
-  group_by(employee_name) %>% select(.,-c(1,2)) %>% 
-  mutate(job.cat = ifelse(any(grep("FACULTY",job_title)),"Faculty", "Non-fac"))
-
-
+seattle<-seattle %>% 
+  group_by(employee_name) %>% #select(.,-c(1,2)) %>% 
+  mutate(job.cat = ifelse(any(grep("Faculty",job.cat)),"Faculty", "Non-fac"))
 
 ####continuing
-sea_long<-sea_long[complete.cases(sea_long),]
+sea_long<-gather(seattle,year,Salary,Sal2012:Sal2015)
+sea_long$job.cat<-as.factor(sea_long$job.cat)
 
-ifelse()
+levels(sea_long$year)[levels(sea_long$year)=="Sal2015"] <- "2015"
+levels(sea_long$year)[levels(sea_long$year)=="Sal2012"] <- "2012"
+levels(sea_long$year)[levels(sea_long$year)=="Sal2013"] <- "2013"
+levels(sea_long$year)[levels(sea_long$year)=="Sal2014"] <- "2014"
+
+str(sea_long)
+
+sea_long<-sea_long[complete.cases(sea_long),]
 
 
 totalSalary_df<-sea_long %>% select(employee_name,job.cat,Salary) %>% group_by(employee_name,job.cat) %>% summarise(totalSalary=sum(Salary))
 
 totalSalary_df$Median<- ifelse(totalSalary_df$job.cat=="Faculty",
-                               cut2(totalSalary_df$totalSalary,cuts= quantile(totalSalary_df$totalSalary[totalSalary_df$job.cat=="Faculty"],na.rm=T,probs=seq(0,1,.3334))),
-                               cut2(totalSalary_df$totalSalary,cuts= quantile(totalSalary_df$totalSalary[totalSalary_df$job.cat!="Faculty"],na.rm=T,probs=seq(0,1,.3334))))
+                               cut2(totalSalary_df$totalSalary,cuts= quantile(totalSalary_df$totalSalary[totalSalary_df$job.cat=="Faculty"],na.rm=T,probs=seq(0,1,.2))),
+                               cut2(totalSalary_df$totalSalary,cuts= quantile(totalSalary_df$totalSalary[totalSalary_df$job.cat!="Faculty"],na.rm=T,probs=seq(0,1,.2))))
 
 
 sea_long<-merge(sea_long,totalSalary_df)
@@ -222,3 +216,9 @@ enrol_plot+geom_point(aes(color=campus,shape=4))+
   scale_shape_identity()+
   scale_y_continuous(breaks=seq(0,6000,750))+
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+
+
+
+for each job.cat
+  for each median
+  print range of salary

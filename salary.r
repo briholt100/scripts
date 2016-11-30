@@ -169,13 +169,18 @@ sea_long %>% group_by(job.cat,year) %>%
             med=median(Salary),mean=mean(Salary))
 
 
-sea_long %>% group_by(job.cat,year) %>% summarise(count=n(),min=min(Salary),max=max(Salary),Quant25=quantile(Salary, probs=0.25),
-                                                  Quant50=quantile(Salary, probs=0.5),
-                                                  Quant75=quantile(Salary, probs=0.75), 
+quants<-
+  sea_long %>% group_by(job.cat,year) %>% summarise(count=n(),min=min(Salary),max=max(Salary),
+                                                  Quant20=quantile(Salary, probs=0.20),
+                                                  Quant40=quantile(Salary, probs=0.40),
+                                                  Quant60=quantile(Salary, probs=0.6),
+                                                  Quant80=quantile(Salary, probs=0.80), 
                                                   med=median(Salary),mean=mean(Salary)) %>% 
-  gather(quant,value,Quant25:Quant75)  %>% 
-  ggplot(aes(x=year,y=value))+geom_line(aes(group=job.cat),size=1.2,linetype = "solid")+
-  facet_grid(job.cat~quant)+geom_jitter(data=sea_long,aes(x=year,y=Salary),alpha=.15,shape=20)+
+  gather(quant,value,Quant20:Quant80)  %>% 
+  ggplot(aes(x=year,y=value))+
+  #geom_line(aes(group=job.cat),size=1.2,linetype = "solid")+
+  facet_grid(job.cat~quant)+
+  geom_jitter(data=sea_long,aes(x=year,y=Salary),alpha=.15,shape=20)+
   labs(title = "Seattle salaries (each dot = a person) \n with the Mean of group Salary trendline within job category and tertile")
 
 sea_long %>%

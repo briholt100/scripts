@@ -59,7 +59,7 @@ salary[,1]<-as.factor(salary[,1])
 salary[,5:8]<-sapply(salary[,5:8], FUN = function(x) as.numeric(gsub(",","",x)))
 #
 # below is the money earned by Pete at Edmonds.  For some reason, the main file shows he worked at edmonds but received no money; I then saved it
-salary[56855,5]<-8732
+#salary[56855,5]<-8732
 #write.table(salary,'./Data/WaStEmployeeHistSalary.txt',sep='\t')
 #write.table(salary,"/home/brian/Projects/Data/WaStEmployeeHistSalary.txt",sep='\t')
 salary<-(rename(salary,Sal2014=Sal20141))
@@ -105,11 +105,12 @@ table(colleges$Quintile)"""
 
 #seattle<-seattle[,c(1:4,9,11,5:8,10)]
 
-colleges$TotSal<-apply(colleges[,5:8],1,sum,na.rm=T)
+
 
 #obvious fix of misname
 colleges[grepl('ABAY, HALEFOM',colleges$employee_name) & colleges$job_title == 'FOOD SERVICE WORKER',c("Sal2014")]<-25900
 colleges<-colleges[-45107,] #after grep('ABAY, HALEFOM',colleges$employee_name) to obtain record number 45107
+colleges$TotSal<-apply(colleges[,5:8],1,sum,na.rm=T)
 
 colleges_longForm<-gather(colleges,year,Salary,Sal2012:Sal2015)
 
@@ -130,7 +131,7 @@ seattle<-colleges[grep('seattle',colleges$Agency,ignore.case=T),  ]
 
 #####cleanign up duplicate names with different job.cat
 
-seattle<-seattle %>% group_by(employee_name) %>% #filter(grepl('^D',employee_name)) %>% 
+seattle<-seattle %>% group_by(employee_name)# %>% filter(grepl('^D',employee_name)) %>% 
   mutate(job.cat = ifelse(any(grep("Faculty",job.cat)),"Faculty","Non-fac")) 
 
 ####continuing
@@ -145,17 +146,35 @@ levels(sea_long$year)[levels(sea_long$year)=="Sal2014"] <- "2014"
 str(sea_long)
 
 sea_long<-sea_long[complete.cases(sea_long),]
-
+sea_long<-sea_long %>% group_by(employee_name) %>% mutate(TotSal=sum(Salary))  
+  
 
 totalSalary_df<-sea_long %>% select(employee_name,job.cat,Salary) %>% group_by(employee_name,job.cat) %>% summarise(totalSalary=sum(Salary))
+
+#by(totalSalary_df,totalSalary_df$job.cat,function(x) median(totalSalary_df$totalSalary,na.rm=T))
+
+#dplyr finiding quants by group/year
+sea_long %>% group_by(job.cat,year) %>% summarise(q0=quantile(totalSalary,probs=0),
+                                                  q2=quantile(totalSalary,probs=.2),
+                                                  q25=quantile(totalSalary,probs=.25),
+                                                  q4=quantile(totalSalary,probs=.4),
+                                                  q5=quantile(totalSalary,probs=.5),
+                                                  q6=quantile(totalSalary,probs=.6),
+                                                  q8=quantile(totalSalary,probs=.8),
+                                                  q10=quantile(totalSalary,probs=1))
+
 
 ###
 #the following median calculatino is based on total salary median over all years (so, first total salary across years, then make cuts)
 ###
 
 totalSalary_df$Median<- ifelse(totalSalary_df$job.cat=="Faculty",
-                               cut2(totalSalary_df$totalSalary,cuts= quantile(totalSalary_df$totalSalary[totalSalary_df$job.cat=="Faculty"],na.rm=T,probs=seq(0,1,.2))),
-                               cut2(totalSalary_df$totalSalary,cuts= quantile(totalSalary_df$totalSalary[totalSalary_df$job.cat!="Faculty"],na.rm=T,probs=seq(0,1,.2))))
+                               cut2(totalSalary_df$totalSalary[totalSalary_df$job.cat=="Faculty"],
+                                    cuts= quantile(totalSalary_df$totalSalary[totalSalary_df$job.cat=="Faculty"],
+                                                   na.rm=T,probs=seq(0,1,.2))),
+                               cut2(totalSalary_df$totalSalary[totalSalary_df$job.cat!="Faculty"],
+                                    cuts= quantile(totalSalary_df$totalSalary[totalSalary_df$job.cat!="Faculty"],
+                                                   na.rm=T,probs=seq(0,1,.2))))
 sea_long<-merge(sea_long,totalSalary_df)
 sea_long<-sea_long %>% select(Code,Agency_Title,employee_name,job_title,job.cat,year,Salary,totalSalary,Median)
 
@@ -176,7 +195,10 @@ quants<-
                                                   Quant60=quantile(Salary, probs=0.6),
                                                   Quant80=quantile(Salary, probs=0.80), 
                                                   med=median(Salary),mean=mean(Salary)) %>% 
-  gather(quant,value,Quant20:Quant80)  %>% 
+  gather(quant,value,Quant20:Quant80)  
+
+quants %>% ggplot(aes(year,value))+geom_line(aes(group=job.cat))+facet_grid(quant~job.cat)
+
   ggplot(aes(x=year,y=value))+
   #geom_line(aes(group=job.cat),size=1.2,linetype = "solid")+
   facet_grid(job.cat~quant)+
@@ -185,12 +207,12 @@ quants<-
 
 sea_long %>%
   group_by(job.cat,year) %>%
-  ggplot(aes(x=year,y=Salary))+geom_jitter(alpha=.1,shape=20)+facet_grid(job.cat~Median)
+  ggplot(aes(x=year,y=Salary))+geom_jitter(aes(color= job.cat),alpha=.2,shape=20)+facet_grid(job.cat~Median)
 
 # a test of range on total salary:
-totalSalary_df %>% filter(job.cat=='Faculty')  %>% group_by(Median)  %>% select(totalSalary) %>% 
-  summarise(min = min(totalSalary),max=max(totalSalary),mean=mean(totalSalary))
-
+totalSalary_df %>% group_by(job.cat,Median)  %>% select(totalSalary) %>% 
+  summarise(min = min(totalSalary),median= median(totalSalary),max=max(totalSalary),mean=mean(totalSalary))
+            
 totalByGroup<-sea_long %>% group_by(year,job.cat,quant=Median) %>% summarise(count=n())
 medianByGroup<-sea_long %>% group_by(year,job.cat,quant=Median) %>% summarise(MedSal=median(Salary,na.rm=T))
 meanByGroup<-sea_long %>% group_by(year,job.cat,quant=Median) %>% summarise(MeanSal=mean(Salary,na.rm=T))

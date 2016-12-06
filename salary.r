@@ -97,8 +97,8 @@ table(colleges$Quintile)"""
 
 
 #colleges$Median<- ifelse(colleges$job.cat=="Faculty",
-                         cut2(colleges$TotSal,cuts= quantile(colleges$TotSal[colleges$job.cat=="Faculty"],na.rm=T,probs=seq(0,1,.2))),
-                         cut2(colleges$TotSal,cuts= quantile(colleges$TotSal[colleges$job.cat!="Faculty"],na.rm=T,probs=seq(0,1,.2))))
+ #                        cut2(colleges$TotSal,cuts= quantile(colleges$TotSal[colleges$job.cat=="Faculty"],na.rm=T,probs=seq(0,1,.2))),
+  #                       cut2(colleges$TotSal,cuts= quantile(colleges$TotSal[colleges$job.cat!="Faculty"],na.rm=T,probs=seq(0,1,.2))))
 
 
 
@@ -154,14 +154,14 @@ totalSalary_df<-sea_long %>% select(employee_name,job.cat,Salary) %>% group_by(e
 #by(totalSalary_df,totalSalary_df$job.cat,function(x) median(totalSalary_df$totalSalary,na.rm=T))
 
 #dplyr finiding quants by group/year
-sea_long %>% group_by(job.cat,year) %>% summarise(q0=quantile(totalSalary,probs=0),
-                                                  q2=quantile(totalSalary,probs=.2),
-                                                  q25=quantile(totalSalary,probs=.25),
-                                                  q4=quantile(totalSalary,probs=.4),
-                                                  q5=quantile(totalSalary,probs=.5),
-                                                  q6=quantile(totalSalary,probs=.6),
-                                                  q8=quantile(totalSalary,probs=.8),
-                                                  q10=quantile(totalSalary,probs=1))
+sea_long %>% group_by(job.cat,year) %>% summarise(q0=quantile(Salary,probs=0),
+                                                  q2=quantile(Salary,probs=.2),
+                                                  #q25=quantile(Salary,probs=.25),
+                                                  q4=quantile(Salary,probs=.4),
+                                                  #q5=quantile(Salary,probs=.5),
+                                                  q6=quantile(Salary,probs=.6),
+                                                  q8=quantile(Salary,probs=.8),
+                                                  q10=quantile(Salary,probs=1))
 
 
 ###

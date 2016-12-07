@@ -85,8 +85,8 @@ Agency_code<-unique(colleges[c("Code","Agency_Title")])
 #grep out faculty and non faculty, then split those two categories into above median and below
 
 colleges$job.cat<-ifelse(grepl("facul|FTF|fac sub|pt-fac|pro-rata",colleges$job_title,ignore.case=T),"Faculty","Non-fac")
-"""
-ApplyQuintiles <- function(x) {
+
+"""ApplyQuintiles <- function(x) {
   cut(x, breaks=c(quantile(colleges$TotSal, probs = seq(0, 1, by = 0.20))),
       labels=c("0-20","20-40","40-60","60-80","80-100"), include.lowest=TRUE)
 }
@@ -112,17 +112,17 @@ colleges[grepl('ABAY, HALEFOM',colleges$employee_name) & colleges$job_title == '
 colleges<-colleges[-45107,] #after grep('ABAY, HALEFOM',colleges$employee_name) to obtain record number 45107
 colleges$TotSal<-apply(colleges[,5:8],1,sum,na.rm=T)
 
-colleges_longForm<-gather(colleges,year,Salary,Sal2012:Sal2015)
+#colleges_longForm<-gather(colleges,year,Salary,Sal2012:Sal2015)
 
-levels(colleges_longForm$year)[levels(colleges_longForm$year)=="X2011"] <- "2011"
-levels(colleges_longForm$year)[levels(colleges_longForm$year)=="X2012"] <- "2012"
-levels(colleges_longForm$year)[levels(colleges_longForm$year)=="X2013"] <- "2013"
-levels(colleges_longForm$year)[levels(colleges_longForm$year)=="X2014"] <- "2014"
+#levels(colleges_longForm$year)[levels(colleges_longForm$year)=="X2011"] <- "2011"
+#levels(colleges_longForm$year)[levels(colleges_longForm$year)=="X2012"] <- "2012"
+#levels(colleges_longForm$year)[levels(colleges_longForm$year)=="X2013"] <- "2013"
+#levels(colleges_longForm$year)[levels(colleges_longForm$year)=="X2014"] <- "2014"
 
-colleges_longForm$et<-NA
-colleges_longForm$mp<-NA
-colleges_longForm$percent_ft<-NA
-head(colleges_longForm)
+#colleges_longForm$et<-NA
+#colleges_longForm$mp<-NA
+#colleges_longForm$percent_ft<-NA
+#head(colleges_longForm)
 
 write.table(colleges_longForm,'./salaryByYear.txt',sep='\t')
 
@@ -131,7 +131,7 @@ seattle<-colleges[grep('seattle',colleges$Agency,ignore.case=T),  ]
 
 #####cleanign up duplicate names with different job.cat
 
-seattle<-seattle %>% group_by(employee_name)# %>% filter(grepl('^D',employee_name)) %>% 
+seattle<-seattle %>% group_by(employee_name) %>% #filter(grepl('^D',employee_name)) %>% 
   mutate(job.cat = ifelse(any(grep("Faculty",job.cat)),"Faculty","Non-fac")) 
 
 ####continuing
@@ -270,6 +270,5 @@ enrol_plot+geom_point(aes(color=campus,shape=4))+
 
 
 
-for each job.cat
-  for each median
-  print range of salary
+
+sea_long %>% filter(grepl('^Dean',job_title,ignore.case=T),job.cat!="Faculty") %>% group_by(employee_name) %>% ggplot(aes(year,Salary))+geom_point(aes(group=employee_name))+geom_line(aes(group=employee_name))+facet_wrap(~employee_name)+  scale_y_continuous(labels = comma)+labs(title="Admins with 'dean' in title")+geom_text(aes(label=Salary),hjust=-.1, vjust=-1.2,size=2)

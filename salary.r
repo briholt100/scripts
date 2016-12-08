@@ -155,13 +155,43 @@ totalSalary_df<-sea_long %>% select(employee_name,job.cat,Salary) %>% group_by(e
 
 #dplyr finiding quants by group/year
 sea_long %>% group_by(job.cat,year) %>% summarise(q0=quantile(Salary,probs=0),
-                                                  q2=quantile(Salary,probs=.2),
+                                                  #q2=quantile(Salary,probs=.2),
                                                   #q25=quantile(Salary,probs=.25),
-                                                  q4=quantile(Salary,probs=.4),
-                                                  #q5=quantile(Salary,probs=.5),
-                                                  q6=quantile(Salary,probs=.6),
-                                                  q8=quantile(Salary,probs=.8),
-                                                  q10=quantile(Salary,probs=1))
+                                                  q33=quantile(Salary,probs=.334),
+                                                  #q4=quantile(Salary,probs=.4),
+                                                  q5=quantile(Salary,probs=.5),
+                                                  #q6=quantile(Salary,probs=.6),
+                                                  q66=quantile(Salary,probs=.667),
+                                                  #q75=quantile(Salary,probs=.75),
+                                                  #q8=quantile(Salary,probs=.8),
+                                                  q10=quantile(Salary,probs=1)) 
+
+df<-sea_long %>% group_by(job.cat,year) %>% 
+  mutate(quants=cut2(Salary,cuts=quantile(Salary,c(#.2,
+                                                   .33,
+                                                   .5,
+                                                   .66,
+                                                   #.8,
+                                                   .999))))
+df<-df %>%
+  mutate(quants = revalue(quants,  c("[   100,  4300)"= 'x00%',
+                                     #"[  4300,  9482)"='x20%', 
+                                     "[  9482, 22300)"= 'x33%',
+                                     "[ 22300, 39064)"='x50%', 
+                                     "[ 39064, 59300)" ='x66%',
+                                     #"[ 59300,115017)"='x80%',
+                                     "[115017,117800]"='x99%')))
+
+df %>% group_by(year,job.cat,quants) %>% summarise(Median=median(Salary))  %>% 
+  ggplot(aes(year,Median))+
+  geom_line(aes(group=quants))+
+  geom_text(aes(label=Median),hjust=.3, vjust=0,size=3)+
+  facet_grid(quants~job.cat)+
+  geom_jitter(data=df,aes(x=year,y=Salary),alpha=.08,shape=20)+
+  labs(title="Salary changes by percentiles\nSalary amount is the median for\n year & percentile")
+
+  +
+  labs(title="Salary changes by percentiles,\n so, 'q5' is the median")
 
 
 ###

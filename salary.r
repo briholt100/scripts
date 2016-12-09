@@ -173,71 +173,26 @@ df<-sea_long %>% group_by(job.cat,year) %>%
                                                    .66,
                                                    #.8,
                                                    .999))))
+levels(df$quants)
+
 df<-df %>%
-  mutate(quants = revalue(quants,  c("[   100,  4300)"= 'x00%',
+  mutate(quants = revalue(quants,  c("[   100,  9482)"= 'x00%',
                                      #"[  4300,  9482)"='x20%', 
                                      "[  9482, 22300)"= 'x33%',
                                      "[ 22300, 39064)"='x50%', 
-                                     "[ 39064, 59300)" ='x66%',
+                                     "[ 39064,115017)" ='x66%',
                                      #"[ 59300,115017)"='x80%',
                                      "[115017,117800]"='x99%')))
 
 df %>% group_by(year,job.cat,quants) %>% summarise(Median=median(Salary))  %>% 
   ggplot(aes(year,Median))+
   geom_line(aes(group=quants))+
-  geom_text(aes(label=Median),hjust=.3, vjust=0,size=3)+
-  facet_grid(quants~job.cat)+
-  geom_jitter(data=df,aes(x=year,y=Salary),alpha=.08,shape=20)+
-  labs(title="Salary changes by percentiles\nSalary amount is the median for\n year & percentile")
+  geom_text(aes(label=Median),hjust=.3, vjust=0,size=3,color='blue')+
+  facet_grid(quants~job.cat,scales='free_y')+
+  geom_jitter(data=df,aes(x=year,y=Salary),alpha=.1,shape=20)+
+  labs(title="Salary changes by percentiles\nSalary amount is the median for\n year & percentile\n\nNOTICE THE Y AXIS SCALE CHANGES")
+  
 
-  +
-  labs(title="Salary changes by percentiles,\n so, 'q5' is the median")
-
-
-###
-#the following median calculatino is based on total salary median over all years (so, first total salary across years, then make cuts)
-###
-
-totalSalary_df$Median<- ifelse(totalSalary_df$job.cat=="Faculty",
-                               cut2(totalSalary_df$totalSalary[totalSalary_df$job.cat=="Faculty"],
-                                    cuts= quantile(totalSalary_df$totalSalary[totalSalary_df$job.cat=="Faculty"],
-                                                   na.rm=T,probs=seq(0,1,.2))),
-                               cut2(totalSalary_df$totalSalary[totalSalary_df$job.cat!="Faculty"],
-                                    cuts= quantile(totalSalary_df$totalSalary[totalSalary_df$job.cat!="Faculty"],
-                                                   na.rm=T,probs=seq(0,1,.2))))
-sea_long<-merge(sea_long,totalSalary_df)
-sea_long<-sea_long %>% select(Code,Agency_Title,employee_name,job_title,job.cat,year,Salary,totalSalary,Median)
-
-
-
-sea_long %>% group_by(job.cat,year) %>% 
-  summarise(count=n(),min=min(Salary),max=max(Salary),
-            `25%`=quantile(Salary, probs=0.25),
-            `50%`=quantile(Salary, probs=0.5),
-            `75%`=quantile(Salary, probs=0.75), 
-            med=median(Salary),mean=mean(Salary))
-
-
-quants<-
-  sea_long %>% group_by(job.cat,year) %>% summarise(count=n(),min=min(Salary),max=max(Salary),
-                                                  Quant20=quantile(Salary, probs=0.20),
-                                                  Quant40=quantile(Salary, probs=0.40),
-                                                  Quant60=quantile(Salary, probs=0.6),
-                                                  Quant80=quantile(Salary, probs=0.80), 
-                                                  med=median(Salary),mean=mean(Salary)) %>% 
-  gather(quant,value,Quant20:Quant80)  
-
-quants %>% ggplot(aes(year,value))+geom_line(aes(group=job.cat))+facet_grid(quant~job.cat)
-
-  ggplot(aes(x=year,y=value))+
-  #geom_line(aes(group=job.cat),size=1.2,linetype = "solid")+
-  facet_grid(job.cat~quant)+
-  geom_jitter(data=sea_long,aes(x=year,y=Salary),alpha=.15,shape=20)+
-  labs(title = "Seattle salaries (each dot = a person) \n with the Mean of group Salary trendline within job category and tertile")
-
-sea_long %>%
-  group_by(job.cat,year) %>%
-  ggplot(aes(x=year,y=Salary))+geom_jitter(aes(color= job.cat),alpha=.2,shape=20)+facet_grid(job.cat~Median)
 
 # a test of range on total salary:
 totalSalary_df %>% group_by(job.cat,Median)  %>% select(totalSalary) %>% 
@@ -260,23 +215,6 @@ p<-ggplot(medianByGroup,aes(x=year,y=MedSal))
 p+geom_line(aes(group=quant),size=1,linetype=2)+facet_grid(~job.cat)+
   geom_jitter(data=sea_long,aes(y=Salary, color = Median),alpha=.3,shape=20)+scale_shape_identity()
 
-cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
-cbbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
-
-ggplot(sea_long,aes(x=year))+geom_bar(aes(fill=as.factor(Median)))+facet_grid(~job.cat)+
-  guides(fill = guide_legend(reverse = TRUE))+labs(title='Seattle employee count within each quantile')+scale_fill_grey(name="Quantile")+theme_bw()
-
-=======
-p<-ggplot(sea_long,aes(x=year))
-p+geom_bar(aes(fill=as.factor(Median)))+facet_grid(~job.cat)+
-  guides(fill = guide_legend(reverse = TRUE))+scale_fill_discrete(name="Quantile")+labs(title='Seattle employee count within each quantile')
-+
-  scale_fill_brewer(palette=cbbPalette)
-
-p+stat_count(aes(x=employee_name))+facet_grid(~job.cat)
-
-  aes(fill=as.factor(Median)))+facet_grid(~job.cat)+
-  guides(fill = guide_legend(reverse = TRUE))+scale_fill_discrete(name="Quantile")+labs(title='Seattle employee count within each quantile')
 
 deans<-seattle[grep('dean',seattle$Job,ignore.case=T,value=F),]
 head(deans)

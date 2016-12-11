@@ -152,6 +152,7 @@ for (i in 1:length(mylist)){
 sapply(df_list,length)
 
 final_df_2003<-do.call("rbind",df_list)  # this converts df_list into a dataframe.
+final_df_2003<-final_df_2003[,1:5]
 colnames(final_df_2003)<-c('Institution','year','Employee','Job.Title','Salary')
 final_df_2003$Salary<-as.numeric(final_df_2003$Salary)
 final_df_2003<-final_df_2003[(is.na(final_df_2003$Salary))==F,]
@@ -189,10 +190,10 @@ for (i in 1:length(mylist)){
 
 
 }
-
-
+head(final_df_2005)
 final_df_2005<-do.call("rbind",df_list)  # this converts df_list into a dataframe.
 colnames(final_df_2005)<-c('Institution','year','Employee','Job.Title','Salary')
+final_df_2005<-final_df_2005[,c(1:5)]
 final_df_2005$Salary<-as.numeric(final_df_2005$Salary)
 final_df_2005<-final_df_2005[(is.na(final_df_2005$Salary))==F,]
 final_df_2005$Employee<-gsub('Z,',',',final_df_2005$Employee)
@@ -211,7 +212,7 @@ write.csv(final_df_2005, file = "./final_df_2005.csv")
 #################
 
 # This works for: 2007,
-table(final_df_2007$et) table(final_df_2007$Institution)
+#table(final_df_2007$et) table(final_df_2007$Institution)
 r=list()
 yr=list()
 for (i in 1:length(mylist)){
@@ -376,7 +377,7 @@ for(i in 1:length(mylist)){
 
 }
 
-sapply(df_list,length)####checks that colleges have 4 columns instead of 5
+print(paste("There should be a whole integer here: ",sum(sapply(df_list,length))/length(df_list)))####checks that colleges have equal number of columns
 
 final_df_2011<-do.call("rbind",df_list)  # this converts df_list into a dataframe.
 colnames(final_df_2011)<-c('Institution','year','Employee','Job.Title','Salary')
@@ -393,19 +394,19 @@ str(final_df_2011)
 #write.csv(final_df_2011,file="I:\\My Data Sources\\Data\\final_df_2011.csv")  #on campus
 write.csv(final_df_2011, file = "./final_df_2011.csv")
 
-df<-rbind(final_df_2011,final_df_2009,final_df_2007,final_df_2005,final_df_2003)
+college_df<-rbind(final_df_2011,final_df_2009,final_df_2007,final_df_2005,final_df_2003)
 #write.csv(df, append=F,file = "I:\\My Data Sources\\Data\\df.csv") #on campus
-write.csv(df, file = "./df.csv")
+write.csv(college_df, file = "./college_df.csv")
 ###The below merges the data frame with a small table for later merging with post 2010 data
 ac<-read.csv(file="./agency_code.csv")
 #ac<-read.csv(file="I://My Data Sources//Scripts//agency_code.csv")  #for campus
 
 ###### these should happen after all of 2003-2011 are merged but before merging with colleges_longForm
-final_df <- merge(df,ac, by.x="Institution", by.y="Institute", all.x=TRUE)  #this gets the correct names of agencies
-final_df<- (final_df[,c(10,11,3:4,9,2,5:8)])
-final_df %>% select(10,11,3:4,9,2,5) %>%
+final_df <- merge(college_df,ac, by.x="Institution", by.y="Institute", all.x=TRUE)  #this gets the correct names of agencies
+#final_df<- (final_df[,c(10,11,3:4,9,2,5:8)])
+final_df %>% select(10,11,3:4,9,2,5:8) %>%
   head()
-final_df<-final_df %>% select(10,11,3:4,9,2,5) %>% rename(Agency_Title=Agency,employee_name=Employee,job_title=Job.Title) #note this drops et, mp, etc
+final_df<-final_df %>% select(10,11,3:4,9,2,5:8) %>% rename(Agency_Title=Agency,employee_name=Employee,job_title=Job.Title) #note this drops et, mp, etc
 head(final_df)
 final_df$job.cat<-ifelse(grepl("facul|FTF|fac sub|pt-fac|pro-rata",final_df$job_title,ignore.case=T),"Faculty","Non-fac")
 

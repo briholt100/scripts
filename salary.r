@@ -110,7 +110,7 @@ table(colleges$Quintile)"""
 #obvious fix of misname
 colleges[grepl('ABAY, HALEFOM',colleges$employee_name) & colleges$job_title == 'FOOD SERVICE WORKER',c("Sal2014")]<-25900
 colleges<-colleges[-45107,] #after grep('ABAY, HALEFOM',colleges$employee_name) to obtain record number 45107
-colleges$TotSal<-apply(colleges[,5:8],1,sum,na.rm=T)
+#colleges$TotSal<-apply(colleges[,5:8],1,sum,na.rm=T)
 colleges<-colleges %>%
   gather(year,Salary,Sal2012:Sal2015)
 #colleges_longForm<-gather(colleges,year,Salary,Sal2012:Sal2015)
@@ -119,6 +119,9 @@ levels(colleges$year)[levels(colleges$year)=="Sal2015"] <- "2015"
 levels(colleges$year)[levels(colleges$year)=="Sal2012"] <- "2012"
 levels(colleges$year)[levels(colleges$year)=="Sal2013"] <- "2013"
 levels(colleges$year)[levels(colleges$year)=="Sal2014"] <- "2014"
+colleges$et<-NA
+colleges$mp<-NA
+colleges$percent_ft<-NA
 
 colleges<-rbind(final_df,colleges)   ##########this rbinds salary and finaldf2011
 
@@ -148,8 +151,8 @@ levels(sea_long$year)[levels(sea_long$year)=="Sal2013"] <- "2013"
 levels(sea_long$year)[levels(sea_long$year)=="Sal2014"] <- "2014"
 
 str(sea_long)
-
-sea_long<-sea_long[complete.cases(sea_long),]
+#sea_long<-seattle
+sea_long<-sea_long[complete.cases(sea_long[,7]),]
 sea_long<-sea_long %>% group_by(employee_name) %>% mutate(TotSal=sum(Salary))
 write.csv(sea_long, file = "./sea_long.csv")
 
@@ -170,7 +173,7 @@ sea_long %>% group_by(job.cat,year) %>% summarise(q0=quantile(Salary,probs=0),
                                                   #q8=quantile(Salary,probs=.8),
                                                   q10=quantile(Salary,probs=1))
 
-df<-sea_long %>% group_by(job.cat,year) %>%
+df<-sea_long %>% filter(year>=2010) %>% group_by(job.cat,year) %>%
   mutate(quants=cut2(Salary,cuts=quantile(Salary,c(#.2,
                                                    .33,
                                                    .5,
@@ -179,14 +182,15 @@ df<-sea_long %>% group_by(job.cat,year) %>%
                                                    .999))))
 levels(df$quants)
 
-df<-df %>%
-  mutate(quants = revalue(quants,  c("[   100,  9482)"= 'x00%',
+"""df<-df %>%
+ mutate(quants = revalue(quants,  c("[   100,  9482)"= 'x00%',
                                      #"[  4300,  9482)"='x20%',
                                      "[  9482, 22300)"= 'x33%',
                                      "[ 22300, 39064)"='x50%',
                                      "[ 39064,115017)" ='x66%',
                                      #"[ 59300,115017)"='x80%',
                                      "[115017,117800]"='x99%')))
+"""
 
 df %>% group_by(year,job.cat,quants) %>% summarise(Median=median(Salary))  %>%
   ggplot(aes(year,Median))+

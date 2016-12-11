@@ -111,13 +111,17 @@ table(colleges$Quintile)"""
 colleges[grepl('ABAY, HALEFOM',colleges$employee_name) & colleges$job_title == 'FOOD SERVICE WORKER',c("Sal2014")]<-25900
 colleges<-colleges[-45107,] #after grep('ABAY, HALEFOM',colleges$employee_name) to obtain record number 45107
 colleges$TotSal<-apply(colleges[,5:8],1,sum,na.rm=T)
-
+colleges<-colleges %>%
+  gather(year,Salary,Sal2012:Sal2015)
 #colleges_longForm<-gather(colleges,year,Salary,Sal2012:Sal2015)
 
-#levels(colleges_longForm$year)[levels(colleges_longForm$year)=="X2011"] <- "2011"
-#levels(colleges_longForm$year)[levels(colleges_longForm$year)=="X2012"] <- "2012"
-#levels(colleges_longForm$year)[levels(colleges_longForm$year)=="X2013"] <- "2013"
-#levels(colleges_longForm$year)[levels(colleges_longForm$year)=="X2014"] <- "2014"
+levels(colleges$year)[levels(colleges$year)=="Sal2015"] <- "2015"
+levels(colleges$year)[levels(colleges$year)=="Sal2012"] <- "2012"
+levels(colleges$year)[levels(colleges$year)=="Sal2013"] <- "2013"
+levels(colleges$year)[levels(colleges$year)=="Sal2014"] <- "2014"
+
+colleges<-rbind(final_df,colleges)   ##########this rbinds salary and finaldf2011
+
 
 #colleges_longForm$et<-NA
 #colleges_longForm$mp<-NA
@@ -133,7 +137,7 @@ seattle<-colleges[grep('seattle',colleges$Agency,ignore.case=T),  ]
 
 seattle<-seattle %>% group_by(employee_name) %>% #filter(grepl('^D',employee_name)) %>%
   mutate(job.cat = ifelse(any(grep("Faculty",job.cat)),"Faculty","Non-fac"))
-
+#sea_long<-seattle
 ####continuing
 sea_long<-gather(seattle,year,Salary,Sal2012:Sal2015)
 sea_long$job.cat<-as.factor(sea_long$job.cat)
@@ -147,7 +151,7 @@ str(sea_long)
 
 sea_long<-sea_long[complete.cases(sea_long),]
 sea_long<-sea_long %>% group_by(employee_name) %>% mutate(TotSal=sum(Salary))
-
+write.csv(sea_long, file = "./sea_long.csv")
 
 totalSalary_df<-sea_long %>% select(employee_name,job.cat,Salary) %>% group_by(employee_name,job.cat) %>% summarise(totalSalary=sum(Salary))
 

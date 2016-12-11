@@ -330,7 +330,7 @@ for (i in 1:length(wid)){
 n
 t
 s
-
+n[10]<-32 # for some reason edmonds is having a tab character added inside the job title...this appears to have fixed it.
 
 #what follows below is a loop that addes a tab chara to a specific numerical position in mylist[[i]], and converts double spaces into single tabs
 rhs<-'\\1\t'
@@ -403,9 +403,14 @@ ac<-read.csv(file="./agency_code.csv")
 ###### these should happen after all of 2003-2011 are merged but before merging with colleges_longForm
 final_df <- merge(df,ac, by.x="Institution", by.y="Institute", all.x=TRUE)  #this gets the correct names of agencies
 final_df<- (final_df[,c(10,11,3:4,9,2,5:8)])
+final_df %>% select(10,11,3:4,9,2,5) %>%
+  head()
+final_df<-final_df %>% select(10,11,3:4,9,2,5) %>% rename(Agency_Title=Agency,employee_name=Employee,job_title=Job.Title) #note this drops et, mp, etc
 head(final_df)
+final_df$job.cat<-ifelse(grepl("facul|FTF|fac sub|pt-fac|pro-rata",final_df$job_title,ignore.case=T),"Faculty","Non-fac")
 
-final_df<-rbind(final_df,colleges_longForm)   ##########this rbinds salary and finaldf2011
+
+#final_df<-rbind(final_df,colleges_longForm)   ##########this rbinds salary and finaldf2011
 write.csv(final_df, file = "./final_df.csv")
 #write.csv(final_df, append=F,file = "I:\\My Data Sources\\Data\\short_final_df.csv") #on campus
 

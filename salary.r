@@ -124,7 +124,7 @@ colleges$mp<-NA
 colleges$percent_ft<-NA
 
 colleges<-rbind(final_df,colleges)   ##########this rbinds salary and finaldf2011
-
+colleges$year<-as.Date(paste0(as.character(colleges$year),"-12-31"))
 
 #colleges_longForm$et<-NA
 #colleges_longForm$mp<-NA

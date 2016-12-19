@@ -525,7 +525,8 @@ tail(sort(table(colleges_df$Job.Title[colleges_df$job.cat=='other'])),40)
 
 
 
-
+colleges_df<-colleges_df %>%
+  rename(Job.Title=job_title)
 #
 colleges_df$job.cat<-"other"
 vicePres.list<-grep("PRINCIPAL,HIGH SCHOOL|COLLEGE INFORMATION OFFICR|VICE-PRES|vp|vice pres|v\\.p\\.", colleges_df$Job.Title, ignore.case=T)
@@ -645,7 +646,8 @@ colleges_df$job.cat[execAssist.list]<-"execAssist"
 colleges_df$job.cat[dean.list]<-"dean"
 
 tail(sort(table(colleges_df$Job.Title[colleges_df$job.cat=='other'])),100)
-
+colleges_df<-colleges_df %>%
+  rename(job_title=Job.Title)
 
 #clearn up the lists
 

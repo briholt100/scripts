@@ -400,13 +400,16 @@ write.csv(college_df, file = "./college_df.csv")
 ###The below merges the data frame with a small table for later merging with post 2010 data
 ac<-read.csv(file="./agency_code.csv")
 #ac<-read.csv(file="I://My Data Sources//Scripts//agency_code.csv")  #for campus
+colleges_df<-colleges_df %>% filter(is.na(et)==F) %>%  separate(.,et,into=c("emp_class","period"), sep=1,convert = T)# %>% head
+colleges_df %>% group_by(job.cat,year,emp_class,period) %>% filter(grepl('seattle com',Institution,ignore.case=T)) %>%  mutate(totSal=(Salary*mp)*percent_ft/100) %>% ggplot(aes(year,totSal))+geom_jitter(aes(group=emp_class))+facet_grid(~emp_class)
 
 ###### these should happen after all of 2003-2011 are merged but before merging with colleges_longForm
-final_df <- merge(college_df,ac, by.x="Institution", by.y="Institute", all.x=TRUE)  #this gets the correct names of agencies
+final_df <- merge(colleges_df,ac, by.x="Institution", by.y="Institute", all.x=TRUE)  #this gets the correct names of agencies
 #final_df<- (final_df[,c(10,11,3:4,9,2,5:8)])
 final_df %>% select(10,11,3:4,9,2,5:8) %>%
   head()
-final_df<-final_df %>% select(10,11,3:4,9,2,5:8) %>% rename(Agency_Title=Agency,employee_name=Employee,job_title=Job.Title) #note this drops et, mp, etc
+final_df<-final_df %>% select(Code,Agency_Title=Agency,employee_name = Employee,job_title=Job.Title,job.cat,year,Salary,et,mp,percent_ft) 
+#final_df<-final_df %>% select(10,11,3:4,9,2,5:8) %>% rename(Agency_Title=Agency,employee_name=Employee,job_title=Job.Title) #note this drops et, mp, etc
 head(final_df)
 final_df$job.cat<-ifelse(grepl("facul|FTF|fac sub|pt-fac|pro-rata",final_df$job_title,ignore.case=T),"Faculty","Non-fac")
 

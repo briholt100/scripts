@@ -198,7 +198,7 @@ df %>% group_by(year,job.cat,quants) %>% summarise(Median=median(Salary))  %>%
   geom_text(aes(label=Median),hjust=.3, vjust=0,size=3,color='blue')+
   facet_grid(quants~job.cat,scales='free_y')+
   geom_jitter(data=df,aes(x=year,y=Salary),alpha=.1,shape=20)+
-  labs(title="Salary changes by percentiles\nSalary amount is the median for\n year & percentile\n\nNOTICE THE Y AXIS SCALE CHANGES")
+  labs(title="Income changes by percentiles\nSalary amount is the median for\n year & percentile\n\nNOTICE THE Y AXIS SCALE CHANGES")
 
 
 
@@ -217,7 +217,7 @@ p<-ggplot(sea_long,aes(x=year,y=Salary))
 p+geom_boxplot()+geom_hline(data=meanByGroup,aes(yintercept=MeanSal,col='red'))+
   facet_grid(job.cat~Median)+
   #geom_line(data=enrol_df,aes(x=year,y=enrollments,color=1,group=1))+
-  labs(title = "Seattle salary by median salary within job category")
+  labs(title = "Seattle salary by median income within job category")
 
 p<-ggplot(medianByGroup,aes(x=year,y=MedSal))
 p+geom_line(aes(group=quant),size=1,linetype=2)+facet_grid(~job.cat)+

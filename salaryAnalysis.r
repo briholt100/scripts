@@ -386,7 +386,7 @@ tst<-read.fwf(txt,widths = c(32, 33, 81),header=F,row.names=NULL,skip=0,col.name
 ##read about 'connection', reading a url(url) okay, but need to skip several lines (find 'name or pre' and skip to that)
 #http://stackoverflow.com/questions/29663107/using-read-fwf-with-https
 
-
+#perhaps run the dplyr "any" ifelse first, then these
 #
 colleges_df$job.cat<-"other"
 adminOther.list<-grep("admin", colleges_df$Job.Title, ignore.case=T, value=F)
@@ -525,7 +525,8 @@ tail(sort(table(colleges_df$Job.Title[colleges_df$job.cat=='other'])),40)
 
 
 
-
+colleges_df<-colleges_df %>%
+  rename(Job.Title=job_title)
 #
 colleges_df$job.cat<-"other"
 vicePres.list<-grep("PRINCIPAL,HIGH SCHOOL|COLLEGE INFORMATION OFFICR|VICE-PRES|vp|vice pres|v\\.p\\.", colleges_df$Job.Title, ignore.case=T)
@@ -645,7 +646,8 @@ colleges_df$job.cat[execAssist.list]<-"execAssist"
 colleges_df$job.cat[dean.list]<-"dean"
 
 tail(sort(table(colleges_df$Job.Title[colleges_df$job.cat=='other'])),100)
-
+colleges_df<-colleges_df %>%
+  rename(job_title=Job.Title)
 
 #clearn up the lists
 

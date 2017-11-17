@@ -34,8 +34,8 @@ observedStat
 mean(permutations > observedStat)
 
 
-##I'd like to play around witha  t-test to recreate a p-value and to compare it to the above. 
-
+##I'd like to play around witha  t-test to recreate a p-value and to compare it to the above.
+with(InsectSprays,t.test(count[spray=='D']),count[spray=='E'])
 
 #his vid on p-values
 https://www.youtube.com/watch?v=Ky68x_7iK6c

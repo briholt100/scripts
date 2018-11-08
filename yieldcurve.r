@@ -24,7 +24,5 @@ lines(yc$df$BC_10YEAR~yc$df$dates,type='l',col='blue')
 lines(yc$df$BC_30YEAR~yc$df$dates,type='l',col='green')
 
 
-
-
-df %>% filter(bond == "BC_30YEAR" | bond == "BC_20YEAR"| bond == "BC_3MONTH"
+yc$df %>% gather(bond,rate,-dates) %>% filter(bond == "BC_30YEAR" | bond == "BC_20YEAR"| bond == "BC_3MONTH"
 ) %>% ggplot(aes(x=dates,y=rate,color=bond)) + geom_line()

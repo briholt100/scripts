@@ -26,6 +26,5 @@ lines(yc$df$BC_30YEAR~yc$df$dates,type='l',col='green')
 
 
 
-
-www.cdc.gov/mmwr/preview/mmwrhtml/ss6302a1.htm?s_cid=ss6302a1_w
-www.cdc.gov/ncbddd/autism/states/comm_report_autism_2014.pdf
+df %>% filter(bond == "BC_30YEAR" | bond == "BC_20YEAR"| bond == "BC_3MONTH"
+) %>% ggplot(aes(x=dates,y=rate,color=bond)) + geom_line()

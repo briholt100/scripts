@@ -7,18 +7,17 @@ Created on Sun Oct 18 20:16:23 2015
 for scraping doc titles from SCCD
 """
 
-import requests, collections, BeautifulSoup, re
+import requests, collections, bs4, re #BeautifulSoup
 from requests.auth import HTTPDigestAuth, HTTPBasicAuth
 
 NoTitleList=[]
 SCCDdocDic={}
 
-url = 'https://inside.seattlecolleges.edu/\
-default.aspx?svc=documentcenter&page=getdocuments&siteID=275'
-docNumber=1000
+url = 'https://inside.seattlecolleges.edu/default.aspx?svc=documentcenter&page=searchdocuments'
+docNumber=1
 # Below is a single url, but the docid can be iterated from 1 to 6k
 # Also, siteID = 275 is financial stuff
-while docNumber<1005:
+while docNumber<105:
     payload = {'docID': str(docNumber)}
     payload_str = "&".join("%s=%s" % (k,v) for k,v in payload.items())
     #  Below is a 'head' request, which is not typical of reading web pages. 
@@ -28,11 +27,11 @@ while docNumber<1005:
         # This checks for a keyword in the header key; if T, title is populat
         if 'content-disposition' in r_head.headers.keys():
             title=r_head.headers.get('content-disposition')            
-            print "this has a title .........  " + title
+            print ("this has a title .........  " + title)
             # Updates a SCCDdocDic with nested dictionary using filename and
               # a new dictionary tracking length and last-modified
             if SCCDdocDic.has_key(title):
-                print "this dictionary already has title: " + str(title)
+                print ("this dictionary already has title: " + str(title))
                 SCCDdocDic.update({str(title) + str(docNumber):
                     {docNumber:{'content-length':r_head.headers.get(
                     'content-length'),'last-modified':
@@ -47,9 +46,9 @@ while docNumber<1005:
                                 'content-length':r_head.headers.get(
                                   'content-length'),'last-modified':
                                      r_head.headers.get('last-modified')}})
-            print "\nNo Title No Title No Title"
-    except:  print "hmmmm....DocID didn't take"
-    print "\n" + str(docNumber) + "\n\n"
+            print ("\nNo Title No Title No Title")
+    except:  print ("hmmmm....DocID didn't take")
+    print ("\n" + str(docNumber) + "\n\n")
     docNumber+=1
 
 
@@ -71,7 +70,7 @@ for (k,v) in SCCDdocDic.items():
     del SCCDdocDic[k]
 
 for k,v in SCCDdocDic.items():
-    print k +'\n'
+    print (k +'\n')
     
 for item in NoTitleList:
     for k,v in item.items():

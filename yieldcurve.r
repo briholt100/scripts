@@ -7,7 +7,7 @@ yc<-getYieldCurve()#year=2018)
 #yc<-getYieldCurve()
 yc$df$dates<-as.Date(rownames(yc$df))#,format = "%Y/%m/%d")
 yc->yc.full
-yc$df<-subset(yc.full$df,yc.full$df$dates > as.Date(as.character("2018-10-1")))
+#yc$df<-subset(yc.full$df,yc.full$df$dates > as.Date(as.character("2018-10-1")))
 yc$df$dates<-as.Date(rownames(yc$df))#,format = "%Y/%m/%d")
 
 
@@ -16,13 +16,23 @@ p+labs(y='rates')+scale_colour_manual(values=c("red","green","blue","black"))+
   geom_point(col='blue')+
   geom_point(aes(y=yc$df$BC_30YEAR),col='red')+
   geom_point(aes(y=yc$df$BC_1MONTH),col='black')+
-  geom_smooth(data=yc$df,aes(dates,BC_30YEAR))
+  geom_smooth(data=yc$df,aes(dates,BC_30YEAR))+
+  geom_vline(xintercept = as.numeric(as.Date("2016-11-06")),linetype='dashed')+
+  geom_hline(yintercept = .81)
 
-plot(yc$df$BC_1MONTH~yc$df$dates,type='l',ylim=c(0,6))
-lines(yc$df$BC_3MONTH~yc$df$dates,type='l',col='red')
-lines(yc$df$BC_10YEAR~yc$df$dates,type='l',col='blue')
-lines(yc$df$BC_30YEAR~yc$df$dates,type='l',col='green')
+df1<-yc$df %>% tail(700)
+plot(df1$BC_1MONTH~df1$dates,type='l',ylim=c(0,6))
+lines(df1$BC_3MONTH~df1$dates,type='l',col='red')
+lines(df1$BC_10YEAR~df1$dates,type='l',col='blue')
+lines(df1$BC_30YEAR~df1$dates,type='l',col='green')
+abline(v=as.numeric(as.Date("2016-11-06")),col='black',lty=3)
 
 
-yc$df %>% gather(bond,rate,-dates) %>% filter(bond == "BC_30YEAR" | bond == "BC_20YEAR"| bond == "BC_3MONTH"
-) %>% ggplot(aes(x=dates,y=rate,color=bond)) + geom_line()
+yc$df %>% 
+  #tail(700) %>% 
+  filter(BC_3MONTH > .5 & BC_3MONTH< .83) %>% 
+  gather(bond,rate,-dates) %>% 
+  filter(bond == "BC_30YEAR" | bond == "BC_20YEAR"| bond == "BC_3MONTH") %>% 
+  ggplot(aes(x=dates,y=rate,color=bond)) + 
+  geom_line() +
+  geom_vline(xintercept = as.numeric(as.Date("2016-11-06")),linetype='dashed')

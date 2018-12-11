@@ -43,3 +43,6 @@ yc$df %>%
 
 yc$df %>% select(BC_3MONTH,dates) %>% filter(dates > as.numeric(as.Date("2004-03-01")) & dates < as.numeric(as.Date("2004-06-01"))) %>% ggplot(aes(x=dates,y=BC_3MONTH))+geom_line()
 yc$df %>%  filter(dates > as.numeric(as.Date("2003-03-01")) & dates < as.numeric(as.Date("2008-06-01"))) %>%   gather(bond,rate,-dates) %>% ggplot(aes(x=dates,y=rate,color=bond))+geom_line()+geom_vline(xintercept = as.numeric(as.Date("2004-04-01")),linetype='dashed')
+
+yc$df %>% tail() %>% gather(bond,rate,-dates) %>% arrange(desc(dates)) %>% ggplot(aes(x=dates,y=rate,color=bond))+geom_line()
+

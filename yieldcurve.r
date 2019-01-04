@@ -1,8 +1,32 @@
-library('ustyc')
+library('Quandl')
 library('ggplot2')
 library('tidyr')
+library('ustyc')
 library('dplyr')
 library('tibble')
+
+
+yc<-Quandl('USTREASURY/YIELD')
+str(yc)
+head(yc)
+yc %>% gather(bond,rate, -Date) %>% 
+  filter(bond == '1 MO' |bond == '2 MO' |bond == '3 MO' |bond == '6 MO' |bond == '3 YR' |bond ==  '2 YR'|bond == '5 YR'|bond == '1 YR'|bond == '7 YR')  %>%
+  arrange(desc(Date)) %>% 
+  head(100) %>% 
+  ggplot(aes(x=Date,y=rate,color=bond)) + 
+  geom_line() 
+  
+
+
+
+
+yc$
+
+
+
+
+
+
 yc<-getYieldCurve()#year=2018)
 #yc<-getYieldCurve()
 yc$df$dates<-as.Date(rownames(yc$df))#,format = "%Y/%m/%d")
@@ -46,3 +70,4 @@ yc$df %>%  filter(dates > as.numeric(as.Date("2003-03-01")) & dates < as.numeric
 
 yc$df %>% tail() %>% gather(bond,rate,-dates) %>% arrange(desc(dates)) %>% ggplot(aes(x=dates,y=rate,color=bond))+geom_line()
 
+see package directlabels https://stackoverflow.com/questions/29357612/plot-labels-at-ends-of-lines

@@ -1,5 +1,5 @@
-line<-function(m=0,x=1,b=0){m*x+b}
 standard.dev<-3
+##this function below assumes mean = 0 and sd =1.  Would need more variabless for complex curves
 norm<-function(x) {(1/sqrt(2*pi))*exp(-.5*(x^2))}
 norm(standard.dev)
 

@@ -43,7 +43,7 @@ yc$df$dates<-as.Date(rownames(yc$df))#,format = "%Y/%m/%d")
 yc->yc.full
 #yc$df<-subset(yc.full$df,yc.full$df$dates > as.Date(as.character("2018-10-1")))
 yc$df$dates<-as.Date(rownames(yc$df))#,format = "%Y/%m/%d")
-
+read.csv(url('http://data.treasury.gov/feed.svc/DailyTreasuryYieldCurveRateData'))
 
 p<-ggplot(yc$df,aes(dates,y=yc$df$BC_3MONTH))
 p+labs(y='rates')+scale_colour_manual(values=c("red","green","blue","black"))+

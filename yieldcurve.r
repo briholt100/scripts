@@ -9,12 +9,22 @@ library('tibble')
 yc<-Quandl('USTREASURY/YIELD')
 str(yc)
 head(yc)
-yc %>% gather(bond,rate, -Date) %>% 
-  filter(bond == '1 MO' |bond == '2 MO' |bond == '3 MO' |bond == '6 MO' |bond == '3 YR' |bond ==  '2 YR'|bond == '5 YR'|bond == '1 YR'|bond == '7 YR')  %>%
+today<-yc %>% 
   arrange(desc(Date)) %>% 
-  head(100) %>% 
+  head(10) %>%
+  gather(bond,rate, -Date) %>% 
+  arrange(desc(Date)) %>% 
+  head(12) %>%
+  arrange(desc(rate))
+
+yc %>% 
+  arrange(desc(Date)) %>% 
+  head(5) %>% 
+  gather(bond,rate, -Date) %>% 
+  #filter(bond == '1 MO' |bond == '2 MO' |bond == '3 MO' |bond == '6 MO' |bond == '3 YR' |bond ==  '2 YR'|bond == '5 YR'|bond == '1 YR'|bond == '7 YR')  %>%
   ggplot(aes(x=Date,y=rate,color=bond)) + 
-  geom_line() 
+  geom_line() +
+  geom_point(data=today, aes(y = today$rate))+geom_text(data=today,aes(label=bond),hjust=0, vjust=-.8)
   
 
 
@@ -33,7 +43,7 @@ yc$df$dates<-as.Date(rownames(yc$df))#,format = "%Y/%m/%d")
 yc->yc.full
 #yc$df<-subset(yc.full$df,yc.full$df$dates > as.Date(as.character("2018-10-1")))
 yc$df$dates<-as.Date(rownames(yc$df))#,format = "%Y/%m/%d")
-
+read.csv(url('http://data.treasury.gov/feed.svc/DailyTreasuryYieldCurveRateData'))
 
 p<-ggplot(yc$df,aes(dates,y=yc$df$BC_3MONTH))
 p+labs(y='rates')+scale_colour_manual(values=c("red","green","blue","black"))+

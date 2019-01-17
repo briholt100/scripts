@@ -16,7 +16,7 @@ today<-yc %>%
   arrange(desc(Date)) %>% 
   head(12) %>%
   arrange(desc(rate))
-
+today
 yc %>% 
   arrange(desc(Date)) %>% 
   head(5) %>% 

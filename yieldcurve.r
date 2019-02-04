@@ -30,11 +30,6 @@ yc %>%
 
 
 
-yc$
-
-
-
-
 
 
 yc<-getYieldCurve()#year=2018)

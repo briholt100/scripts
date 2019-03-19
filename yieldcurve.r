@@ -9,9 +9,13 @@ library('tibble')
 yc<-Quandl('USTREASURY/YIELD')
 str(yc)
 head(yc)
+names.yc<-names(yc)
+
+
+names(yc)<-gsub("([0-9]{1,2}) ([A-Z]{2})","\\2\\1",names.yc)
 today<-yc %>% 
   arrange(desc(Date)) %>% 
-  head(10) %>%
+  head(10) %>% 
   gather(bond,rate, -Date) %>% 
   arrange(desc(Date)) %>% 
   head(12) %>%
@@ -21,18 +25,31 @@ yc %>%
   arrange(desc(Date)) %>% 
   head(5) %>% 
   gather(bond,rate, -Date) %>% 
-  #filter(bond == '1 MO' |bond == '2 MO' |bond == '3 MO' |bond == '6 MO' |bond == '3 YR' |bond ==  '2 YR'|bond == '5 YR'|bond == '1 YR'|bond == '7 YR')  %>%
-  ggplot(aes(x=Date,y=rate,color=bond)) + 
+  filter(#bond == '1 MO' |bond == '2 MO' |bond == '3 MO' |
+    bond == '6 MO' |
+      bond == '3 YR' |
+      bond ==  '2 YR'|
+      bond == '5 YR'|
+      bond == '1 YR'|
+      bond == '7 YR')  %>% with(plot(rate~Date,data = . ))
+  
+ggplot(aes(x=Date,y=rate,color=bond)) + 
   geom_line() +
   geom_point(data=today, aes(y = today$rate))+geom_text(data=today,aes(label=bond),hjust=0, vjust=-.8)
   
 
 
 
+yc %>% 
+  arrange(desc(Date)) %>% 
+  head(10) %>% 
+  mutate(one=YR7-YR1,six=YR7-MO6,two=YR7-YR2) %>% 
+  select(one,six,two,Date) %>% 
+  gather(key=bond,value=rate,-Date) %>% 
+  ggplot(aes(x=Date,y=rate,color=bond))+geom_line()
 
 
-
-yc<-getYieldCurve()#year=2018)
+yc<-getYieldCurve(year=2019)
 #yc<-getYieldCurve()
 yc$df$dates<-as.Date(rownames(yc$df))#,format = "%Y/%m/%d")
 yc->yc.full

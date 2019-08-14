@@ -1,10 +1,9 @@
 library('Quandl')
 library('ggplot2')
-library('tidyr')
 library('ustyc')
 library('dplyr')
 library('tibble')
-
+library('tidyr')
 
 yc<-Quandl('USTREASURY/YIELD')
 str(yc)
@@ -33,7 +32,11 @@ yc %>%
       bond == '1 YR'|
       bond == '7 YR')  %>% with(plot(rate~Date,data = . ))
   
-ggplot(aes(x=Date,y=rate,color=bond)) + 
+yc %>% 
+  arrange(desc(Date)) %>% 
+  head(5) %>% 
+  gather(bond,rate, -Date) %>% 
+  ggplot(aes(x=Date,y=rate,color=bond)) + 
   geom_line() +
   geom_point(data=today, aes(y = today$rate))+geom_text(data=today,aes(label=bond),hjust=0, vjust=-.8)
   

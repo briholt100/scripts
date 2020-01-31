@@ -34,7 +34,7 @@ yc %>%
   
 yc %>% 
   arrange(desc(Date)) %>% 
-  head(5) %>% 
+  head(105) %>% 
   gather(bond,rate, -Date) %>% 
   ggplot(aes(x=Date,y=rate,color=bond)) + 
   geom_line() +

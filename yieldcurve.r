@@ -36,6 +36,10 @@ yc %>%
   arrange(desc(Date)) %>% 
   head(105) %>% 
   gather(bond,rate, -Date) %>% 
+  group_by(bond,Date) %>% 
+  filter(Date>"2020-02-01") %>% 
+  filter(grepl('YR',bond)) %>% 
+  filter(nchar(bond)<4) %>% 
   ggplot(aes(x=Date,y=rate,color=bond)) + 
   geom_line() +
   geom_point(data=today, aes(y = today$rate))+geom_text(data=today,aes(label=bond),hjust=0, vjust=-.8)
@@ -48,7 +52,7 @@ yc %>%
   head(10) %>% 
   mutate(one=YR7-YR1,six=YR7-MO6,two=YR7-YR2) %>% 
   select(one,six,two,Date) %>% 
-  gather(key=bond,value=rate,-Date) %>% 
+  gather(key=bond,value=rate,-Date) %>% group_by(bond, Date) %>% 
   ggplot(aes(x=Date,y=rate,color=bond))+geom_line()
 
 

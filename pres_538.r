@@ -41,3 +41,6 @@ pp %>% select(state,candidate_party,candidate_name,pct) %>%
 df %>% select(state,candidate_name,candidate_party,pct) %>% 
   filter(candidate_name=="Donald Trump",state=='Maine') %>% 
   summarise(mean.pct=mean(pct))
+
+group_by(state) %>% top_n(1) %>% group_by(state,candidate_party) %>% summarise(n()) %>% full_join(evotes) %>% group_by(candidate_party) %>% summarise(total_ev=sum(ev))
+

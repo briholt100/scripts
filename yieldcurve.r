@@ -1,3 +1,7 @@
+x=c('Quandl','ustyc','tibble','tidyr','Quandl')
+
+lapply(x,install.packages)
+
 library('Quandl')
 library('ggplot2')
 library('ustyc')
@@ -5,6 +9,8 @@ library('dplyr')
 library('tibble')
 library('tidyr')
 
+
+Quandl.api_key(Sys.getenv("quandl.ApiConfig.api_key"))
 yc<-Quandl('USTREASURY/YIELD')
 str(yc)
 head(yc)
@@ -56,7 +62,7 @@ yc %>%
   ggplot(aes(x=Date,y=rate,color=bond))+geom_line()
 
 
-yc<-getYieldCurve(year=2019)
+yc<-getYieldCurve(year=20)
 #yc<-getYieldCurve()
 yc$df$dates<-as.Date(rownames(yc$df))#,format = "%Y/%m/%d")
 yc->yc.full
